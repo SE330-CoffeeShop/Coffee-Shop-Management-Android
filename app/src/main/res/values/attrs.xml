@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AuthInput">
+        <attr name="labelText" format="string" />
+        <attr name="hintText" format="string" />
+    </declare-styleable>
+    <declare-styleable name="AuthButton">
+        <attr name="authButtonText" format="string" />
+        <attr name="authButtonIcon" format="reference|color" />
+    </declare-styleable>
+</resources>
