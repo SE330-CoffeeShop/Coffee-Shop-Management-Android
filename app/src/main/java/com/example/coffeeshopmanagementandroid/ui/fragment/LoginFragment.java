@@ -1,15 +1,20 @@
-package com.example.coffeeshopmanagementandroid.ui.view;
+package com.example.coffeeshopmanagementandroid.ui.fragment;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
+import com.example.coffeeshopmanagementandroid.ui.component.SocialButton;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthInput;
 
 /**
@@ -67,14 +72,18 @@ public class LoginFragment extends Fragment {
 
         AuthInput emailInput = view.findViewById(R.id.email_input);
         AuthInput passwordInput = view.findViewById(R.id.password_input);
-        AuthButton facebook_button = view.findViewById(R.id.facebook_button);
-        AuthButton google_button = view.findViewById(R.id.google_button);
+        SocialButton facebook_button = view.findViewById(R.id.facebook_button);
+        SocialButton google_button = view.findViewById(R.id.google_button);
+
+        TextView goToSignUpButton = view.findViewById(R.id.go_to_sign_up_button);
+
+        goToSignUpButton.setOnClickListener(v -> navigateToSignUp());
 
         emailInput.setLabel("Email");
         emailInput.setHint("Type your Email");
 
         passwordInput.setLabel("Password");
-        passwordInput.setHint("Enter yout password");
+        passwordInput.setHint("Enter your password");
 
         facebook_button.setButtonIcon(R.drawable.facebook_icon);
         facebook_button.setButtonText("Facebook");
@@ -82,5 +91,10 @@ public class LoginFragment extends Fragment {
         google_button.setButtonIcon(R.drawable.google_icon);
         google_button.setButtonText("Google");
         return view;
+    }
+    private void navigateToSignUp() {
+        if (getActivity() instanceof AuthActivity) {
+            ((AuthActivity) getActivity()).switchFragment(new RegisterFragment());
+        }
     }
 }

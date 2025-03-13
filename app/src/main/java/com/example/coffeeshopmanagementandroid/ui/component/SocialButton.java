@@ -12,23 +12,23 @@ import android.widget.TextView;
 
 import com.example.coffeeshopmanagementandroid.R; // Replace with your R file
 
-public class AuthButton extends LinearLayout {
+public class SocialButton extends LinearLayout {
 
     private ImageView buttonIcon;
     private TextView buttonText;
 
-    public AuthButton(Context context) {
+    public SocialButton(Context context) {
         super(context);
         init(context, null);
     }
 
-    public AuthButton(Context context, AttributeSet attrs) {
+    public SocialButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
-        LayoutInflater.from(context).inflate(R.layout.auth_button, this, true); // Use your layout name
+        LayoutInflater.from(context).inflate(R.layout.social_button, this, true); // Use your layout name
 
         buttonIcon = findViewById(R.id.buttonIcon);
         buttonText = findViewById(R.id.buttonText);

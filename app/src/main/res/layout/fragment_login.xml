@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.view.LoginFragment">
+    tools:context=".ui.fragment.LoginFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -101,18 +101,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <com.example.coffeeshopmanagementandroid.ui.component.AuthButton
+                <com.example.coffeeshopmanagementandroid.ui.component.SocialButton
                     android:id="@+id/facebook_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    layout="@layout/auth_button"/>
+                    />
                 <View
                     android:layout_width="200dp"
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
-                <com.example.coffeeshopmanagementandroid.ui.component.AuthButton
+                <com.example.coffeeshopmanagementandroid.ui.component.SocialButton
                     android:id="@+id/google_button"
-                    layout="@layout/auth_button"
+                    layout="@layout/social_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -134,7 +134,7 @@
                 android:text="@string/dont_have_an_account" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/go_to_sign_up_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/information_400"
