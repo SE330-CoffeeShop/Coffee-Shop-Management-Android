@@ -36,7 +36,7 @@ public class AuthButton extends LinearLayout {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AuthButton);
 
             String text = typedArray.getString(R.styleable.AuthButton_authButtonText);
-            Drawable icon = typedArray.getDrawable(R.styleable.AuthButton_authButtonIcon);
+
 
             if (text != null) {
                 authButton.setText(text);
@@ -52,5 +52,9 @@ public class AuthButton extends LinearLayout {
 
     public String getButtonText() {
         return authButton.getText().toString();
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        authButton.setOnClickListener(listener);
     }
 }

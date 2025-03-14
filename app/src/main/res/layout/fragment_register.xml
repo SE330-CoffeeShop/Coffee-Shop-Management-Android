@@ -4,41 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.RegisterFragment">
+    tools:context=".ui.fragment.auth.RegisterFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <com.example.coffeeshopmanagementandroid.ui.component.BackButton
+            android:id="@+id/back_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/bg_white"
-                app:navigationIcon="@drawable/back_arrow_icon" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="40dp"
             android:orientation="vertical"
             android:paddingHorizontal="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+            app:layout_constraintTop_toBottomOf="@+id/back_button">
 
             <TextView
                 android:id="@+id/textView4"
@@ -78,6 +69,7 @@
             <com.example.coffeeshopmanagementandroid.ui.component.AuthInput
                 android:id="@+id/password_input"
                 android:layout_width="match_parent"
+                app:inputType="password"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp" />
 
@@ -85,6 +77,7 @@
                 android:id="@+id/confirm_password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:inputType="password"
                 android:layout_marginBottom="10dp" />
         </LinearLayout>
 

@@ -1,14 +1,17 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment;
+package com.example.coffeeshopmanagementandroid.ui.fragment.auth;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthInput;
 
@@ -57,6 +60,12 @@ public class RegisterFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Chặn nút back, không thực hiện popBackStack
+            }
+        });
     }
 
     @Override
@@ -71,6 +80,7 @@ public class RegisterFragment extends Fragment {
         AuthInput passwordInput = view.findViewById(R.id.password_input);
         AuthInput confirmPasswordInput = view.findViewById(R.id.confirm_password_input);
 
+        createButton.setOnClickListener(v -> navigateToVerify());
         createButton.setButtonText("Create");
 
         emailInput.setLabel("Email");
@@ -88,5 +98,18 @@ public class RegisterFragment extends Fragment {
         confirmPasswordInput.setLabel("Confirm Password");
         confirmPasswordInput.setHint("Type Your Password Again");
         return view;
+    }
+    private void navigateToVerify() {
+        if (getActivity() == null) {
+            Log.e("RegisterFragment", "❌ Activity is null!");
+            return;
+        }
+        if (!(getActivity() instanceof AuthActivity)) {
+            Log.e("RegisterFragment", "❌ Activity is not AuthActivity!");
+            return;
+        }
+
+        Log.d("RegisterFragment", "✅ Navigating to VerifyFragment...");
+        ((AuthActivity) getActivity()).switchFragment(new VerifyFragment());
     }
 }

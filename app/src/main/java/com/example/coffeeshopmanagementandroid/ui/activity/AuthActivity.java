@@ -1,16 +1,13 @@
 package com.example.coffeeshopmanagementandroid.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.ui.fragment.LoginFragment;
+import com.example.coffeeshopmanagementandroid.ui.fragment.auth.LoginFragment;
 
 public class AuthActivity extends AppCompatActivity {
     @Override
@@ -30,5 +27,6 @@ public class AuthActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();
+        Log.d("AuthActivity", "✅ Fragment switched!");
     }
 }

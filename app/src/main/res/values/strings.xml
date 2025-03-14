@@ -7,6 +7,9 @@
     <string name="sign_up">Sign Up</string>
     <string name="create_new_account">Create New Account</string>
     <string name="type_your_name">Type Your Name</string>
+    <string name="verify_your_account">Verify Your Account</string>
+    <string name="enter_your_otp">Enter Your OTP</string>
+    <string name="resend">Resend</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

@@ -1,10 +1,8 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment;
+package com.example.coffeeshopmanagementandroid.ui.fragment.auth;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
-import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
 import com.example.coffeeshopmanagementandroid.ui.component.SocialButton;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthInput;
 
@@ -92,6 +89,7 @@ public class LoginFragment extends Fragment {
         google_button.setButtonText("Google");
         return view;
     }
+
     private void navigateToSignUp() {
         if (getActivity() instanceof AuthActivity) {
             ((AuthActivity) getActivity()).switchFragment(new RegisterFragment());

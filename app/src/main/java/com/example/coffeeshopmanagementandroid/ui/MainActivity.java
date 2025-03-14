@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
-import com.example.coffeeshopmanagementandroid.ui.fragment.LoginFragment;
+import com.example.coffeeshopmanagementandroid.ui.fragment.auth.LoginFragment;
 
 public class MainActivity extends AppCompatActivity {
 
