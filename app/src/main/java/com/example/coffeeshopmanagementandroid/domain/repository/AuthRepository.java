@@ -1,4 +1,7 @@
 package com.example.coffeeshopmanagementandroid.domain.repository;
 
-public class AuthRepository {
+import com.example.coffeeshopmanagementandroid.domain.model.AuthModel;
+
+public interface AuthRepository {
+    AuthModel login(String email, String password, Boolean rememberMe) throws Exception;
 }

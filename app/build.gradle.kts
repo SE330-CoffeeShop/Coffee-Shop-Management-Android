@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.dagger.hilt.android")
 }
 
 val localProperties = Properties()
@@ -50,6 +51,8 @@ android {
 dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation( "com.google.dagger:hilt-android:2.42")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.44")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

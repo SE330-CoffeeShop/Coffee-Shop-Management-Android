@@ -1,93 +1,100 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.auth;
 
 import android.os.Bundle;
-
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.Toast;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.SocialButton;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthInput;
+import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.LoginViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class LoginFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public LoginFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LoginFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private LoginViewModel loginViewModel;
+    private AuthInput emailInput;
+    private AuthInput passwordInput;
+    private AuthButton loginButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        AuthInput emailInput = view.findViewById(R.id.email_input);
-        AuthInput passwordInput = view.findViewById(R.id.password_input);
-        SocialButton facebook_button = view.findViewById(R.id.facebook_button);
-        SocialButton google_button = view.findViewById(R.id.google_button);
+        // Ánh xạ các thành phần UI
+        emailInput = view.findViewById(R.id.email_input);
+        passwordInput = view.findViewById(R.id.password_input);
+        loginButton = view.findViewById(R.id.sign_in_button);
+        SocialButton facebookButton = view.findViewById(R.id.facebook_button);
+        SocialButton googleButton = view.findViewById(R.id.google_button);
 
-        TextView goToSignUpButton = view.findViewById(R.id.go_to_sign_up_button);
-
-        goToSignUpButton.setOnClickListener(v -> navigateToSignUp());
-
+        // Thiết lập giao diện
         emailInput.setLabel("Email");
         emailInput.setHint("Type your Email");
 
         passwordInput.setLabel("Password");
         passwordInput.setHint("Enter your password");
 
-        facebook_button.setButtonIcon(R.drawable.facebook_icon);
-        facebook_button.setButtonText("Facebook");
+        facebookButton.setButtonIcon(R.drawable.facebook_icon);
+        facebookButton.setButtonText("Facebook");
 
-        google_button.setButtonIcon(R.drawable.google_icon);
-        google_button.setButtonText("Google");
+        googleButton.setButtonIcon(R.drawable.google_icon);
+        googleButton.setButtonText("Google");
+
+        // Xử lý sự kiện bấm đăng nhập
+        loginButton.setOnClickListener(v -> handleLogin());
+
+        // Xử lý sự kiện chuyển sang màn hình đăng ký
+        view.findViewById(R.id.go_to_sign_up_button).setOnClickListener(v -> navigateToSignUp());
+
+        // Lắng nghe kết quả đăng nhập từ ViewModel
+        observeLoginResult();
+
         return view;
+    }
+
+    private void handleLogin() {
+        String email = emailInput.getText();
+        String password = passwordInput.getText();
+
+        Log.v("Button Click", "Login");
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(getContext(), "Email and password must not be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        loginButton.setEnabled(false); // Vô hiệu hóa nút khi đang xử lý
+        loginViewModel.login(email, password, false);
+    }
+
+    private void observeLoginResult() {
+        loginViewModel.getAuthLiveData().observe(getViewLifecycleOwner(), authModel -> {
+            loginButton.setEnabled(true); // Bật lại nút khi có kết quả
+
+            if (authModel != null) {
+                Toast.makeText(getContext(), "Login Success!", Toast.LENGTH_SHORT).show();
+                // Điều hướng sang màn hình chính hoặc xử lý tiếp theo
+            } else {
+                Toast.makeText(getContext(), "Login Failed. Please try again!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void navigateToSignUp() {
