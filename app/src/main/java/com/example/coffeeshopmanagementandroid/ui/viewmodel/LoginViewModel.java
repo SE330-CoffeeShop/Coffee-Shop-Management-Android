@@ -1,5 +1,7 @@
 package com.example.coffeeshopmanagementandroid.ui.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -38,11 +40,13 @@ public class LoginViewModel extends ViewModel {
     public void login(String email, String password, Boolean rememberMe) {
         isLoading.setValue(true);
         new Thread(() -> {
+
             try {
                 AuthModel authModel = loginUseCase.execute(email, password, rememberMe);
                 authLiveData.postValue(authModel);
             } catch (Exception e) {
                 errorLiveData.postValue(e.getMessage());
+                Log.d("Error", String.valueOf(e));
             } finally {
                 isLoading.postValue(false);
             }

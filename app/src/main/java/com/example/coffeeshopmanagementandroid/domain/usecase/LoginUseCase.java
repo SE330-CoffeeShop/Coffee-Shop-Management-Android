@@ -1,5 +1,7 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
+import android.util.Log;
+
 import com.example.coffeeshopmanagementandroid.domain.model.AuthModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 
@@ -11,6 +13,7 @@ public class LoginUseCase {
     }
 
     public AuthModel execute(String email, String password, Boolean rememberMe) throws Exception {
+        Log.d("Login Use Case", "Called");
         return authRepository.login(email, password, rememberMe);
     }
 }
