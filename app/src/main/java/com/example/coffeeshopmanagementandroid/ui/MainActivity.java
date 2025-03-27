@@ -51,41 +51,27 @@ public class MainActivity extends AppCompatActivity {
 
         // Nếu đã đăng nhập, tiếp tục hiển thị MainActivity
         setContentView(R.layout.activity_main);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.main_navigation);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_main);
         if (navHostFragment != null) {
             NavOptions.Builder builder = new NavOptions.Builder();
             builder.setLaunchSingleTop(true);
             navOptions = builder.build();
 
             navController = navHostFragment.getNavController();
-            navController.navigate(R.id.home_navigation);
+            navController.navigate(R.id.main_navigation);
 
         }
-        bottomAppBar = findViewById(R.id.bottomAppBar);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomAppBar = findViewById(R.id.bottom_app_bar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        bottomNavigationView.setSelectedItemId(R.id.homeFragment);
 //        if (savedInstanceState == null) {
 //            loadFragment(new LoginFragment());
 //        }
     }
 
     // Để lại chưa làm
-
-    private void tabAppearance(TabLayout.Tab tab, boolean isSelected) {
-        View customView = tab.getCustomView();
-        if(customView != null) {
-            ImageView tabIcon = customView.findViewById(R.id.tab_icon);
-            TextView tabText = customView.findViewById(R.id.tab_text);
-
-            if(isSelected) {
-                tabIcon.setColorFilter(getResources().getColor(R.color.primary_500));
-                tabText.setTextColor(getResources().getColor(R.color.primary_500));
-            } else {
-                tabIcon.setColorFilter(getResources().getColor(R.color.black));
-                tabText.setTextColor(getResources().getColor(R.color.black));
-            }
-        }
-    }
 
     private boolean isUserLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);

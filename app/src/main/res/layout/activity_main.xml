@@ -8,12 +8,12 @@
 
     <!-- Container để load các Fragment -->
     <fragment
-        android:id="@+id/nav_host"
+        android:id="@+id/nav_host_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/main_navigation" />
+        app:navGraph="@navigation/app_navigation" />
     <FrameLayout
         android:id="@+id/fragment_main_container"
         android:layout_width="match_parent"
@@ -23,21 +23,16 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_gravity="bottom"
-        android:id="@+id/bottomAppBar"
-
+        android:id="@+id/bottom_app_bar"
         app:fabCradleRoundedCornerRadius="10dp"
-
         android:visibility="visible"
         >
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/bottomNavigationView"
-
+            android:id="@+id/bottom_navigation"
             app:menu="@menu/bottom_menu"
             android:background="@drawable/bg_transparent"
             app:itemIconSize="32dp" />
     </com.google.android.material.bottomappbar.BottomAppBar>
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
