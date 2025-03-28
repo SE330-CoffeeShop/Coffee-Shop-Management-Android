@@ -24,6 +24,7 @@
         android:layout_height="72dp"
         android:layout_gravity="bottom"
         android:id="@+id/bottom_app_bar"
+        android:background="@color/bg_white"
         app:fabCradleRoundedCornerRadius="10dp"
         android:visibility="visible"
         >
@@ -33,6 +34,7 @@
             android:id="@+id/bottom_navigation"
             app:menu="@menu/bottom_menu"
             android:background="@drawable/bg_transparent"
+
             app:itemIconSize="32dp" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

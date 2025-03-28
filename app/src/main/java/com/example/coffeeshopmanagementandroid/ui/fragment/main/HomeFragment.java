@@ -75,6 +75,7 @@ public class HomeFragment extends Fragment {
 
         categoryAdapter = new CategoryAdapter(coffeeTypes);
         RecyclerView categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         categoryRecyclerView.setAdapter(categoryAdapter);
 
