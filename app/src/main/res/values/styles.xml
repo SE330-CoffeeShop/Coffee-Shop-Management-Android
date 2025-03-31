@@ -81,4 +81,8 @@
         <item name="android:textSize">72sp</item>
         <item name="android:fontFamily">@font/montserrat_semibold</item>
     </style>
+    <style name="text_bracode_regular">
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">@font/bracode_39_regular</item>
+    </style>
 </resources>
