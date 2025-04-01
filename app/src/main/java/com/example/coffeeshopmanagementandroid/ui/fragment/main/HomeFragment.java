@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.main;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,7 +34,7 @@ public class HomeFragment extends Fragment {
 
         // Inflate layout cho Fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        int horizontalSpace = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
 
         List<ProductModel> coffees = new ArrayList<>();
         coffees.add(new ProductModel("1", "Classic Cappuccino", 45.13, "https://example.com/cappuccino.jpg", 4.5f, "Cappuccino", false));
@@ -59,6 +60,7 @@ public class HomeFragment extends Fragment {
         );
         RecyclerView productRecyclerView = view.findViewById(R.id.productRecyclerView);
         productRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        productRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpace));
         productRecyclerView.setAdapter(productAdapter);
 
         List<CategoryModel> coffeeTypes = new ArrayList<>();
@@ -97,8 +99,24 @@ public class HomeFragment extends Fragment {
                         Toast.LENGTH_SHORT).show());
         RecyclerView recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
         recentlyProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        recentlyProductRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpace));
         recentlyProductRecyclerView.setAdapter(recentlyProductAdapter);
 
         return view;
+    }
+
+    public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+        private int spacing;
+
+        public HorizontalSpaceItemDecoration(int spacing) {
+            this.spacing = spacing;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                outRect.right = spacing;
+            }
+        }
     }
 }

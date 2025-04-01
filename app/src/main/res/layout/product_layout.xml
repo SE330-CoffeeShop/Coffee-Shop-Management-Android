@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
@@ -53,8 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
+                style="@style/text_base_semibold"
             tools:text="Cappuccino" />
 
         <TextView
@@ -63,13 +61,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="#808080"
-            android:textSize="14sp"
+            style="@style/text_xs_regular"
             tools:text="Classic" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -78,8 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                style="@style/text_base_semibold"
                 tools:text="$45.13" />
 
             <com.google.android.material.button.MaterialButton
