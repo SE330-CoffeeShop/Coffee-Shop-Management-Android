@@ -66,4 +66,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="favorite">Favorite</string>
+    <string name="cappuccino">Cappuccino</string>
+    <string name="variantProduct">XL, Chân châu trắng</string>
+    <string name="priceProduct">40.000 VND</string>
+    <string name="delete">Delete</string>
+    <string name="quantity_product_cart">1</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="price">Price</string>
 </resources>
