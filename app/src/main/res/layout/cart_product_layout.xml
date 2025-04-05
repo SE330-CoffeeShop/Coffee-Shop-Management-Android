@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_marginVertical="10dp"
+    android:background="@drawable/bg_product_cart"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButtonCartProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/productNameTextView"
+            style="@style/text_xl_semibold"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/cappuccino" />
+
+        <TextView
+            android:id="@+id/variantProductTextView"
+            style="@style/text_xs_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/variantProduct" />
+
+        <TextView
+            android:id="@+id/priceTextView"
+            style="@style/text_lg_semibold"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/priceProduct" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="7"
+        android:gravity="end"
+        android:orientation="vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="10dp">
+
+        <Button
+            android:id="@+id/deleteButton"
+            style="@style/text_xs_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_transparent"
+            android:text="@string/delete"
+            android:textColor="@color/secondary_500" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/minusButton"
+                style="@style/text_xs_regular"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_stroke"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:scaleType="fitCenter"
+                android:textColor="@color/secondary_500"
+                app:srcCompat="@drawable/minus_icon" />
+
+            <TextView
+                android:id="@+id/quantityTextView"
+                style="@style/text_base_semibold"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_stroke"
+                android:gravity="center"
+                android:text="@string/quantity_product_cart" />
+
+            <ImageButton
+                android:id="@+id/plusButton"
+                style="@style/text_xs_regular"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_stroke"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:scaleType="fitCenter"
+                android:textColor="@color/secondary_500"
+                app:srcCompat="@drawable/plus_icon" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

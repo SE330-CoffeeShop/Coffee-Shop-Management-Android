@@ -33,7 +33,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 public class MainActivity extends AppCompatActivity {
     private BottomAppBar bottomAppBar;
+    private BottomNavigationView bottomNavigationView;
     private NavOptions navOptions;
+
     private NavController navController;
 
     @Override
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
         bottomAppBar = findViewById(R.id.bottom_app_bar);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
         bottomNavigationView.setSelectedItemId(R.id.homeFragment);
@@ -83,5 +85,23 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.fragment_main_container, fragment)
                 .commit();
+    }
+
+    public void hideBottomNavigation() {
+        if(bottomAppBar != null ){
+            bottomAppBar.setVisibility(View.GONE);
+        }
+        if(bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(View.GONE);
+        }
+    }
+
+    public void showBottomNavigation() {
+        if(bottomAppBar != null ){
+            bottomAppBar.setVisibility(View.VISIBLE);
+        }
+        if(bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(View.VISIBLE);
+        }
     }
 }

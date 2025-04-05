@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
@@ -115,6 +118,11 @@ public class HomeFragment extends Fragment {
         recentlyProductRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpace));
         recentlyProductRecyclerView.setAdapter(recentlyProductAdapter);
 
+        ImageButton cartButton = view.findViewById(R.id.cartButton);
+        cartButton.setOnClickListener(v -> {
+            navigateToCartFragment();
+        });
+
         return view;
     }
 
@@ -129,6 +137,22 @@ public class HomeFragment extends Fragment {
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
                 outRect.right = spacing;
+            }
+        }
+    }
+
+    public void navigateToCartFragment() {
+        if (getView() != null) {
+            try {
+                NavController navController = Navigation.findNavController(getView());
+                navController.navigate(R.id.action_homeFragment_to_cartFragment);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Fallback nếu dùng Navigation Component thất bại
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_main, new CartFragment())
+                        .addToBackStack(null)
+                        .commit();
             }
         }
     }
