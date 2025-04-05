@@ -10,10 +10,12 @@ public class ProductModel {
     private float productRating;
     private String productCategory;
     private boolean isFavorite;
+    private String productDescription;
 
-    public ProductModel(String productId, String productName, double productPrice, String productThumb, float productRating, String productCategory, boolean isFavorite) {
+    public ProductModel(String productId, String productName, String productDescription, double productPrice, String productThumb, float productRating, String productCategory, boolean isFavorite) {
         this.productId = productId;
         this.productName = productName;
+        this.productDescription = productDescription;
         this.productPrice = productPrice;
         this.productThumb = productThumb;
         this.productRating = productRating;
@@ -75,6 +77,14 @@ public class ProductModel {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 
     @Override
