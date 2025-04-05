@@ -1,6 +1,7 @@
 package com.example.coffeeshopmanagementandroid.ui.component;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -16,9 +17,9 @@ public class CategoryChipButton extends LinearLayout {
     private LinearLayout chipContainer;
     private boolean isSelected;
 
-    private int normalBackgroundcolor;
+    private Drawable normalBackgroundcolor;
     private int normalTextcolor;
-    private int selectedBackgroundcolor;
+    private Drawable selectedBackgroundcolor;
     private int selectedTextcolor;
 
     public CategoryChipButton(Context context) {
@@ -41,9 +42,9 @@ public class CategoryChipButton extends LinearLayout {
         categoryChipTextView = findViewById(R.id.categoryChipTextView);
         chipContainer = findViewById(R.id.chipContainer);
 
-        normalBackgroundcolor = context.getResources().getColor(R.color.white);
+        normalBackgroundcolor = context.getResources().getDrawable(R.drawable.bg_category_unselected);
         normalTextcolor = context.getResources().getColor(R.color.black);
-        selectedBackgroundcolor = context.getResources().getColor(R.color.primary_400);
+        selectedBackgroundcolor = context.getResources().getDrawable(R.drawable.bg_category_selected);
         selectedTextcolor = context.getResources().getColor(R.color.white);
 
         updateAppearance();
@@ -52,10 +53,10 @@ public class CategoryChipButton extends LinearLayout {
 
     private void updateAppearance() {
         if (isSelected) {
-            chipContainer.setBackgroundColor(selectedBackgroundcolor);
+            chipContainer.setBackground(selectedBackgroundcolor);
             categoryChipTextView.setTextColor(selectedTextcolor);
         } else {
-            chipContainer.setBackgroundColor(normalBackgroundcolor);
+            chipContainer.setBackground(normalBackgroundcolor);
             categoryChipTextView.setTextColor(normalTextcolor);
         }
     }
