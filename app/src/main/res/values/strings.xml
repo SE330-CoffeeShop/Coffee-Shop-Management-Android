@@ -75,4 +75,13 @@
     <string name="price">Price</string>
     <string name="description">Description</string>
     <string name="size">Size</string>
+    <string name="id">ID:</string>
+    <string name="orderTrackingNumber">22520000</string>
+    <string name="waiting">Chờ xác nhận</string>
+    <string name="ma_van_don">Mã vận đơn: </string>
+    <string name="default_code">XXXXXXX</string>
+    <string name="total_order">Tổng tiền:</string>
+    <string name="status">Trạng thái:</string>
+    <string name="detail_order">Detail order</string>
+    <string name="orders">Đơn hàng</string>
 </resources>
