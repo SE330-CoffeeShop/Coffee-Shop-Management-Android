@@ -45,8 +45,8 @@
                 android:textStyle="bold" />
 
             <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_weight="1" />
         </LinearLayout>
         <ScrollView
@@ -96,7 +96,7 @@
                     style="@style/text_base_semibold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="200.000VND"
+                    android:text="200.000 VND"
                     android:textColor="@color/primary_400" />
             </LinearLayout>
 

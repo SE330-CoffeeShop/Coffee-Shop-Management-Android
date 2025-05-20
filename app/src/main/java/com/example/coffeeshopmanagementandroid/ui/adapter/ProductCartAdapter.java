@@ -20,7 +20,6 @@ import java.util.List;
 public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.ProductCartViewHolder> {
 
     private List<ProductCartModel> products;
-
     private final OnMinusQuantityListener onMinusQuantity;
     private final OnDeleteProductListener onDeleteProduct;
     private final OnPlusQuantityListener onPlusQuantity;
@@ -68,12 +67,10 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
     }
 
     public class ProductCartViewHolder extends RecyclerView.ViewHolder {
-        private final RadioButton radioButtonCartProduct;
         private final TextView productNameTextView;
         private final TextView variantProductTextView;
         private final TextView priceTextView;
         private final TextView quantityTextView;
-
         private final ImageButton minusButton;
         private final Button deleteButton;
         private final ImageButton plusButton;
@@ -81,7 +78,6 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
 
         public ProductCartViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.radioButtonCartProduct = itemView.findViewById(R.id.radioButtonCartProduct);
             this.productNameTextView = itemView.findViewById(R.id.productNameTextView);
             this.variantProductTextView = itemView.findViewById(R.id.variantProductTextView);
             this.priceTextView = itemView.findViewById(R.id.priceTextView);
@@ -119,7 +115,6 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
             });
         }
         public void bind(ProductCartModel product){
-            radioButtonCartProduct.setChecked(false);
             productNameTextView.setText(product.getProductName());
             variantProductTextView.setText(product.getProductVarient());
             priceTextView.setText(product.getProductPrice() + " VND");
