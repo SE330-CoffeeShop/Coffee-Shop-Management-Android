@@ -65,7 +65,7 @@
     <string name="detail">Detail</string>
     <dimen name="category_chip_radius">16dp</dimen>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Yêu thích</string>
     <string name="cappuccino">Cappuccino</string>
     <string name="variantProduct">XL, Chân châu trắng</string>
     <string name="priceProduct">40.000 VND</string>
@@ -82,6 +82,20 @@
     <string name="default_code">XXXXXXX</string>
     <string name="total_order">Tổng tiền:</string>
     <string name="status">Trạng thái:</string>
-    <string name="detail_order">Detail order</string>
+    <string name="detail_order">Chi tiết đơn hàng</string>
     <string name="orders">Đơn hàng</string>
+    <string name="back_button">Back button</string>
+    <string name="shipping_address">Địa chỉ giao hàng</string>
+    <string name="example_shipping_address">66E Hoàng Diệu 2, Quận Thủ Đức, Hồ Chí Minh, Việt Nam</string>
+    <string name="prefix_quantity">x</string>
+    <string name="customer_information">Thông tin khách hàng</string>
+    <string name="custome_name">Họ và tên:</string>
+    <string name="uit">UIT</string>
+    <string name="customer_phone">Số điện thoại:</string>
+    <string name="order_status">Trạng thái đơn hàng: </string>
+    <string name="orders_list">Danh sách các món ăn đã đặt</string>
+    <string name="check_reminder">Kiểm tra kĩ trước khi nhận hàng bạn nhé</string>
+    <string name="total">Tổng cộng:</string>
+    <string name="total_default">100.000 VND</string>
+    <string name="cancel_order">Huỷ đơn hàng</string>
 </resources>

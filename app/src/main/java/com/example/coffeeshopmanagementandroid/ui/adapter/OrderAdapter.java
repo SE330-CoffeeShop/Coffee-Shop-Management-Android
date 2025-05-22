@@ -17,9 +17,15 @@ import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
     private List<OrderModel> orderList;
+    private final OnItemClickListener onItemClick;
 
-    public OrderAdapter(List<OrderModel> orders) {
+    public interface OnItemClickListener {
+        void onItemClick(OrderModel order);
+    }
+
+    public OrderAdapter(List<OrderModel> orders, OnItemClickListener onItemClick) {
         this.orderList = orders != null ? orders : new ArrayList<>();
+        this.onItemClick = onItemClick;
     }
 
     @NonNull
@@ -41,16 +47,24 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         return orderList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView orderIdTextView;
-        StatusIndicator statusIndicator;
-        TextView totalOrderTextView;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView orderIdTextView;
+        private final StatusIndicator statusIndicator;
+        private final TextView totalOrderTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             orderIdTextView = itemView.findViewById(R.id.orderIdTextView);
             statusIndicator = itemView.findViewById(R.id.statusIndicator);
             totalOrderTextView = itemView.findViewById(R.id.totalOrderTextView);
+            // Xử lý sự kiện nhấn vào item
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if(position != RecyclerView.NO_POSITION) {
+                    onItemClick.onItemClick(orderList.get(position));
+                }
+            });
+
         }
 
         public void bind(OrderModel order) {
