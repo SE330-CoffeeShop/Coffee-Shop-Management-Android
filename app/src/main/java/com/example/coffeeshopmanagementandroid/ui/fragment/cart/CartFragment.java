@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment.main;
+package com.example.coffeeshopmanagementandroid.ui.fragment.cart;
 
 import android.os.Bundle;
 
