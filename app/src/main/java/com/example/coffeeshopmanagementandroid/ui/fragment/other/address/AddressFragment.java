@@ -1,7 +1,8 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment.other;
+package com.example.coffeeshopmanagementandroid.ui.fragment.other.address;
 
 import android.view.View;
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 
 public class AddressFragment extends BaseOtherFragment {
 

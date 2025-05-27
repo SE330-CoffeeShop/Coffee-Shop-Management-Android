@@ -1,7 +1,8 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment.other;
+package com.example.coffeeshopmanagementandroid.ui.fragment.other.setting;
 
 import android.view.View;
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 
 public class SettingFragment extends BaseOtherFragment {
 

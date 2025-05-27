@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment.other;
+package com.example.coffeeshopmanagementandroid.ui.fragment.other.profile;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 

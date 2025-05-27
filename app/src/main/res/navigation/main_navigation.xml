@@ -84,25 +84,25 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.ProfileFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.AddressFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.address.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" />
 
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.SettingFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting"/>
 
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.NotificationFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification"
         />
