@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.ui.fragment.order;
+package com.example.coffeeshopmanagementandroid.ui.fragment.orders;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,22 +7,16 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
-import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
-import com.example.coffeeshopmanagementandroid.domain.model.OrderStatusModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
-import com.example.coffeeshopmanagementandroid.ui.adapter.OrderAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
-import com.example.coffeeshopmanagementandroid.ui.adapter.StatusAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DetailOrderFragment extends Fragment {

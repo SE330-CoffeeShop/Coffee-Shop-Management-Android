@@ -18,4 +18,8 @@
     <declare-styleable name="BackButton">
         <attr name="backButtonText" format="string" />
     </declare-styleable>
+    <declare-styleable name="OthersButton">
+        <attr name="buttonText" format="string"/>
+        <attr name="rightIcon" format="reference"/>
+    </declare-styleable>
 </resources>

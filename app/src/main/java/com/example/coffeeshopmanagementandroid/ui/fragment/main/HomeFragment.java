@@ -22,6 +22,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.ui.activity.DetailProductActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
+import com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment;
 
 import java.util.ArrayList;
 import java.util.List;

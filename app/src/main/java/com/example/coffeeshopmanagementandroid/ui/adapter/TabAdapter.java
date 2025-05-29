@@ -8,9 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.main.FavoritesFragment;
 import com.example.coffeeshopmanagementandroid.ui.fragment.main.HomeFragment;
 import com.example.coffeeshopmanagementandroid.ui.fragment.main.OrdersFragment;
-import com.example.coffeeshopmanagementandroid.ui.fragment.main.OthersFragment;
-
-import org.jetbrains.annotations.NotNull;
+import com.example.coffeeshopmanagementandroid.ui.fragment.main.OtherFragment;
 
 public class TabAdapter extends FragmentStateAdapter {
     public TabAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -28,7 +26,7 @@ public class TabAdapter extends FragmentStateAdapter {
             case 2:
                 return new FavoritesFragment();
             case 3:
-                return new OthersFragment();
+                return new OtherFragment();
             default:
                 return new HomeFragment();
         }

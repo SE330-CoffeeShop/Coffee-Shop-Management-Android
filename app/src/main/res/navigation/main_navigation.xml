@@ -40,19 +40,40 @@
 
     <fragment
         android:id="@+id/otherFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.main.OthersFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.main.OtherFragment"
         android:label="fragment_others"
-        tools:layout="@layout/fragment_others" />
+        tools:layout="@layout/fragment_other">
+        <action
+            android:id="@+id/action_otherFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/otherFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_otherFragment_to_addressFragment"
+            app:destination="@id/addressFragment"
+            app:popUpTo="@id/otherFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_otherFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:popUpTo="@id/otherFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_otherFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment"
+            app:popUpTo="@id/otherFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.main.CartFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
 
     <fragment
         android:id="@+id/detailOrderFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.order.DetailOrderFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.orders.DetailOrderFragment"
         android:label="fragment_detail_order"
         tools:layout="@layout/fragment_detail_order" >
         <argument
@@ -60,4 +81,68 @@
             app:argType="string"
             app:nullable="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.address.AddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_address">
+        <action
+            android:id="@+id/action_addressFragment_to_updateAddressFragment"
+            app:destination="@id/updateAddressFragment"
+            app:popUpTo="@id/addressFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"
+            />
+        <action
+            android:id="@+id/action_addressFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment"
+            app:popUpTo="@id/addressFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment"
+            app:popUpTo="@id/settingFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification"
+        />
+
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.setting.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password"/>
+
+    <fragment
+        android:id="@+id/updateAddressFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.address.UpdateAddressFragment"
+        android:label="fragment_update_address"
+        tools:layout="@layout/fragment_update_address" />
+
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.address.AddAddressFragment"
+        android:label="fragment_add_address"
+        tools:layout="@layout/fragment_add_address" />
 </navigation>

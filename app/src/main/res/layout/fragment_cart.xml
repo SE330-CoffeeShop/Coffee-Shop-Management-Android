@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#EFEFEF"
     android:id="@+id/cartFragment"
-    tools:context=".ui.fragment.main.CartFragment">
+    tools:context=".ui.fragment.cart.CartFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
