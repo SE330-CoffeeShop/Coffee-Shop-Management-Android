@@ -11,7 +11,7 @@
         android:id="@+id/fragment_main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="72dp" >
+        >
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_main"
