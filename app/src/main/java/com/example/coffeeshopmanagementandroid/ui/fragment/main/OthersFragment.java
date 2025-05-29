@@ -10,11 +10,14 @@ import android.view.ViewGroup;
 
 import com.example.coffeeshopmanagementandroid.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link OthersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 public class OthersFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match

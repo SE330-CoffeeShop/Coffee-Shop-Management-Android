@@ -21,6 +21,9 @@ import com.example.coffeeshopmanagementandroid.ui.adapter.ProductCartAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class CartFragment extends Fragment {
 
     ProductCartAdapter productCartAdapter;
