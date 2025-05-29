@@ -131,4 +131,20 @@
     <string name="new_password">Nhập mật khẩu mới</string>
     <string name="confirm_password">Nhập lại mật khẩu mới</string>
     <string name="confirm">Xác nhận</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="save_address">Địa chỉ đã lưu</string>
+    <string name="recently_address">Đã đặt gần đây</string>
+    <string name="add_address_button">Thêm địa chỉ mới</string>
+    <string name="update_address">Sửa địa chỉ</string>
+    <string name="add_address">Thêm địa chỉ mới</string>
+    <string name="city">Tỉnh / Thành phố</string>
+    <string name="notice">Không được để trống</string>
+    <string name="select_city">Chọn Tỉnh / Thành phố</string>
+    <string name="district">Huyện / Quận</string>
+    <string name="select_district">Chọn Huyện / Quận</string>
+    <string name="line">Địa chỉ cụ thể</string>
+    <string name="select_line">Nhập địa chỉ cụ thể</string>
+    <string name="set_default_address">Đặt làm địa chỉ mặc định</string>
+    <string name="complete">Hoàn thành</string>
+    <string name="delete_address">Xoá địa chỉ</string>
 </resources>
