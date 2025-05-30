@@ -69,11 +69,11 @@
     <string name="cappuccino">Cappuccino</string>
     <string name="variantProduct">XL, Chân châu trắng</string>
     <string name="priceProduct">40.000 VND</string>
-    <string name="delete">Delete</string>
+    <string name="delete">Xoá</string>
     <string name="quantity_product_cart">1</string>
-    <string name="buy_now">Buy Now</string>
-    <string name="price">Price</string>
-    <string name="description">Description</string>
+    <string name="buy_now">Mua ngay</string>
+    <string name="price">Giá</string>
+    <string name="description">Mô tả</string>
     <string name="size">Size</string>
     <string name="id">ID:</string>
     <string name="orderTrackingNumber">22520000</string>
@@ -147,4 +147,16 @@
     <string name="set_default_address">Đặt làm địa chỉ mặc định</string>
     <string name="complete">Hoàn thành</string>
     <string name="delete_address">Xoá địa chỉ</string>
+    <string name="confirm_order">Xác nhận đơn hàng</string>
+    <string name="choosed_products">Sản phẩm đã chọn</string>
+    <string name="apply_discount">Áp dụng ưu đãi</string>
+    <string name="navigate_to_discount">Di chuyển sang màn áp dụng voucher</string>
+    <string name="discount_icon">Icon mã giảm giá</string>
+    <string name="default_price">Default price</string>
+    <string name="totalProducts">Thành tiền</string>
+    <string name="fee_shipping">Phí giao hàng</string>
+    <string name="payment_method">Phương thức thanh toán</string>
+    <string name="payment_icon">Icon phương thức thanh toán</string>
+    <string name="discount">Ưu đãi</string>
+    <string name="apply">Áp dụng</string>
 </resources>
