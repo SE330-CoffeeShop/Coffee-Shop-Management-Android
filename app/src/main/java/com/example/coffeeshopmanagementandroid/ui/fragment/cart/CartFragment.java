@@ -2,14 +2,19 @@ package com.example.coffeeshopmanagementandroid.ui.fragment.cart;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -17,6 +22,7 @@ import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductCartModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductCartAdapter;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +32,42 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class CartFragment extends Fragment {
 
-    ProductCartAdapter productCartAdapter;
+    private ProductCartAdapter productCartAdapter;
+    private Button buyButton;
+    private ImageButton backButton;
+    private NavController navController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout cho Fragment
-        View view = inflater.inflate(R.layout.fragment_cart, container, false);
 
-        ImageButton backButton = view.findViewById(R.id.backButtonCart);
+
+        return inflater.inflate(R.layout.fragment_cart, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        setupProductCartRecyclerView(view);
+    }
+
+    void initViews(View view) {
+        navController = NavHostFragment.findNavController(this);
+        NavigationUtils.checkAndFixNavState(navController, R.id.cartFragment, "CartFragment");
+
+        backButton = view.findViewById(R.id.backButtonToMain);
+        buyButton = view.findViewById(R.id.buyButton);
+
         backButton.setOnClickListener(v -> {
             // Xử lý khi nhấn nút back
             handleBackPressed();
         });
+        buyButton.setOnClickListener(v -> navigateToConfirmOrderFragment());
+    }
 
+    void setupProductCartRecyclerView(View view) {
         List<ProductCartModel> productCarts = new ArrayList<>();
 
         productCarts.add(new ProductCartModel("PROD001", "Cappuccino", 45000, "Regular", 1));
@@ -63,8 +91,6 @@ public class CartFragment extends Fragment {
         RecyclerView productCardRecyclerView = view.findViewById(R.id.productCardRecyclerView);
         productCardRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         productCardRecyclerView.setAdapter(productCartAdapter);
-
-        return view;
     }
 
     private void onItemClick(ProductCartModel product) {
@@ -97,10 +123,19 @@ public class CartFragment extends Fragment {
         }
     }
 
+    private void navigateToConfirmOrderFragment() {
+        NavigationUtils.safeNavigate(navController,
+                R.id.cartFragment,
+                R.id.action_cartFragment_to_confirmOrderFragment,
+                "ConfirmOrderFragment",
+                "CartFragment",
+                null);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if(getActivity() instanceof MainActivity) {
+        if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).hideBottomNavigation();
         }
     }

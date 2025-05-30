@@ -69,7 +69,13 @@
         android:id="@+id/cartFragment"
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_confirmOrderFragment"
+            app:destination="@id/confirmOrderFragment"
+            app:popUpTo="@id/cartFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/detailOrderFragment"
@@ -145,4 +151,30 @@
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.address.AddAddressFragment"
         android:label="fragment_add_address"
         tools:layout="@layout/fragment_add_address" />
+
+    <fragment
+        android:id="@+id/confirmOrderFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.orders.ConfirmOrderFragment"
+        android:label="fragment_confirm_order"
+        tools:layout="@layout/fragment_confirm_order">
+        <action
+            android:id="@+id/action_confirmOrderFragment_to_discountFragment"
+            app:destination="@id/discountFragment"
+            app:popUpTo="@id/confirmOrderFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/discountFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.discount.DiscountFragment"
+        android:label="fragment_discount"
+        tools:layout="@layout/fragment_discount">
+        <action
+            android:id="@+id/action_discountFragment_to_confirmOrderFragment"
+            app:destination="@id/confirmOrderFragment"
+            app:popUpTo="@id/discountFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
+    </fragment>
 </navigation>
