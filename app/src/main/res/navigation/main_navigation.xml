@@ -177,4 +177,11 @@
             app:popUpToInclusive="false"
             app:launchSingleTop="true"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/ratingFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.rating.RatingFragment"
+        android:label="fragment_rating"
+        tools:layout="@layout/fragment_rating"
+        />
 </navigation>
