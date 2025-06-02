@@ -159,4 +159,9 @@
     <string name="payment_icon">Icon phương thức thanh toán</string>
     <string name="discount">Ưu đãi</string>
     <string name="apply">Áp dụng</string>
+    <string name="review">Đánh giá</string>
+    <string name="delivery_successfully">Giao hàng thành công</string>
+    <string name="rating_label">Vui lòng đánh giá để chúng tôi cải thiện dịch vụ</string>
+    <string name="need_improve">Chúng tôi cần gì?</string>
+    <string name="send_review">Gửi đánh giá</string>
 </resources>
