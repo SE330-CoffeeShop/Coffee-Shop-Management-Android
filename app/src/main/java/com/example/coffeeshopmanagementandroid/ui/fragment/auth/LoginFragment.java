@@ -1,21 +1,35 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.auth;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.SocialButton;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthInput;
 import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
+import com.example.coffeeshopmanagementandroid.ui.fragment.main.HomeFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.LoginViewModel;
+import com.example.coffeeshopmanagementandroid.utils.LoadingManager;
+
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -35,8 +49,13 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         // Ánh xạ các thành phần UI
         emailInput = view.findViewById(R.id.email_input);
         passwordInput = view.findViewById(R.id.password_input);
@@ -65,41 +84,68 @@ public class LoginFragment extends Fragment {
 
         // Lắng nghe kết quả đăng nhập từ ViewModel
         observeLoginResult();
-
-        return view;
     }
 
     private void handleLogin() {
         String email = emailInput.getText();
         String password = passwordInput.getText();
-
-        Log.v("Button Click", "Login");
+        CheckBox rememberMe = requireView().findViewById(R.id.checkBox);
+        Boolean rememberMeValue = rememberMe.isChecked();
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(getContext(), "Email and password must not be empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        loginButton.setEnabled(false); // Vô hiệu hóa nút khi đang xử lý
-        loginViewModel.login(email, password, false);
+        loginButton.setEnabled(false);
+        loginViewModel.login(email, password, rememberMeValue);
     }
 
     private void observeLoginResult() {
-        loginViewModel.getAuthLiveData().observe(getViewLifecycleOwner(), authModel -> {
-            loginButton.setEnabled(true); // Bật lại nút khi có kết quả
 
+        // Observe loading state to show/hide ProgressBar
+        loginViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                if (isLoading) {
+                    LoadingManager.getInstance().showLoading(requireContext());
+                } else {
+                    LoadingManager.getInstance().hideLoading();
+                }
+            }
+        });
+
+        loginViewModel.getAuthLiveData().observe(getViewLifecycleOwner(), authModel -> {
+            loginButton.setEnabled(true);
             if (authModel != null) {
-                Toast.makeText(getContext(), "Login Success!", Toast.LENGTH_SHORT).show();
-                // Điều hướng sang màn hình chính hoặc xử lý tiếp theo
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Login Success!", Toast.LENGTH_SHORT).show();
+
+                    // Lưu trạng thái đăng nhập ngay lập tức
+                    SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                    prefs.edit()
+                            .putString("auth_token", authModel.getToken())  // Lưu token
+                            .putBoolean("is_logged_in", true)
+                            .apply();
+
+                    // Delay một chút trước khi chuyển Activity để Toast được hiển thị
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (isAdded() && getActivity() != null) {
+                            Intent intent = new Intent(requireContext(), MainActivity.class);
+                            startActivity(intent);
+                            requireActivity().finish();
+                        }
+                    }, 500);
+                }
             } else {
-                Toast.makeText(getContext(), "Login Failed. Please try again!", Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Login Failed. Please try again!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-
+    
     private void navigateToSignUp() {
-        if (getActivity() instanceof AuthActivity) {
-            ((AuthActivity) getActivity()).switchFragment(new RegisterFragment());
-        }
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_loginFragment_to_registerFragment);
     }
 }

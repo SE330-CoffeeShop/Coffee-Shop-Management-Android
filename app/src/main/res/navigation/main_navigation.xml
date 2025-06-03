@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_noticationFragment"
+            app:destination="@id/notificationFragment"/>
     </fragment>
 
     <fragment
@@ -129,7 +132,7 @@
 
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.other.notification.NotificationFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification"
         />

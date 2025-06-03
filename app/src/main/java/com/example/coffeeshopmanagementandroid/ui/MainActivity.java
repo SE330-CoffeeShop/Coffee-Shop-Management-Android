@@ -42,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        // Kiểm tra trạng thái đăng nhập
-//        if (!isUserLoggedIn()) {
-//            // Chuyển sang AuthActivity
-//            Intent intent = new Intent(this, AuthActivity.class);
-//            startActivity(intent);
-//            finish(); // Đóng MainActivity để không quay lại màn hình này
-//            return;
-//        }
+        // Kiểm tra trạng thái đăng nhập
+        if (!isUserLoggedIn()) {
+            // Chuyển sang AuthActivity
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+            finish(); // Đóng MainActivity để không quay lại màn hình này
+            return;
+        }
 
         // Nếu đã đăng nhập, tiếp tục hiển thị MainActivity
         setContentView(R.layout.activity_main);
