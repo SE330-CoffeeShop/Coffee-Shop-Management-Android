@@ -17,17 +17,11 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new LoginFragment())
-                    .commit();
-        }
     }
 
     public void switchFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.nav_host, fragment)
                 .addToBackStack(null)
                 .commit();
         Log.d("AuthActivity", "✅ Fragment switched!");

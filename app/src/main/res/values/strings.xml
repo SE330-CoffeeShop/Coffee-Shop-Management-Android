@@ -164,4 +164,7 @@
     <string name="rating_label">Vui lòng đánh giá để chúng tôi cải thiện dịch vụ</string>
     <string name="need_improve">Chúng tôi cần gì?</string>
     <string name="send_review">Gửi đánh giá</string>
+    <string name="new_notification">Thông báo mới</string>
+    <string name="default_content_notification">Nội dung thông báo dài hơn một dòng sẽ bị cắt...</string>
+    <string name="all_notifications">Tất cả thông báo</string>
 </resources>

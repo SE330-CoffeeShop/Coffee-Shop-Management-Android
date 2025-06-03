@@ -4,9 +4,12 @@ import android.graphics.Rect;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +26,8 @@ import com.example.coffeeshopmanagementandroid.ui.activity.DetailProductActivity
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
+import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +39,31 @@ public class HomeFragment extends Fragment {
     private ProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
     private ProductAdapter recentlyProductAdapter;
+    private RecyclerView productRecyclerView;
+    private RecyclerView categoryRecyclerView;
+    private RecyclerView recentlyProductRecyclerView;
+    private NavController navController;
+    private ImageButton notificationButton;
+    private ImageButton cartButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate layout cho Fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        int horizontalSpace = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = NavHostFragment.findNavController(this);
+        NavigationUtils.checkAndFixNavState(navController, R.id.homeFragment, "HomeFragment");
+        cartButton = view.findViewById(R.id.cartButton);
+        notificationButton = view.findViewById(R.id.notificationButton);
+        setUpRecyclerView(view);
+        setUpListener();
+    }
+
+    private void setUpRecyclerView(View view) {
         List<ProductModel> coffees = new ArrayList<>();
         coffees.add(new ProductModel("1", "Classic Cappuccino", "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85 ml of fresh milk the fo espresso coffee and 85 ml of fresh milk the fo espresso coffee and 85 ml of fresh milk the fo",  45.13, "https://example.com/cappuccino.jpg", 4.5f, "Cappuccino", false));
         coffees.add(new ProductModel("2", "Caramel Macchiato", "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85 ml of fresh milk the fo espresso coffee and 85 ml of fresh milk the fo espresso coffee and 85 ml of fresh milk the fo",50.00, "https://example.com/caramel_macchiato.jpg", 4.7f, "Macchiato", false));
@@ -75,9 +97,8 @@ public class HomeFragment extends Fragment {
                     startActivity(intent);  // Mở Activity chi tiết sản phẩm
                 }
         );
-        RecyclerView productRecyclerView = view.findViewById(R.id.productRecyclerView);
+        productRecyclerView = view.findViewById(R.id.productRecyclerView);
         productRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        productRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpace));
         productRecyclerView.setAdapter(productAdapter);
 
         List<CategoryModel> coffeeTypes = new ArrayList<>();
@@ -93,7 +114,7 @@ public class HomeFragment extends Fragment {
         coffeeTypes.add(new CategoryModel("10", "Cold Brew", "Coffee brewed with cold water over a long period, resulting in a smooth flavor."));
 
         categoryAdapter = new CategoryAdapter(coffeeTypes);
-        RecyclerView categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        categoryRecyclerView= view.findViewById(R.id.categoryRecyclerView);
 
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         categoryRecyclerView.setAdapter(categoryAdapter);
@@ -114,47 +135,27 @@ public class HomeFragment extends Fragment {
                 product -> Toast.makeText(requireContext(),
                         "Selected recently: " + product.getProductName(),
                         Toast.LENGTH_SHORT).show());
-        RecyclerView recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
+        recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
         recentlyProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        recentlyProductRecyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpace));
         recentlyProductRecyclerView.setAdapter(recentlyProductAdapter);
 
-        ImageButton cartButton = view.findViewById(R.id.cartButton);
-        cartButton.setOnClickListener(v -> {
-            navigateToCartFragment();
-        });
-
-        return view;
+        int marginHorizontal = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
+        productRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
+        recentlyProductRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
     }
 
-    public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
-        private int spacing;
-
-        public HorizontalSpaceItemDecoration(int spacing) {
-            this.spacing = spacing;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
-                outRect.right = spacing;
-            }
-        }
-    }
-
-    public void navigateToCartFragment() {
-        if (getView() != null) {
-            try {
-                NavController navController = Navigation.findNavController(getView());
-                navController.navigate(R.id.action_homeFragment_to_cartFragment);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Fallback nếu dùng Navigation Component thất bại
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.nav_host_main, new CartFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        }
+    private void setUpListener() {
+        cartButton.setOnClickListener(v ->
+                NavigationUtils.safeNavigate(navController,
+                        R.id.homeFragment,
+                        R.id.action_homeFragment_to_cartFragment,
+                        "CartFragment",
+                        "HomeFragment"));
+        notificationButton.setOnClickListener(v ->
+                NavigationUtils.safeNavigate(navController,
+                        R.id.homeFragment,
+                        R.id.action_homeFragment_to_noticationFragment,
+                        "NotificationFragment",
+                        "HomeFragment"));
     }
 }
