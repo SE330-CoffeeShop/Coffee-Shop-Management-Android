@@ -1,11 +1,9 @@
 package com.example.coffeeshopmanagementandroid.utils;
 
 import android.content.Context;
-
 import com.example.coffeeshopmanagementandroid.BuildConfig;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -19,13 +17,11 @@ public class RetrofitInstance {
     }
 
     public Retrofit getRetrofit() {
+        OkHttpClient client = null;
         if (retrofit == null) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
-
-            OkHttpClient client = new OkHttpClient.Builder()
+            client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(context))
-                    .addInterceptor(logging)
+                    .authenticator(new TokenAuthenticator(context)) // <-- Add this line
                     .build();
 
             retrofit = new Retrofit.Builder()

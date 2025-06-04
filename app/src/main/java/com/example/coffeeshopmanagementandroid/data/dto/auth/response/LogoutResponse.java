@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.data.dto.auth;
+package com.example.coffeeshopmanagementandroid.data.dto.auth.response;
 
 public class LogoutResponse {
     private String message;
