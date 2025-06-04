@@ -56,16 +56,6 @@ public class FavoritesFragment extends Fragment {
 
         // Product
         List<ProductModel> coffees = new ArrayList<>();
-        coffees.add(new ProductModel("1", "Classic Cappuccino", "A classic blend of espresso, steamed milk, and frothy foam", 45.13, "https://example.com/cappuccino.jpg", 4.5f, "Cappuccino", false));
-        coffees.add(new ProductModel("2", "Caramel Macchiato", "Espresso with vanilla-flavored syrup, milk, and caramel drizzle", 50.00, "https://example.com/caramel_macchiato.jpg", 4.7f, "Macchiato", false));
-        coffees.add(new ProductModel("3", "Vanilla Latte", "Smooth espresso combined with steamed milk and vanilla flavor", 48.75, "https://example.com/vanilla_latte.jpg", 4.6f, "Latte", false));
-        coffees.add(new ProductModel("4", "Espresso Shot", "Strong and concentrated coffee brewed under pressure", 30.00, "https://example.com/espresso.jpg", 4.8f, "Espresso", false));
-        coffees.add(new ProductModel("5", "Americano", "Espresso diluted with hot water for a lighter taste", 35.50, "https://example.com/americano.jpg", 4.4f, "Americano", false));
-        coffees.add(new ProductModel("6", "Chocolate Mocha", "Rich combination of espresso, chocolate, and steamed milk", 55.00, "https://example.com/mocha.jpg", 4.9f, "Mocha", false));
-        coffees.add(new ProductModel("7", "Flat White", "Creamy espresso with microfoam for a velvety texture", 47.00, "https://example.com/flat_white.jpg", 4.7f, "Flat White", false));
-        coffees.add(new ProductModel("8", "Decaf Cappuccino", "All the flavor of cappuccino without the caffeine", 45.13, "https://example.com/decaf_cappuccino.jpg", 4.3f, "Decaf", false));
-        coffees.add(new ProductModel("9", "Iced Latte", "Chilled espresso with milk served over ice", 52.00, "https://example.com/iced_latte.jpg", 4.6f, "Iced Coffee", false));
-        coffees.add(new ProductModel("10", "Cold Brew", "Smooth coffee steeped in cold water for 12 hours", 60.00, "https://example.com/cold_brew.jpg", 4.9f, "Cold Brew", false));
 
         productAdapter = new ProductAdapter(coffees,
                 // Xử lý thêm vào giỏ hàng

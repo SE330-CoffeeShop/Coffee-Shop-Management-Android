@@ -124,6 +124,7 @@ public class LoginFragment extends Fragment {
                     SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
                     prefs.edit()
                             .putString("auth_token", authModel.getToken())  // Lưu token
+                            .putString("refresh_token", authModel.getRefreshToken()) // Lưu refresh token
                             .putBoolean("is_logged_in", true)
                             .apply();
 

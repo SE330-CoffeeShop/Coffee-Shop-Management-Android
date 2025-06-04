@@ -1,27 +1,48 @@
 package com.example.coffeeshopmanagementandroid.domain.model;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 public class ProductModel {
     private String productId;
     private String productName;
-    private double productPrice;
     private String productThumb;
-    private float productRating;
-    private String productCategory;
-    private boolean isFavorite;
     private String productDescription;
+    private BigDecimal productPrice;
+    private String productSlug;
+    private BigDecimal productRatingsAverage;
+    private Boolean productIsPublished;
+    private Boolean productIsDeleted;
+    private List<String> productVariants;
+    private String productCategoryId;
+    private List<String> commentIds;
+    private boolean isFavorite;
 
-    public ProductModel(String productId, String productName, String productDescription, double productPrice, String productThumb, float productRating, String productCategory, boolean isFavorite) {
+    // Default constructor
+    public ProductModel() {
+    }
+
+    // Constructor đầy đủ các trường cần thiết (có thể tùy chỉnh)
+    public ProductModel(String productId,
+                        String productName,
+                        String productDescription,
+                        BigDecimal productPrice,
+                        String productThumb,
+                        BigDecimal productRatingsAverage,
+                        String productCategoryId,
+                        boolean isFavorite) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
         this.productThumb = productThumb;
-        this.productRating = productRating;
-        this.productCategory = productCategory;
+        this.productRatingsAverage = productRatingsAverage;
+        this.productCategoryId = productCategoryId;
         this.isFavorite = isFavorite;
     }
+
+    // Getter / Setter
 
     public String getProductId() {
         return productId;
@@ -39,44 +60,12 @@ public class ProductModel {
         this.productName = productName;
     }
 
-    public double getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
-    }
-
     public String getProductThumb() {
         return productThumb;
     }
 
     public void setProductThumb(String productThumb) {
         this.productThumb = productThumb;
-    }
-
-    public float getProductRating() {
-        return productRating;
-    }
-
-    public void setProductRating(float productRating) {
-        this.productRating = productRating;
-    }
-
-    public String getProductCategory() {
-        return productCategory;
-    }
-
-    public void setProductCategory(String productCategory) {
-        this.productCategory = productCategory;
-    }
-
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
     }
 
     public String getProductDescription() {
@@ -87,31 +76,97 @@ public class ProductModel {
         this.productDescription = productDescription;
     }
 
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public BigDecimal getProductRatingsAverage() {
+        return productRatingsAverage;
+    }
+
+    public void setProductRatingsAverage(BigDecimal productRatingsAverage) {
+        this.productRatingsAverage = productRatingsAverage;
+    }
+
+    public String getProductSlug() {
+        return productSlug;
+    }
+
+    public void setProductSlug(String productSlug) {
+        this.productSlug = productSlug;
+    }
+
+    public Boolean getProductIsPublished() {
+        return productIsPublished;
+    }
+
+    public void setProductIsPublished(Boolean productIsPublished) {
+        this.productIsPublished = productIsPublished;
+    }
+
+    public Boolean getProductIsDeleted() {
+        return productIsDeleted;
+    }
+
+    public void setProductIsDeleted(Boolean productIsDeleted) {
+        this.productIsDeleted = productIsDeleted;
+    }
+
+    public List<String> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(List<String> productVariants) {
+        this.productVariants = productVariants;
+    }
+
+    public String getProductCategoryId() {
+        return productCategoryId;
+    }
+
+    public void setProductCategoryId(String productCategoryId) {
+        this.productCategoryId = productCategoryId;
+    }
+
+    public List<String> getCommentIds() {
+        return commentIds;
+    }
+
+    public void setCommentIds(List<String> commentIds) {
+        this.commentIds = commentIds;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    // equals & hashCode
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ProductModel)) return false;
         ProductModel that = (ProductModel) o;
-        return Double.compare(that.productPrice, productPrice) == 0 &&
-                Float.compare(that.productRating, productRating) == 0 &&
-                isFavorite == that.isFavorite &&
-                productId.equals(that.productId) &&
-                productName.equals(that.productName) &&
-                productThumb.equals(that.productThumb) &&
-                productCategory.equals(that.productCategory);
+        return isFavorite == that.isFavorite &&
+                Objects.equals(productId, that.productId) &&
+                Objects.equals(productName, that.productName) &&
+                Objects.equals(productThumb, that.productThumb) &&
+                Objects.equals(productDescription, that.productDescription) &&
+                Objects.equals(productPrice, that.productPrice) &&
+                Objects.equals(productRatingsAverage, that.productRatingsAverage) &&
+                Objects.equals(productCategoryId, that.productCategoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                productId,
-                productName,
-                productPrice,
-                productThumb,
-                productRating,
-                productCategory,
-                isFavorite
-        );
+        return Objects.hash(productId, productName, productThumb, productDescription, productPrice, productRatingsAverage, productCategoryId, isFavorite);
     }
 }
-

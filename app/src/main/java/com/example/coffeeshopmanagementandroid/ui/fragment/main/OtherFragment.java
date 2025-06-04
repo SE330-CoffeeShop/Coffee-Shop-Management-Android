@@ -134,5 +134,8 @@ public class OtherFragment extends Fragment {
 
     private void handleLogout() {
         logoutViewModel.logout();
+//        SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+//        prefs.edit().remove("auth_token").putBoolean("is_logged_in", false).apply();
     }
+
 }

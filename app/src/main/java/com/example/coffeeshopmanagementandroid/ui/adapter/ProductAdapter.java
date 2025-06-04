@@ -28,6 +28,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.onItemClick = onItemClick;
     }
 
+    public void setProducts(List<ProductModel> products) {
+        this.products = products;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ProductAdapter.ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -92,9 +97,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             // Một vấn đề là ảnh được lưu như thế nào
             productImageView.setImageResource(R.drawable.demo_image);
             nameTextView.setText(product.getProductName());
-            descriptionTextView.setText(product.getProductCategory());
+            descriptionTextView.setText(product.getProductDescription());
             priceTextView.setText("$" + product.getProductPrice());
-            ratingTextView.setText(String.valueOf(product.getProductRating()));
+            ratingTextView.setText(String.valueOf(product.getProductRatingsAverage()));
         }
     }
 }

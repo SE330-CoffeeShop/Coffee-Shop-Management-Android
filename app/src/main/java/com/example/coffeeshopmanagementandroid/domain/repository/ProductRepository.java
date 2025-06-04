@@ -8,7 +8,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import java.util.List;
 
 public interface ProductRepository {
-    LiveData<List<ProductModel>> getProducts();
-    LiveData<List<ProductModel>> getRecentProducts();
-    LiveData<List<CategoryModel>> getCategories(); // Tách ra
+    List<ProductModel> getAllProducts(int page, int limit, String sortType, String sortBy) throws Exception;
+
+    List<ProductModel> getAllRecentProducts() throws Exception;
 }

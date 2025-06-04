@@ -1,5 +1,7 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 
 import com.example.coffeeshopmanagementandroid.domain.model.CategoryModel;
@@ -15,15 +17,12 @@ public class ProductUseCase {
         this.productRepository = productRepository;
     }
 
-    public LiveData<List<ProductModel>> getProducts() {
-        return productRepository.getProducts();
+    public List<ProductModel> getAllProducts(int page, int limit, String sortType, String sortBy) throws Exception {
+        Log.d("Product Use Case", "Called");
+        return productRepository.getAllProducts(page,limit, sortType, sortBy);
     }
 
-    public LiveData<List<ProductModel>> getRecentProducts() {
-        return productRepository.getRecentProducts();
-    }
-
-    public LiveData<List<CategoryModel>> getCategories() {
-        return productRepository.getCategories();
+    public List<ProductModel> getRecentProducts() throws Exception {
+        return productRepository.getAllRecentProducts();
     }
 }

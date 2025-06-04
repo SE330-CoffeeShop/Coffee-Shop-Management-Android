@@ -33,6 +33,8 @@ public class AuthInterceptor implements Interceptor {
             request = request.newBuilder()
                     .addHeader("Authorization", "Bearer " + token)
                     .build();
+        }  else {
+            return chain.proceed(request); // Nếu không có token, không thêm Authorization
         }
 
         // Tiếp tục gửi request
