@@ -1,15 +1,20 @@
 package com.example.coffeeshopmanagementandroid.data.mapper;
 
-import com.example.coffeeshopmanagementandroid.data.dto.auth.LoginResponse;
-import com.example.coffeeshopmanagementandroid.domain.model.AuthModel;
+import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LoginResponse;
+import com.example.coffeeshopmanagementandroid.domain.model.auth.AuthModel;
+import com.example.coffeeshopmanagementandroid.domain.model.auth.UserModel;
 
 public class AuthMapper {
-    public static AuthModel mapToDomain(LoginResponse response) {
+    public static AuthModel mapLoginResponseToAuthDomain(LoginResponse response) {
         return new AuthModel(
-                response.getToken(),
-                response.getRefreshToken(),
-                response.getExpiresIn().getToken(),
-                response.getExpiresIn().getRefreshToken()
+                response.getAccessToken(),
+                response.getRefreshToken()
+        );
+    }
+    public static UserModel mapLoginResponseToUserDomain(LoginResponse response) {
+        return new UserModel(
+                response.getId(),
+                response.getRole()
         );
     }
 }
