@@ -115,7 +115,7 @@ public class OtherFragment extends Fragment {
             if (result != null) {
                 // Logout successful
                 SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-                prefs.edit().remove("auth_token").putBoolean("is_logged_in", false).apply();
+                prefs.edit().remove("access_token").remove("refresh_token").putBoolean("is_logged_in", false).apply();
 
                 Intent intent = new Intent(requireContext(), AuthActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -133,9 +133,14 @@ public class OtherFragment extends Fragment {
     }
 
     private void handleLogout() {
-        logoutViewModel.logout();
-//        SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-//        prefs.edit().remove("auth_token").putBoolean("is_logged_in", false).apply();
+//        logoutViewModel.logout();
+        SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        prefs.edit().remove("access_token").remove("refresh_token").putBoolean("is_logged_in", false).apply();
+
+        Intent intent = new Intent(requireContext(), AuthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
 }

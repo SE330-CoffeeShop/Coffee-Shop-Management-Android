@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.ProductViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,6 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate layout cho Fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -73,29 +75,42 @@ public class HomeFragment extends Fragment {
         List<ProductModel> coffees = new ArrayList<>();
 
         productAdapter = new ProductAdapter(coffees,
-                // Xử lý thêm vào giỏ hàng
                 product -> Toast.makeText(requireContext(),
                         "Added " + product.getProductName() + " to cart",
                         Toast.LENGTH_SHORT).show(),
-                // Xử lý click vào sản phẩm
                 product -> {
-                    // Khi sản phẩm được click, chuyển tới màn hình chi tiết sản phẩm
                     Intent intent = new Intent(getActivity(), DetailProductActivity.class);
-                    // Truyền thông tin sản phẩm vào Intent
                     intent.putExtra("product_id", product.getProductId());
                     intent.putExtra("product_name", product.getProductName());
                     intent.putExtra("product_description", product.getProductDescription());
-                    intent.putExtra("product_price", product.getProductPrice());
+                    intent.putExtra("product_price", product.getProductPrice().doubleValue());
                     intent.putExtra("product_image_url", product.getProductThumb());
-                    intent.putExtra("product_rating", product.getProductRatingsAverage());
+                    intent.putExtra("product_rating", product.getProductRatingsAverage().floatValue());
                     intent.putExtra("product_is_favorite", product.isFavorite());
                     intent.putExtra("product_category", product.getProductCategoryId());
-                    startActivity(intent);  // Mở Activity chi tiết sản phẩm
+//                    intent.putStringArrayListExtra("product_variants", (ArrayList<String>) product.get());
+                    startActivity(intent);
                 }
         );
         productRecyclerView = view.findViewById(R.id.productRecyclerView);
-        productRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        productRecyclerView.setLayoutManager(layoutManager);
         productRecyclerView.setAdapter(productAdapter);
+
+        productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!productViewModel.getIsLoading().getValue() && dx > 0 && !productViewModel.getIsAllDataLoaded().getValue()) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    int totalItemCount = lm.getItemCount();
+                    int lastVisibleItem = lm.findLastVisibleItemPosition();
+                    if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                        productViewModel.fetchMoreProducts(SortType.DESC, ProductSortBy.CREATED_AT);
+                    }
+                }
+            }
+        });
 
         List<CategoryModel> coffeeTypes = new ArrayList<>();
         coffeeTypes.add(new CategoryModel("1", "Cappuccino", "A classic Italian coffee with frothy milk."));
@@ -111,18 +126,14 @@ public class HomeFragment extends Fragment {
 
         categoryAdapter = new CategoryAdapter(coffeeTypes);
         categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
-
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         categoryRecyclerView.setAdapter(categoryAdapter);
 
         List<ProductModel> recentCoffees = new ArrayList<>();
-
         recentlyProductAdapter = new ProductAdapter(recentCoffees,
-                // Xử lý thêm vào giỏ hàng
                 product -> Toast.makeText(requireContext(),
                         "Added recently" + product.getProductName() + " to cart",
                         Toast.LENGTH_SHORT).show(),
-                // Xử lý click vào sản phẩm
                 product -> Toast.makeText(requireContext(),
                         "Selected recently: " + product.getProductName(),
                         Toast.LENGTH_SHORT).show());
@@ -151,13 +162,31 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchAndObserveProducts() {
-        productViewModel.fetchAllProducts(1, 10, "desc", "createdAt");
+        productViewModel.fetchAllProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
 
         productViewModel.getProductsResult().observe(getViewLifecycleOwner(), products -> {
             if (products != null) {
-                productAdapter.setProducts(products);
+                productAdapter.setProducts(products); // Cập nhật danh sách, bao gồm cả dữ liệu mới
             } else {
                 productAdapter.setProducts(new ArrayList<>());
+            }
+        });
+
+        // Quan sát trạng thái loading
+        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            // Có thể thêm UI feedback (ví dụ: ProgressBar) nếu muốn
+        });
+
+        // Quan sát lỗi
+        productViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+        // Quan sát isAllDataLoaded để cập nhật UI nếu cần
+        productViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
+            if (isAllLoaded) {
+                Log.d("HomeFragment", "All data loaded, no more fetching");
             }
         });
     }

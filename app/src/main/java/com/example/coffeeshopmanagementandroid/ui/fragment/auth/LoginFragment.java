@@ -118,17 +118,13 @@ public class LoginFragment extends Fragment {
             loginButton.setEnabled(true);
             if (authModel != null) {
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Login Success!", Toast.LENGTH_SHORT).show();
-
                     // Lưu trạng thái đăng nhập ngay lập tức
                     SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
                     prefs.edit()
-                            .putString("auth_token", authModel.getToken())  // Lưu token
+                            .putString("access_token", authModel.getAccessToken())  // Lưu access token
                             .putString("refresh_token", authModel.getRefreshToken()) // Lưu refresh token
                             .putBoolean("is_logged_in", true)
                             .apply();
-
-                    // Delay một chút trước khi chuyển Activity để Toast được hiển thị
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         if (isAdded() && getActivity() != null) {
                             Intent intent = new Intent(requireContext(), MainActivity.class);

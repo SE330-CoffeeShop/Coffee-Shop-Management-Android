@@ -1,10 +1,11 @@
-package com.example.coffeeshopmanagementandroid.domain.model;
+package com.example.coffeeshopmanagementandroid.data.dto.product.response;
+
+import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
-public class ProductModel {
+public class ProductResponse {
     private String productId;
     private String productName;
     private String productThumb;
@@ -16,31 +17,6 @@ public class ProductModel {
     private Boolean productIsDeleted;
     private String productCategoryId;
     private boolean isFavorite;
-
-    // Default constructor
-    public ProductModel() {
-    }
-
-    // Constructor đầy đủ các trường cần thiết (có thể tùy chỉnh)
-    public ProductModel(String productId,
-                        String productName,
-                        String productDescription,
-                        BigDecimal productPrice,
-                        String productThumb,
-                        BigDecimal productRatingsAverage,
-                        String productCategoryId,
-                        boolean isFavorite) {
-        this.productId = productId;
-        this.productName = productName;
-        this.productDescription = productDescription;
-        this.productPrice = productPrice;
-        this.productThumb = productThumb;
-        this.productRatingsAverage = productRatingsAverage;
-        this.productCategoryId = productCategoryId;
-        this.isFavorite = isFavorite;
-    }
-
-    // Getter / Setter
 
     public String getProductId() {
         return productId;
@@ -82,20 +58,20 @@ public class ProductModel {
         this.productPrice = productPrice;
     }
 
-    public BigDecimal getProductRatingsAverage() {
-        return productRatingsAverage;
-    }
-
-    public void setProductRatingsAverage(BigDecimal productRatingsAverage) {
-        this.productRatingsAverage = productRatingsAverage;
-    }
-
     public String getProductSlug() {
         return productSlug;
     }
 
     public void setProductSlug(String productSlug) {
         this.productSlug = productSlug;
+    }
+
+    public BigDecimal getProductRatingsAverage() {
+        return productRatingsAverage;
+    }
+
+    public void setProductRatingsAverage(BigDecimal productRatingsAverage) {
+        this.productRatingsAverage = productRatingsAverage;
     }
 
     public Boolean getProductIsPublished() {
@@ -128,27 +104,5 @@ public class ProductModel {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
-    }
-
-    // equals & hashCode
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ProductModel)) return false;
-        ProductModel that = (ProductModel) o;
-        return isFavorite == that.isFavorite &&
-                Objects.equals(productId, that.productId) &&
-                Objects.equals(productName, that.productName) &&
-                Objects.equals(productThumb, that.productThumb) &&
-                Objects.equals(productDescription, that.productDescription) &&
-                Objects.equals(productPrice, that.productPrice) &&
-                Objects.equals(productRatingsAverage, that.productRatingsAverage) &&
-                Objects.equals(productCategoryId, that.productCategoryId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(productId, productName, productThumb, productDescription, productPrice, productRatingsAverage, productCategoryId, isFavorite);
     }
 }

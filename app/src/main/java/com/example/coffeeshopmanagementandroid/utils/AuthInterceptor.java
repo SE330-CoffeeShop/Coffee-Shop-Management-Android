@@ -18,7 +18,7 @@ public class AuthInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        SharedPreferences prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         String accessToken = prefs.getString("access_token", null);
 
         Request.Builder requestBuilder = chain.request().newBuilder();

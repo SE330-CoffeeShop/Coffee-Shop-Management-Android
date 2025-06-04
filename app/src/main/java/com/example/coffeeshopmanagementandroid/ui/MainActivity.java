@@ -43,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Kiểm tra trạng thái đăng nhập
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String accessToken = prefs.getString("access_token", null);
+        String refreshToken = prefs.getString("refresh_token", null);
+        boolean isLoggedIn = prefs.getBoolean("is_logged_in", false);
+
         if (!isUserLoggedIn()) {
             // Chuyển sang AuthActivity
             Intent intent = new Intent(this, AuthActivity.class);
@@ -77,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isUserLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        return prefs.getBoolean("is_logged_in", false); // Mặc định là false nếu chưa có dữ liệu
+        // Kiểm tra trạng thái đăng nhập từ SharedPreferences
+
+        return prefs.getBoolean("is_logged_in", false) && prefs.getString("access_token", null) != null;
     }
 
     public void loadFragment(Fragment fragment) {

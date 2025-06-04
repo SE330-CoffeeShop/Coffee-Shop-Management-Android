@@ -38,7 +38,7 @@ public class LogoutViewModel extends ViewModel {
     }
 
     public void logout() {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         new Thread(() -> {
             try {
                 String result = logoutUseCase.execute();

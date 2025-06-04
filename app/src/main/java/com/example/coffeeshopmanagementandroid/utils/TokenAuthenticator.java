@@ -1,15 +1,19 @@
 package com.example.coffeeshopmanagementandroid.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.example.coffeeshopmanagementandroid.BuildConfig;
+import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 
 import java.io.IOException;
 
 import okhttp3.Authenticator;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
@@ -28,14 +32,18 @@ public class TokenAuthenticator implements Authenticator {
         if (responseCount(response) >= 2) return null;
 
         // Get refresh token
-        SharedPreferences prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         String refreshToken = prefs.getString("refresh_token", null);
 
         if (refreshToken == null) return null;
 
         // Call refresh endpoint (sync call using Retrofit or OkHttp directly)
         String newAccessToken = refreshAccessToken(refreshToken);
-        if (newAccessToken == null) return null;
+        if (newAccessToken == null) {
+            // Handle refresh token failure
+//            logoutUser();
+            return null;
+        }
 
         // Save new token
         prefs.edit().putString("access_token", newAccessToken).apply();
@@ -53,29 +61,33 @@ public class TokenAuthenticator implements Authenticator {
     }
 
     private String refreshAccessToken(String refreshToken) {
-        // TODO: implement actual refresh token call
-        // Example using OkHttp for sync call
-        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
-
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(BuildConfig.BASE_URL + "auth/refresh") // Change to your actual refresh endpoint
-                .post(okhttp3.RequestBody.create(null, new byte[0])) // Or form body if needed
-                .header("Authorization", "Bearer " + refreshToken)
-                .build();
-
-        try (okhttp3.Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                // Parse response JSON to get access token
-                String responseBody = response.body().string();
-                // You can use a JSON library here
-                // Assuming response is like: { "access_token": "..." }
-                return parseAccessToken(responseBody);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (refreshToken == null) {
+            Log.e("TokenAuthenticator", "Refresh token is null");
+            return null;
         }
 
-        return null;
+        // Sử dụng OkHttpClient mới không có AuthInterceptor để tránh vòng lặp
+        OkHttpClient client = new OkHttpClient.Builder().build();
+
+        // Tạo yêu cầu với header Authorization chứa refreshToken
+        Request request = new Request.Builder()
+                .url(BuildConfig.BASE_URL + "auth/refresh")
+                .get() // Thay bằng POST nếu server yêu cầu body
+                .header("Authorization", "Bearer " + refreshToken) // Đảm bảo gửi refreshToken trong header
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String responseBody = response.body() != null ? response.body().string() : "";
+                return parseAccessToken(responseBody);
+            } else {
+                Log.e("TokenAuthenticator", "Refresh token failed with code: " + response.code() + ", body: " + response.body().string());
+                return null;
+            }
+        } catch (IOException e) {
+            Log.e("TokenAuthenticator", "Refresh token error: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     private String parseAccessToken(String responseBody) {
@@ -87,5 +99,18 @@ public class TokenAuthenticator implements Authenticator {
             e.printStackTrace();
             return null;
         }
+    }
+    private void logoutUser() {
+        // Clear tokens from SharedPreferences (logout the user)
+        SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove("access_token"); // Remove access token
+        editor.remove("refresh_token"); // Remove refresh token (optional)
+        editor.apply();
+
+        // Redirect the user to the login screen (example)
+        Intent intent = new Intent(context, AuthActivity.class); // Assuming LoginActivity is your login screen
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the activity stack
+        context.startActivity(intent); // Start the login activity
     }
 }
