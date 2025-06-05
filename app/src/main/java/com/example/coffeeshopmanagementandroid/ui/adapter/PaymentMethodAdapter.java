@@ -16,7 +16,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.PaymentMethodModel;
 import java.util.List;
 
 public class PaymentMethodAdapter extends RecyclerView.Adapter<PaymentMethodAdapter.PaymentMethodViewHolder> {
-    private List<PaymentMethodModel> paymentMethods;
+    private final List<PaymentMethodModel> paymentMethods;
     private int selectedPosition = -1;
     private final OnPaymentSelectedListener listener;
 

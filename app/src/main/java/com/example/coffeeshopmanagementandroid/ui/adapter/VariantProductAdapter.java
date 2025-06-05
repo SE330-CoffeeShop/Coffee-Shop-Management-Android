@@ -13,7 +13,7 @@ import com.example.coffeeshopmanagementandroid.ui.component.VariantProductChipBu
 import java.util.List;
 
 public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAdapter.ViewHolder> {
-    private List<String> variantsList;
+    private final List<String> variantsList;
     private int selectedPosition = -1;
 
     public VariantProductAdapter(List<String> variantsList) {

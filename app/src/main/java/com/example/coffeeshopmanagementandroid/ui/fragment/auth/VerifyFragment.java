@@ -63,7 +63,7 @@ public class VerifyFragment extends Fragment {
         countDownTimer = new CountDownTimer(TIMER_DURATION, INTERVAL) {
             @Override
             public void onTick(long millisUntilFinished) {
-                textClock.setText("(" + String.valueOf(millisUntilFinished / 1000) + "s)");
+                textClock.setText("(" + millisUntilFinished / 1000 + "s)");
             }
 
             @Override

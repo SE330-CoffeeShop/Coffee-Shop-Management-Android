@@ -28,9 +28,11 @@ import com.example.coffeeshopmanagementandroid.ui.activity.DetailProductActivity
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.ProductViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.CategorySortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
     private ImageButton notificationButton;
     private ImageButton cartButton;
     private ProductViewModel productViewModel;
+    private CategoryViewModel categoryViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,17 +64,29 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+
+        productRecyclerView = view.findViewById(R.id.productRecyclerView);
+        categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
+
         navController = NavHostFragment.findNavController(this);
         NavigationUtils.checkAndFixNavState(navController, R.id.homeFragment, "HomeFragment");
         cartButton = view.findViewById(R.id.cartButton);
         notificationButton = view.findViewById(R.id.notificationButton);
-        setUpRecyclerView(view);
+
+        setUpRecyclerView();
         setUpListener();
 
         fetchAndObserveProducts();
+        fetchAndObserveCategories();
+        fetchAndObserveRecentlyProducts();
+
+        // Thiết lập listener cho category
+        categoryAdapter.setOnCategorySelectedListener(categoryId -> filterProductsByCategory(categoryId));
     }
 
-    private void setUpRecyclerView(View view) {
+    private void setUpRecyclerView() {
         List<ProductModel> coffees = new ArrayList<>();
 
         productAdapter = new ProductAdapter(coffees,
@@ -92,17 +107,15 @@ public class HomeFragment extends Fragment {
                     startActivity(intent);
                 }
         );
-        productRecyclerView = view.findViewById(R.id.productRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
-        productRecyclerView.setLayoutManager(layoutManager);
+        productRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         productRecyclerView.setAdapter(productAdapter);
-
         productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (!productViewModel.getIsLoading().getValue() && dx > 0 && !productViewModel.getIsAllDataLoaded().getValue()) {
+                if (Boolean.FALSE.equals(productViewModel.getIsLoading().getValue()) && dx > 0 && Boolean.FALSE.equals(productViewModel.getIsAllDataLoaded().getValue())) {
                     LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    assert lm != null;
                     int totalItemCount = lm.getItemCount();
                     int lastVisibleItem = lm.findLastVisibleItemPosition();
                     if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
@@ -112,34 +125,49 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        List<CategoryModel> coffeeTypes = new ArrayList<>();
-        coffeeTypes.add(new CategoryModel("1", "Cappuccino", "A classic Italian coffee with frothy milk."));
-        coffeeTypes.add(new CategoryModel("2", "Macchiato", "Espresso with a small amount of steamed milk."));
-        coffeeTypes.add(new CategoryModel("3", "Latte", "Espresso with steamed milk and a small amount of foam."));
-        coffeeTypes.add(new CategoryModel("4", "Espresso", "A strong black coffee made by forcing steam through ground coffee beans."));
-        coffeeTypes.add(new CategoryModel("5", "Americano", "Espresso diluted with hot water, similar to drip coffee."));
-        coffeeTypes.add(new CategoryModel("6", "Mocha", "Espresso with chocolate and steamed milk, often topped with whipped cream."));
-        coffeeTypes.add(new CategoryModel("7", "Flat White", "Similar to a latte but with a higher ratio of coffee to milk."));
-        coffeeTypes.add(new CategoryModel("8", "Decaf", "Decaffeinated coffee for those who want to avoid caffeine."));
-        coffeeTypes.add(new CategoryModel("9", "Iced Coffee", "Chilled coffee served with ice, often sweetened."));
-        coffeeTypes.add(new CategoryModel("10", "Cold Brew", "Coffee brewed with cold water over a long period, resulting in a smooth flavor."));
-
-        categoryAdapter = new CategoryAdapter(coffeeTypes);
-        categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        categoryAdapter = new CategoryAdapter(new ArrayList<>());
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         categoryRecyclerView.setAdapter(categoryAdapter);
+        categoryRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Boolean.FALSE.equals(categoryViewModel.getIsLoading().getValue()) && dx > 0 && Boolean.FALSE.equals(categoryViewModel.getIsAllDataLoaded().getValue())) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    assert lm != null;
+                    int totalItemCount = lm.getItemCount();
+                    int lastVisibleItem = lm.findLastVisibleItemPosition();
+                    if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                        categoryViewModel.fetchMoreCategories(SortType.DESC, CategorySortBy.CREATED_AT);
+                    }
+                }
+            }
+        });
 
-        List<ProductModel> recentCoffees = new ArrayList<>();
-        recentlyProductAdapter = new ProductAdapter(recentCoffees,
+        recentlyProductAdapter = new ProductAdapter(new ArrayList<>(),
                 product -> Toast.makeText(requireContext(),
                         "Added recently" + product.getProductName() + " to cart",
                         Toast.LENGTH_SHORT).show(),
                 product -> Toast.makeText(requireContext(),
                         "Selected recently: " + product.getProductName(),
                         Toast.LENGTH_SHORT).show());
-        recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
         recentlyProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         recentlyProductRecyclerView.setAdapter(recentlyProductAdapter);
+        recentlyProductRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Boolean.FALSE.equals(productViewModel.getIsLoading().getValue()) && dx > 0 && Boolean.FALSE.equals(productViewModel.getIsAllDataLoaded().getValue())) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    assert lm != null;
+                    int totalItemCount = lm.getItemCount();
+                    int lastVisibleItem = lm.findLastVisibleItemPosition();
+                    if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                        productViewModel.fetchMoreProducts(SortType.DESC, ProductSortBy.CREATED_AT);
+                    }
+                }
+            }
+        });
 
         int marginHorizontal = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         productRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
@@ -164,30 +192,104 @@ public class HomeFragment extends Fragment {
     private void fetchAndObserveProducts() {
         productViewModel.fetchAllProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
 
-        productViewModel.getProductsResult().observe(getViewLifecycleOwner(), products -> {
+        productViewModel.getProductsLiveData().observe(getViewLifecycleOwner(), products -> {
             if (products != null) {
-                productAdapter.setProducts(products); // Cập nhật danh sách, bao gồm cả dữ liệu mới
+                productAdapter.setProducts(products);
             } else {
                 productAdapter.setProducts(new ArrayList<>());
             }
         });
 
-        // Quan sát trạng thái loading
+
         productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            // Có thể thêm UI feedback (ví dụ: ProgressBar) nếu muốn
+
         });
 
-        // Quan sát lỗi
         productViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
-        // Quan sát isAllDataLoaded để cập nhật UI nếu cần
+
         productViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
             if (isAllLoaded) {
                 Log.d("HomeFragment", "All data loaded, no more fetching");
             }
         });
+    }
+
+    private void fetchAndObserveRecentlyProducts() {
+        productViewModel.fetchRecentlyProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
+
+        productViewModel.getRecentlyProductsLiveData().observe(getViewLifecycleOwner(), products -> {
+            if (products != null) {
+                recentlyProductAdapter.setProducts(products);
+            } else {
+                recentlyProductAdapter.setProducts(new ArrayList<>());
+            }
+        });
+
+        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+
+        });
+
+        productViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        productViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
+            if (isAllLoaded) {
+                Log.d("HomeFragment", "All data loaded, no more fetching");
+            }
+        });
+    }
+
+    private void fetchAndObserveCategories() {
+        categoryViewModel.fetchAllCategories(1, 10, SortType.DESC, CategorySortBy.CREATED_AT);
+        categoryViewModel.getCategoriesLiveData().observe(getViewLifecycleOwner(), categories -> {
+            if (categories != null) {
+                categoryAdapter.setCategories(categories);
+            } else {
+                categoryAdapter.setCategories(new ArrayList<>());
+            }
+        });
+
+        categoryViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+
+        });
+
+        categoryViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        categoryViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
+            if (isAllLoaded) {
+                Log.d("HomeFragment", "All data loaded, no more fetching");
+            }
+        });
+    }
+
+    private void filterProductsByCategory(String categoryId) {
+        if (categoryId == null) {
+            // Reset về danh sách đầy đủ
+            productViewModel.fetchAllProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
+        } else {
+            // Lọc danh sách sản phẩm theo categoryId
+            productViewModel.getProductsLiveData().observe(getViewLifecycleOwner(), products -> {
+                if (products != null) {
+                    List<ProductModel> filteredProducts = new ArrayList<>();
+                    for (ProductModel product : products) {
+                        if (product.getProductCategoryId().equals(categoryId)) {
+                            filteredProducts.add(product);
+                        }
+                    }
+                    productAdapter.setProducts(filteredProducts);
+                }
+            });
+        }
     }
 }

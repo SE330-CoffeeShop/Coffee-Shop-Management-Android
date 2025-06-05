@@ -11,11 +11,21 @@ import com.example.coffeeshopmanagementandroid.ui.component.CategoryChipButton;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
-    private List<CategoryModel> categoryList;
+    private List<CategoryModel> categories;
     private int selectedPosition = -1;
+    private OnCategorySelectedListener onCategorySelectedListener;
 
     public CategoryAdapter(List<CategoryModel> categoryList) {
-        this.categoryList = categoryList;
+        this.categories = categoryList;
+    }
+
+    // Interface để thông báo khi category được chọn
+    public interface OnCategorySelectedListener {
+        void onCategorySelected(String categoryId);
+    }
+
+    public void setOnCategorySelectedListener(OnCategorySelectedListener listener) {
+        this.onCategorySelectedListener = listener;
     }
 
     @NonNull
@@ -27,7 +37,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder holder, int position) {
-        holder.categoryChipButton.setText(categoryList.get(position));
+        CategoryModel category = categories.get(position);
+        holder.categoryChipButton.setText(categories.get(position));
         holder.categoryChipButton.setSelected(position == selectedPosition);
         holder.categoryChipButton.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
@@ -35,21 +46,32 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 // Bỏ chọn nếu đang được chọn
                 selectedPosition = -1;
                 notifyItemChanged(pos);
+                if (onCategorySelectedListener != null) {
+                    onCategorySelectedListener.onCategorySelected(null);
+                }
             } else {
-                // Chọn chip mới và bỏ chọn chip cũ (nếu có)
+                // Chọn category mới
                 int previous = selectedPosition;
                 selectedPosition = pos;
                 if (previous != -1) {
                     notifyItemChanged(previous);
                 }
                 notifyItemChanged(pos);
+                if (onCategorySelectedListener != null) {
+                    onCategorySelectedListener.onCategorySelected(category.getCategoryId()); // Gửi categoryId
+                }
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return categoryList.size();
+        return categories.size();
+    }
+
+    public void setCategories(List<CategoryModel> categories) {
+        this.categories = categories;
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

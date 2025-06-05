@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.ProductCartViewHolder> {
 
-    private List<ProductCartModel> products;
+    private final List<ProductCartModel> products;
     private final OnMinusQuantityListener onMinusQuantity;
     private final OnDeleteProductListener onDeleteProduct;
     private final OnPlusQuantityListener onPlusQuantity;

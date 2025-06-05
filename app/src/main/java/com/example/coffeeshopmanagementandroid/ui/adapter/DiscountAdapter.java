@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.DiscountViewHolder> {
-    private List<DiscountModel> discounts;
+    private final List<DiscountModel> discounts;
     private int selectedPosition = -1;
     private final OnDiscountSelectedListener listener;
 

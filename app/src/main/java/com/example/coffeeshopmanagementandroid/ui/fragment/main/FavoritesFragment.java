@@ -79,8 +79,8 @@ public class FavoritesFragment extends Fragment {
     }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
-        private int spanCount;
-        private int spacing;
+        private final int spanCount;
+        private final int spacing;
 
         public GridSpacingItemDecoration(int spanCount, int spacing) {
             this.spanCount = spanCount;

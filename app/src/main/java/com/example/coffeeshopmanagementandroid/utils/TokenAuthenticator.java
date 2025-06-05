@@ -41,7 +41,7 @@ public class TokenAuthenticator implements Authenticator {
         String newAccessToken = refreshAccessToken(refreshToken);
         if (newAccessToken == null) {
             // Handle refresh token failure
-//            logoutUser();
+            logoutUser();
             return null;
         }
 

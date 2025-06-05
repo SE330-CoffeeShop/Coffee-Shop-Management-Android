@@ -26,11 +26,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ProductViewModel extends ViewModel {
     private final ProductUseCase productUseCase;
-    private final MutableLiveData<List<ProductModel>> productsResult = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<ProductModel>> productsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> limit = new MutableLiveData<>(10);
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
-    private final MutableLiveData<List<ProductModel>> recentlyProductsResult = new MutableLiveData<>();
+    private final MutableLiveData<List<ProductModel>> recentlyProductsResultLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isAllDataLoaded = new MutableLiveData<>(false); // Thêm cờ này
@@ -40,12 +40,12 @@ public class ProductViewModel extends ViewModel {
         this.productUseCase = productUseCase;
     }
 
-    public LiveData<List<ProductModel>> getProductsResult() {
-        return productsResult;
+    public LiveData<List<ProductModel>> getProductsLiveData() {
+        return productsLiveData;
     }
 
-    public LiveData<List<ProductModel>> getRecentlyProductsResult() {
-        return recentlyProductsResult;
+    public LiveData<List<ProductModel>> getRecentlyProductsLiveData() {
+        return recentlyProductsResultLiveData;
     }
 
     public LiveData<String> getErrorLiveData() {
@@ -61,11 +61,11 @@ public class ProductViewModel extends ViewModel {
     }
 
     public void setProductsResult(List<ProductModel> products) {
-        productsResult.postValue(products);
+        productsLiveData.postValue(products);
     }
 
     public void setRecentlyProductsResult(List<ProductModel> recentlyProducts) {
-        recentlyProductsResult.postValue(recentlyProducts);
+        recentlyProductsResultLiveData.postValue(recentlyProducts);
     }
 
     public void setErrorLiveData(String errorMessage) {
@@ -74,6 +74,10 @@ public class ProductViewModel extends ViewModel {
 
     public void setIsLoading(Boolean loading) {
         isLoading.postValue(loading);
+    }
+
+    public void setIsAllDataLoaded(Boolean allDataLoaded){
+        isAllDataLoaded.postValue(allDataLoaded);
     }
 
     // Fetch initial products
@@ -97,6 +101,25 @@ public class ProductViewModel extends ViewModel {
         }).start();
     }
 
+    public void fetchRecentlyProducts(int page, int limit, SortType sortType, ProductSortBy sortBy) {
+        setIsLoading(true);
+        new Thread(() -> {
+            try {
+                GetAllProductsRequest request = new GetAllProductsRequest(page, limit, sortType, sortBy);
+                BasePagingResponse<List<ProductResponse>> result = productUseCase.getAllProducts(request);
+                if (result != null && result.getData() != null) {
+                    List<ProductModel> newProducts = ProductMapper.mapProductResponsesToProductsDomain(result.getData());
+                    setRecentlyProductsResult(newProducts);
+                }
+            } catch (Exception e) {
+                setErrorLiveData(e.getMessage());
+                Log.e("ProductViewModel", "Fetch recently products failed: " + e.getMessage(), e);
+            } finally {
+                setIsLoading(false);
+            }
+        }).start();
+    }
+
     // Fetch more products for infinite scroll
     public void fetchMoreProducts(SortType sortType, ProductSortBy sortBy) {
         if (isAllDataLoaded.getValue() != null && isAllDataLoaded.getValue()) {
@@ -109,20 +132,24 @@ public class ProductViewModel extends ViewModel {
         fetchAllProducts(nextPage, limit.getValue(), sortType, sortBy);
 
         // Cập nhật isAllDataLoaded khi đã tải đủ
-        if (productsResult.getValue() != null && total.getValue() != null && productsResult.getValue().size() >= total.getValue()) {
-            isAllDataLoaded.postValue(true);
+        if (productsLiveData.getValue() != null && total.getValue() != null && productsLiveData.getValue().size() >= total.getValue()) {
+            setIsAllDataLoaded(true);
         }
+    }
+
+    public void fetchMoreRecentlyProducts(SortType sortType, ProductSortBy sortBy) {
+        // Logic sẽ được thêm sau khi có API riêng
     }
 
     // Phương thức append dữ liệu mới vào danh sách hiện tại
     private void appendProducts(List<ProductModel> newProducts) {
-        List<ProductModel> currentProducts = productsResult.getValue() != null ? new ArrayList<>(productsResult.getValue()) : new ArrayList<>();
+        List<ProductModel> currentProducts = productsLiveData.getValue() != null ? new ArrayList<>(productsLiveData.getValue()) : new ArrayList<>();
         for (ProductModel newProduct : newProducts) {
             if (!currentProducts.contains(newProduct)) {
                 currentProducts.add(newProduct);
             }
         }
-        productsResult.postValue(currentProducts);
+        productsLiveData.postValue(currentProducts);
     }
 
     private void setPage(int page) {

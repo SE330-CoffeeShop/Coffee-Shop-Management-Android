@@ -4,7 +4,7 @@ public class ProductCartModel {
     private String productId;
     private String productName;
     private double productPrice;
-    private String productVarient;
+    private final String productVarient;
     private int quantity;
 
     public ProductCartModel(String productId, String productName, double productPrice, String productVarient, int quantity) {

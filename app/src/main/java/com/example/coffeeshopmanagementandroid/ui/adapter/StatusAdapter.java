@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder> {
-    private List<OrderStatusModel> statusList;
+    private final List<OrderStatusModel> statusList;
     private int selectedPosition = -1;
 
     public StatusAdapter(List<OrderStatusModel> statusList) {

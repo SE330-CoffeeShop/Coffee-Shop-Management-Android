@@ -15,7 +15,7 @@ import com.example.coffeeshopmanagementandroid.R;
 
 public class OtpInput extends LinearLayout {
     private static final int OTP_LENGTH = 6;
-    private EditText[] otpFields = new EditText[OTP_LENGTH];
+    private final EditText[] otpFields = new EditText[OTP_LENGTH];
 
     public OtpInput(Context context) {
         super(context);

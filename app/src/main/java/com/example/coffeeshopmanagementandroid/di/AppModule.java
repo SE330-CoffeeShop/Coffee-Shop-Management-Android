@@ -3,11 +3,15 @@ package com.example.coffeeshopmanagementandroid.di;
 import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
+import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
+import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
@@ -69,5 +73,19 @@ public class AppModule {
     @Provides
     public static ProductUseCase provideProductUseCase(ProductRepository productRepository) {
         return new ProductUseCase(productRepository);
+    }
+    @Provides
+    @Singleton
+    public static CategoryService provideCategoryService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(CategoryService.class);
+    }
+    @Provides
+    @Singleton
+    public static CategoryRepository provideCategoryRepository(CategoryService categoryService) {
+        return new CategoryRepositoryImpl(categoryService);
+    }
+    @Provides
+    public static CategoryUseCase provideCategoryUseCase(CategoryRepository categoryRepository) {
+        return new CategoryUseCase(categoryRepository);
     }
 }

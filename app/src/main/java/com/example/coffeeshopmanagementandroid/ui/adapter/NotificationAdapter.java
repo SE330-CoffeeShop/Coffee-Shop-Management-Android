@@ -17,8 +17,8 @@ import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
-    private List<NotificationModel> notifications;
-    private OnItemClickListener onItemClickListener;
+    private final List<NotificationModel> notifications;
+    private final OnItemClickListener onItemClickListener;
 
     public NotificationAdapter(List<NotificationModel> notifications, OnItemClickListener onItemClickListener) {
         this.notifications = notifications;
@@ -44,10 +44,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public class NotificationViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivNotificationImage;
-        private TextView tvNotificationLabel;
-        private TextView tvNotificationContent;
-        private ImageView ivReadStatus;
+        private final ImageView ivNotificationImage;
+        private final TextView tvNotificationLabel;
+        private final TextView tvNotificationContent;
+        private final ImageView ivReadStatus;
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);

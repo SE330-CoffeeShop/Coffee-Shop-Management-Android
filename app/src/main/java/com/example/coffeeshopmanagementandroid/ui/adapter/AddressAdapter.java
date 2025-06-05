@@ -18,7 +18,7 @@ import java.util.List;
 
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder> {
 
-    private List<AddressModel> addresses;
+    private final List<AddressModel> addresses;
     private final OnItemClickListener onItemClickListener;
 
     public AddressAdapter(List<AddressModel> addresses, OnItemClickListener onItemClickListener) {

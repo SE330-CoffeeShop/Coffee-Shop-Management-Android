@@ -62,7 +62,7 @@ public class AuthInput extends LinearLayout {
             isPasswordField = (inputType) == 129;
 
 
-            Log.d("INPUT TYPE", "Raw inputType: " + String.valueOf(inputType | InputType.TYPE_TEXT_VARIATION_PASSWORD));
+            Log.d("INPUT TYPE", "Raw inputType: " + (inputType | InputType.TYPE_TEXT_VARIATION_PASSWORD));
             Log.d("(inputType & InputType.TYPE_TEXT_VARIATION_PASSWORD)", String.valueOf(typedArray.getInt(R.styleable.AuthInput_inputType, InputType.TYPE_CLASS_TEXT)));
             Log.d("INPUT TYPE", "isPasswordField: " + isPasswordField);
 

@@ -27,7 +27,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         Call<BaseResponse<LoginResponse>> call = authService.login(new LoginRequest(email, password));
         Response<BaseResponse<LoginResponse>> response = call.execute();
 
-        Log.d("LOGIN", "Response received: " + response.toString());
+        Log.d("LOGIN", "Response received: " + response);
 
         if (response.isSuccessful() && response.body() != null) {
             BaseResponse<LoginResponse> baseResponse = response.body();

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
-    private List<OrderModel> orderList;
+    private final List<OrderModel> orderList;
     private final OnItemClickListener onItemClick;
 
     public interface OnItemClickListener {
@@ -71,7 +71,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             // Bind dữ liệu vào các thành phần giao diện ở đây
             orderIdTextView.setText(order.getOrderId());
             statusIndicator.setStatus(order.getOrderStatus());
-            totalOrderTextView.setText(String.valueOf(order.getTotalOrder()) + "đ");
+            totalOrderTextView.setText(order.getTotalOrder() + "đ");
         }
     }
 }

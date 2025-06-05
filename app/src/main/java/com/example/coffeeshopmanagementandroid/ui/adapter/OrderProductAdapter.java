@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder> {
-    private List<OrderItemModel> productList;
+    private final List<OrderItemModel> productList;
     @NonNull
     @Override
     public OrderProductAdapter.OrderProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,11 +40,11 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
     }
 
     public class OrderProductViewHolder extends RecyclerView.ViewHolder {
-        private ImageView productImageView;
-        private TextView productNameTextView;
-        private TextView variantProductTextView;
-        private TextView priceTextView;
-        private TextView quantityTextView;
+        private final ImageView productImageView;
+        private final TextView productNameTextView;
+        private final TextView variantProductTextView;
+        private final TextView priceTextView;
+        private final TextView quantityTextView;
 
         public OrderProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,7 +59,7 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
 //            productImageView.setImageResource(R.drawable.product_image);
             productNameTextView.setText(product.getProductName());
             variantProductTextView.setText(product.getVariant());
-            priceTextView.setText(String.valueOf(product.getUnitPrice()) + "đ");
+            priceTextView.setText(product.getUnitPrice() + "đ");
             quantityTextView.setText(String.valueOf(product.getQuantity()));
         }
     }
