@@ -16,15 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
-    private final List<OrderModel> orderList;
+    private List<OrderModel> orders;
     private final OnItemClickListener onItemClick;
+
+    public void setOrders(List<OrderModel> orders) {
+        this.orders = orders;
+        notifyDataSetChanged();
+    }
 
     public interface OnItemClickListener {
         void onItemClick(OrderModel order);
     }
 
     public OrderAdapter(List<OrderModel> orders, OnItemClickListener onItemClick) {
-        this.orderList = orders != null ? orders : new ArrayList<>();
+        this.orders = orders != null ? orders : new ArrayList<>();
         this.onItemClick = onItemClick;
     }
 
@@ -38,13 +43,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
-        OrderModel order = orderList.get(position);
+        OrderModel order = orders.get(position);
         holder.bind(order);
     }
 
     @Override
     public int getItemCount() {
-        return orderList.size();
+        return orders.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,7 +66,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if(position != RecyclerView.NO_POSITION) {
-                    onItemClick.onItemClick(orderList.get(position));
+                    onItemClick.onItemClick(orders.get(position));
                 }
             });
 
@@ -71,7 +76,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             // Bind dữ liệu vào các thành phần giao diện ở đây
             orderIdTextView.setText(order.getOrderId());
             statusIndicator.setStatus(order.getOrderStatus());
-            totalOrderTextView.setText(order.getTotalOrder() + "đ");
+            totalOrderTextView.setText(order.getOrderTotalCost() + " VND");
         }
     }
 }

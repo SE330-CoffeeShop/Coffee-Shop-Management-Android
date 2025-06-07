@@ -3,14 +3,20 @@ package com.example.coffeeshopmanagementandroid.data.dto.auth.response;
 import com.example.coffeeshopmanagementandroid.utils.enums.Role;
 
 public class LoginResponse extends TokenResponse {
-    private String userId;
+    private String id;
+    private String role;
 
     public String getId() {
-        return userId;
+        return id;
     }
 
     public void setId(String id) {
-        this.userId = id;
+        this.id = id;
     }
-
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

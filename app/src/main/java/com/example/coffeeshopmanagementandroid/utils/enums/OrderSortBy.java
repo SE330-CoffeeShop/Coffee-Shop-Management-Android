@@ -2,22 +2,17 @@ package com.example.coffeeshopmanagementandroid.utils.enums;
 
 import androidx.annotation.NonNull;
 
-public enum ProductSortBy {
-    NAME("productName"),
-    PRICE("productPrice"),
-    RATING("productRatingsAverage"),
+public enum OrderSortBy {
+    STATUS("orderStatus"),
+    ORDER_TOTAL_COST("orderTotalCost"),
     CREATED_AT("createdAt");
-
     private final String sortByField;
-
-    ProductSortBy(String sortByField) {
+    OrderSortBy(String sortByField) {
         this.sortByField = sortByField;
     }
-
     public String getSortByField() {
         return sortByField;
     }
-
     @NonNull
     @Override
     public String toString() {

@@ -19,7 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Toast;
+
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.domain.model.auth.AuthModel;
+import com.example.coffeeshopmanagementandroid.domain.model.auth.UserModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.SocialButton;
@@ -28,6 +31,7 @@ import com.example.coffeeshopmanagementandroid.ui.component.AuthButton;
 import com.example.coffeeshopmanagementandroid.ui.fragment.main.HomeFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.LoginViewModel;
 import com.example.coffeeshopmanagementandroid.utils.LoadingManager;
+import com.example.coffeeshopmanagementandroid.utils.SharedPreferencesUtils;
 
 import java.util.Objects;
 
@@ -102,45 +106,57 @@ public class LoginFragment extends Fragment {
     }
 
     private void observeLoginResult() {
-
         // Observe loading state to show/hide ProgressBar
-        loginViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null) {
-                if (isLoading) {
-                    LoadingManager.getInstance().showLoading(requireContext());
-                } else {
-                    LoadingManager.getInstance().hideLoading();
-                }
-            }
-        });
+        loginViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> handleLoadingState(isLoading));
 
-        loginViewModel.getAuthLiveData().observe(getViewLifecycleOwner(), authModel -> {
-            loginButton.setEnabled(true);
-            if (authModel != null) {
-                if (isAdded()) {
-                    // Lưu trạng thái đăng nhập ngay lập tức
-                    SharedPreferences prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-                    prefs.edit()
-                            .putString("access_token", authModel.getAccessToken())  // Lưu access token
-                            .putString("refresh_token", authModel.getRefreshToken()) // Lưu refresh token
-                            .putBoolean("is_logged_in", true)
-                            .apply();
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (isAdded() && getActivity() != null) {
-                            Intent intent = new Intent(requireContext(), MainActivity.class);
-                            startActivity(intent);
-                            requireActivity().finish();
-                        }
-                    }, 500);
-                }
-            } else {
-                if (isAdded()) {
-                    Toast.makeText(requireContext(), "Login Failed. Please try again!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        // Observe user data and save to SharedPreferences
+        loginViewModel.getUserLiveData().observe(getViewLifecycleOwner(), userModel -> handleUserData(userModel));
+
+        // Observe authentication result and navigate
+        loginViewModel.getAuthLiveData().observe(getViewLifecycleOwner(), authModel -> handleAuthResult(authModel));
     }
-    
+
+    private void handleLoadingState(Boolean isLoading) {
+        if (isLoading == null) {
+            return;
+        }
+        if (isLoading) {
+            LoadingManager.getInstance().showLoading(requireContext());
+        } else {
+            LoadingManager.getInstance().hideLoading();
+        }
+    }
+
+    private void handleUserData(UserModel userModel) {
+        if (!isAdded()) return;
+
+        if (userModel == null) return;
+        SharedPreferencesUtils.saveUserPreferences(requireContext(), userModel.getId(), userModel.getRole().toString());
+    }
+
+    private void handleAuthResult(AuthModel authModel) {
+        if (!isAdded()) return;
+
+        if (authModel != null) {
+            SharedPreferencesUtils.saveAuthPreferences(requireContext(), authModel.getAccessToken(), authModel.getRefreshToken(), true);
+            navigateToMainActivity();
+        } else {
+            Toast.makeText(requireContext(), "Đăng nhập thất bại! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
+        }
+
+        loginButton.setEnabled(true);
+    }
+
+    private void navigateToMainActivity() {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isAdded() && getActivity() != null) {
+                Intent intent = new Intent(requireContext(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+        }, 500);
+    }
+
     private void navigateToSignUp() {
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_loginFragment_to_registerFragment);

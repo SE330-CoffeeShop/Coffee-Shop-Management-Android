@@ -60,7 +60,7 @@
     <string name="add_to_cart">Thêm vào giỏ hàng</string>
     <string name="product_image">Product\'s Image</string>
     <string name="category">Category</string>
-    <string name="recently">Recently</string>
+    <string name="recently">Gần đây</string>
     <string name="banner">Banner</string>
     <string name="detail">Detail</string>
     <dimen name="category_chip_radius">16dp</dimen>
@@ -167,4 +167,5 @@
     <string name="new_notification">Thông báo mới</string>
     <string name="default_content_notification">Nội dung thông báo dài hơn một dòng sẽ bị cắt...</string>
     <string name="all_notifications">Tất cả thông báo</string>
+    <string name="menu">Menu</string>
 </resources>

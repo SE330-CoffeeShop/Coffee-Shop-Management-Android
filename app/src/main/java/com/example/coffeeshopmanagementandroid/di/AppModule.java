@@ -4,16 +4,20 @@ import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
+import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
 import com.example.coffeeshopmanagementandroid.utils.RetrofitInstance;
 
@@ -87,5 +91,19 @@ public class AppModule {
     @Provides
     public static CategoryUseCase provideCategoryUseCase(CategoryRepository categoryRepository) {
         return new CategoryUseCase(categoryRepository);
+    }
+    @Provides
+    @Singleton
+    public static OrderService provideOrderService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(OrderService.class);
+    }
+    @Provides
+    @Singleton
+    public static OrderRepository provideOrderRepository(OrderService orderService) {
+        return new OrderRepositoryImpl(orderService);
+    }
+    @Provides
+    public static OrderUseCase provideOrderUseCase(OrderRepository orderRepository) {
+        return new OrderUseCase(orderRepository);
     }
 }

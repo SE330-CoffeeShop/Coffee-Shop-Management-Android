@@ -1,8 +1,6 @@
-package com.example.coffeeshopmanagementandroid.domain.model;
+package com.example.coffeeshopmanagementandroid.data.dto.order.response;
 
-import java.util.List;
-
-public class OrderModel {
+public class OrderResponse {
     private String orderId;
     private String userId;
     private String employeeId;
@@ -13,10 +11,8 @@ public class OrderModel {
     private int orderTotalCostAfterDiscount;
     private String orderStatus;
     private String orderTrackingNumber;
-    public OrderModel() {
-        // Constructor mặc định không cần thực hiện gì
-    }
-    public OrderModel(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, int orderTotalCost, int orderDiscountCost, int orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
+
+    public OrderResponse(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, int orderTotalCost, int orderDiscountCost, int orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
         this.orderId = orderId;
         this.userId = userId;
         this.employeeId = employeeId;
@@ -108,4 +104,5 @@ public class OrderModel {
     public void setOrderTrackingNumber(String orderTrackingNumber) {
         this.orderTrackingNumber = orderTrackingNumber;
     }
+
 }

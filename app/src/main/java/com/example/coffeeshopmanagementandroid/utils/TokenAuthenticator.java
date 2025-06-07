@@ -104,13 +104,15 @@ public class TokenAuthenticator implements Authenticator {
         // Clear tokens from SharedPreferences (logout the user)
         SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.remove("access_token"); // Remove access token
-        editor.remove("refresh_token"); // Remove refresh token (optional)
+        editor.remove("id");
+        editor.remove("role");
+        editor.remove("access_token");
+        editor.remove("refresh_token");
+        editor.putBoolean("is_logged_in", false);
         editor.apply();
 
-        // Redirect the user to the login screen (example)
-        Intent intent = new Intent(context, AuthActivity.class); // Assuming LoginActivity is your login screen
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the activity stack
-        context.startActivity(intent); // Start the login activity
+        Intent intent = new Intent(context, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
     }
 }

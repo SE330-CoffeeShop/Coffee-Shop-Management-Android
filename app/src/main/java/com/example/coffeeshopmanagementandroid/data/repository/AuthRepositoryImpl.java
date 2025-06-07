@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 import android.util.Log;
+import android.util.Pair;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
@@ -8,6 +9,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LoginRespo
 import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LogoutResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.AuthMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.auth.AuthModel;
+import com.example.coffeeshopmanagementandroid.domain.model.auth.UserModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 
 import retrofit2.Call;
@@ -22,7 +24,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public AuthModel login(String email, String password) throws Exception {
+    public Pair<AuthModel, UserModel> login(String email, String password) throws Exception {
         Log.d("AuthRepoImpl", "Login called");
         Call<BaseResponse<LoginResponse>> call = authService.login(new LoginRequest(email, password));
         Response<BaseResponse<LoginResponse>> response = call.execute();
@@ -35,7 +37,9 @@ public class AuthRepositoryImpl implements AuthRepository {
 
             if (baseResponse.getData() != null) {
                 Log.d("Response", "Login ID: " + data.getId());
-                return AuthMapper.mapLoginResponseToAuthDomain(data);
+                UserModel user = AuthMapper.mapLoginResponseToUserDomain(data);
+                AuthModel authModel = AuthMapper.mapLoginResponseToAuthDomain(data);
+                return new Pair<>(authModel, user);
             } else {
                 throw new Exception("Login failed: empty data");
             }

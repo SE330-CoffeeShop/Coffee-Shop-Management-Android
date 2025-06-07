@@ -276,7 +276,7 @@ public class HomeFragment extends Fragment {
     private void filterProductsByCategory(String categoryId) {
         if (categoryId == null) {
             // Reset về danh sách đầy đủ
-            productViewModel.fetchAllProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
+            productAdapter.setProducts(productViewModel.getProductsLiveData().getValue());
         } else {
             // Lọc danh sách sản phẩm theo categoryId
             productViewModel.getProductsLiveData().observe(getViewLifecycleOwner(), products -> {
