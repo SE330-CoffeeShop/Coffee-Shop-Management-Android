@@ -1,31 +1,30 @@
-package com.example.coffeeshopmanagementandroid.data.dto.order.request;
+package com.example.coffeeshopmanagementandroid.data.dto.favoriteproduct.request;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingRequest;
-import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.FavoriteProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.google.gson.annotations.SerializedName;
 
-public class GetAllOrdersCustomerRequest extends BasePagingRequest {
-    @SerializedName("customerId")
-    private String id;
+public class GetAllFavoriteProductsUserRequest extends BasePagingRequest {
+    @SerializedName("userId")
+    private String userId;
     @SerializedName("sortType")
     private SortType sortType;
     @SerializedName("sortBy")
-    private OrderSortBy sortBy;
-    public GetAllOrdersCustomerRequest(int page, int limit, String id, SortType sortType, OrderSortBy sortBy) {
+    private FavoriteProductSortBy sortBy;
+    public GetAllFavoriteProductsUserRequest(int page, int limit, String id, SortType sortType, FavoriteProductSortBy sortBy) {
         super(page, limit);
-        this.id = id;
+        this.userId = id;
         this.sortType = sortType;
         this.sortBy = sortBy;
-
     }
 
     public String getId() {
-        return id;
+        return userId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.userId = id;
     }
 
     public SortType getSortType() {
@@ -36,11 +35,11 @@ public class GetAllOrdersCustomerRequest extends BasePagingRequest {
         this.sortType = sortType;
     }
 
-    public OrderSortBy getSortBy() {
+    public FavoriteProductSortBy getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(OrderSortBy sortBy) {
+    public void setSortBy(FavoriteProductSortBy sortBy) {
         this.sortBy = sortBy;
     }
 }

@@ -49,22 +49,27 @@
 
         <TextView
             android:id="@+id/nameTextView"
+            style="@style/text_base_semibold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-                style="@style/text_base_semibold"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Cappuccino" />
 
         <TextView
             android:id="@+id/descriptionTextView"
+            style="@style/text_xs_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:maxLines="1"
             android:textColor="#808080"
-            style="@style/text_xs_regular"
+            android:ellipsize="end"
             tools:text="Classic" />
 
         <LinearLayout
+            android:layout_marginTop="@dimen/vertical_spacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -72,10 +77,10 @@
 
             <TextView
                 android:id="@+id/priceTextView"
+                style="@style/text_base_semibold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                style="@style/text_base_semibold"
                 tools:text="$45.13" />
 
             <com.google.android.material.button.MaterialButton

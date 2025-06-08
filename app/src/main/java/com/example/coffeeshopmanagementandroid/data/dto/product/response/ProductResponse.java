@@ -16,7 +16,6 @@ public class ProductResponse {
     private Boolean productIsPublished;
     private Boolean productIsDeleted;
     private String productCategoryId;
-    private boolean isFavorite;
 
     public String getProductId() {
         return productId;
@@ -96,13 +95,5 @@ public class ProductResponse {
 
     public void setProductCategoryId(String productCategoryId) {
         this.productCategoryId = productCategoryId;
-    }
-
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
     }
 }

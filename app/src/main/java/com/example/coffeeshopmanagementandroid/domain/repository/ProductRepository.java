@@ -14,4 +14,5 @@ public interface ProductRepository {
     BasePagingResponse<List<ProductResponse>> getAllProducts(GetAllProductsRequest request) throws Exception;
 
     List<ProductModel> getAllRecentProducts() throws Exception;
+    ProductModel getProductById(String id) throws Exception;
 }

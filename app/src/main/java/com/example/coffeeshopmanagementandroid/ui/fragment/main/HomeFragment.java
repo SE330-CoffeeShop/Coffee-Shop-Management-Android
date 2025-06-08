@@ -1,6 +1,5 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.main;
 
-import android.graphics.Rect;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,18 +20,16 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.CategoryModel;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.ui.activity.DetailProductActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
-import com.example.coffeeshopmanagementandroid.ui.fragment.cart.CartFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.ProductViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
-import com.example.coffeeshopmanagementandroid.utils.enums.CategorySortBy;
-import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;
@@ -101,9 +97,7 @@ public class HomeFragment extends Fragment {
                     intent.putExtra("product_price", product.getProductPrice().doubleValue());
                     intent.putExtra("product_image_url", product.getProductThumb());
                     intent.putExtra("product_rating", product.getProductRatingsAverage().floatValue());
-                    intent.putExtra("product_is_favorite", product.isFavorite());
                     intent.putExtra("product_category", product.getProductCategoryId());
-//                    intent.putStringArrayListExtra("product_variants", (ArrayList<String>) product.get());
                     startActivity(intent);
                 }
         );

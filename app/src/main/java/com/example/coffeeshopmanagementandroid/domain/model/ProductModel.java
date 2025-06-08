@@ -15,7 +15,6 @@ public class ProductModel {
     private Boolean productIsPublished;
     private Boolean productIsDeleted;
     private String productCategoryId;
-    private boolean isFavorite;
 
     // Default constructor
     public ProductModel() {
@@ -28,8 +27,8 @@ public class ProductModel {
                         BigDecimal productPrice,
                         String productThumb,
                         BigDecimal productRatingsAverage,
-                        String productCategoryId,
-                        boolean isFavorite) {
+                        String productCategoryId
+                        ) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -37,7 +36,6 @@ public class ProductModel {
         this.productThumb = productThumb;
         this.productRatingsAverage = productRatingsAverage;
         this.productCategoryId = productCategoryId;
-        this.isFavorite = isFavorite;
     }
 
     // Getter / Setter
@@ -122,14 +120,6 @@ public class ProductModel {
         this.productCategoryId = productCategoryId;
     }
 
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
-
     // equals & hashCode
 
     @Override
@@ -137,7 +127,7 @@ public class ProductModel {
         if (this == o) return true;
         if (!(o instanceof ProductModel)) return false;
         ProductModel that = (ProductModel) o;
-        return isFavorite == that.isFavorite &&
+        return
                 Objects.equals(productId, that.productId) &&
                 Objects.equals(productName, that.productName) &&
                 Objects.equals(productThumb, that.productThumb) &&
@@ -149,6 +139,6 @@ public class ProductModel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, productName, productThumb, productDescription, productPrice, productRatingsAverage, productCategoryId, isFavorite);
+        return Objects.hash(productId, productName, productThumb, productDescription, productPrice, productRatingsAverage, productCategoryId);
     }
 }

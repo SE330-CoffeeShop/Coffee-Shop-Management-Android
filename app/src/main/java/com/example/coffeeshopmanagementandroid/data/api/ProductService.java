@@ -1,6 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.api;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
@@ -24,5 +25,5 @@ public interface ProductService {
     );
 
     @GET("/product/{id}")
-    Call<ProductModel> getProductById(@Path("id") String id);
+    Call<BaseResponse<ProductResponse>> getProductById(@Path("id") String id);
 }

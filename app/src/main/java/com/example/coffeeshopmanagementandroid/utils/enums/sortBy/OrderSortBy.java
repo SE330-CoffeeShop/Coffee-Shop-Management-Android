@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.utils.enums;
+package com.example.coffeeshopmanagementandroid.utils.enums.sortBy;
 
 import androidx.annotation.NonNull;
 

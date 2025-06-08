@@ -1,7 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.dto.category.request;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingRequest;
-import com.example.coffeeshopmanagementandroid.utils.enums.CategorySortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.google.gson.annotations.SerializedName;
 

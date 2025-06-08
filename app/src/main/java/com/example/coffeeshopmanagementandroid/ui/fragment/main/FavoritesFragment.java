@@ -1,24 +1,31 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.main;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.CategoryModel;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.FavoriteViewModel;
+import com.example.coffeeshopmanagementandroid.utils.SharedPreferencesUtils;
+import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.FavoriteProductSortBy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,36 +35,62 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class FavoritesFragment extends Fragment {
 
-    private ProductAdapter productAdapter;
+    private ProductAdapter favoriteProductAdapter;
+    private RecyclerView favoriteProductRecyclerView;
     private CategoryAdapter categoryAdapter;
+    private RecyclerView categoryRecyclerView;
+    private FavoriteViewModel favoriteViewModel;
+    private String customerId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate layout cho Fragment
-        View view = inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_favorites, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        favoriteViewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
+
+        categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        favoriteProductRecyclerView = view.findViewById(R.id.productRecyclerView);
+
+        customerId = SharedPreferencesUtils.getUserId(requireContext());
+
+        setupRecyclerView();
+        fetchAndObserveProducts();
+        fetchAndObserveCategories();
+
+        // Thiết lập listener cho category
+        categoryAdapter.setOnCategorySelectedListener(categoryId -> filterProductsByCategory(categoryId));
+    }
+
+    private void setupRecyclerView() {
         // Category
-        List<CategoryModel> coffeeTypes = new ArrayList<>();
-        coffeeTypes.add(new CategoryModel("1", "Cappuccino", "A classic Italian coffee with frothy milk."));
-        coffeeTypes.add(new CategoryModel("2", "Macchiato", "Espresso with a small amount of steamed milk."));
-        coffeeTypes.add(new CategoryModel("3", "Latte", "Espresso with steamed milk and a small amount of foam."));
-        coffeeTypes.add(new CategoryModel("4", "Espresso", "A strong black coffee made by forcing steam through ground coffee beans."));
-        coffeeTypes.add(new CategoryModel("5", "Americano", "Espresso diluted with hot water, similar to drip coffee."));
-        coffeeTypes.add(new CategoryModel("6", "Mocha", "Espresso with chocolate and steamed milk, often topped with whipped cream."));
-        coffeeTypes.add(new CategoryModel("7", "Flat White", "Similar to a latte but with a higher ratio of coffee to milk."));
-        coffeeTypes.add(new CategoryModel("8", "Decaf", "Decaffeinated coffee for those who want to avoid caffeine."));
-        coffeeTypes.add(new CategoryModel("9", "Iced Coffee", "Chilled coffee served with ice, often sweetened."));
-        coffeeTypes.add(new CategoryModel("10", "Cold Brew", "Coffee brewed with cold water over a long period, resulting in a smooth flavor."));
-
-        categoryAdapter = new CategoryAdapter(coffeeTypes);
-        RecyclerView categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
-
+        categoryAdapter = new CategoryAdapter(new ArrayList<>());
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         categoryRecyclerView.setAdapter(categoryAdapter);
+        categoryRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Boolean.FALSE.equals(favoriteViewModel.getIsLoading().getValue()) && dx > 0 && Boolean.FALSE.equals(favoriteViewModel.getIsAllDataLoaded().getValue())) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    assert lm != null;
+                    int totalItemCount = lm.getItemCount();
+                    int lastVisibleItem = lm.findLastVisibleItemPosition();
+                    if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                        favoriteViewModel.fetchMoreCategories(SortType.DESC, CategorySortBy.CREATED_AT);
+                    }
+                }
+            }
+        });
 
         // Product
         List<ProductModel> coffees = new ArrayList<>();
 
-        productAdapter = new ProductAdapter(coffees,
+        favoriteProductAdapter = new ProductAdapter(coffees,
                 // Xử lý thêm vào giỏ hàng
                 product -> Toast.makeText(requireContext(),
                         "Added " + product.getProductName() + " to cart",
@@ -67,49 +100,96 @@ public class FavoritesFragment extends Fragment {
                         "Selected: " + product.getProductName(),
                         Toast.LENGTH_SHORT).show()
         );
-        RecyclerView productRecyclerView = view.findViewById(R.id.productRecyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
-        productRecyclerView.setLayoutManager(gridLayoutManager);
-        productRecyclerView.setAdapter(productAdapter);
+        favoriteProductRecyclerView.setLayoutManager(gridLayoutManager);
+        favoriteProductRecyclerView.setAdapter(favoriteProductAdapter);
 
 
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        productRecyclerView.addItemDecoration(new GridSpacingItemDecoration(2, spacingInPixels));
-        return view;
+        favoriteProductRecyclerView.addItemDecoration(new SpaceItemDecoration().grid(2, spacingInPixels));
     }
 
-    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
-        private final int spanCount;
-        private final int spacing;
-
-        public GridSpacingItemDecoration(int spanCount, int spacing) {
-            this.spanCount = spanCount;
-            this.spacing = spacing;
+    private void fetchAndObserveProducts() {
+        if (customerId != null) {
+            favoriteViewModel.fetchAllFavoriteProducts(customerId, 1, 15, SortType.DESC, FavoriteProductSortBy.CREATED_AT);
+        } else {
+            Toast.makeText(getContext(), "Can not fetch FAVORITE PRODUCTS", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view);
-            int column = position % spanCount;
+        favoriteViewModel.getFavoriteProductsLiveData().observe(getViewLifecycleOwner(), favoriteProductModels -> {
 
-            // Khoảng cách giữa các cột (giữa item trái và phải)
-            int horizontalSpacing = spacing;
+        });
 
-            // Khoảng cách giữa các item trong cùng cột (dọc)
-            int verticalSpacing = spacing;
-
-            if (column == 0) {
-                outRect.left = 0;
-                outRect.right = horizontalSpacing / 2;
+        favoriteViewModel.getDetailFavoriteProductsLiveData().observe(getViewLifecycleOwner(), productModels -> {
+            if (productModels != null) {
+                favoriteProductAdapter.setProducts(productModels);
             } else {
-                outRect.left = horizontalSpacing / 2;
-                outRect.right = 0;
+                favoriteProductAdapter.setProducts(new ArrayList<>());
             }
+        });
 
-            // Thêm khoảng cách dọc cho tất cả item trừ item đầu tiên
-            if (position >= spanCount) {
-                outRect.top = verticalSpacing;
+        favoriteViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+
+        });
+
+        favoriteViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
             }
+        });
+
+        favoriteViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
+            if (isAllLoaded) {
+                Log.d("FavoritesFragment", "All favorite products loaded, no more fetching");
+            }
+        });
+    }
+
+    private void fetchAndObserveCategories() {
+        favoriteViewModel.fetchAllCategories(1, 10, SortType.DESC, CategorySortBy.CREATED_AT);
+        favoriteViewModel.getCategoriesLiveData().observe(getViewLifecycleOwner(), categories -> {
+            if (categories != null) {
+                categoryAdapter.setCategories(categories);
+            } else {
+                categoryAdapter.setCategories(new ArrayList<>());
+            }
+        });
+
+        favoriteViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+
+        });
+
+        favoriteViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        favoriteViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
+            if (isAllLoaded) {
+                Log.d("FavoriteFragment", "All categories loaded, no more fetching");
+            }
+        });
+    }
+
+    private void filterProductsByCategory(String categoryId) {
+        if (categoryId == null) {
+            // Reset về danh sách đầy đủ
+            favoriteProductAdapter.setProducts(favoriteViewModel.getDetailFavoriteProductsLiveData().getValue());
+        } else {
+            // Lọc danh sách sản phẩm theo categoryId
+            favoriteViewModel.getDetailFavoriteProductsLiveData().observe(getViewLifecycleOwner(), products -> {
+                if (products != null) {
+                    List<ProductModel> filteredProducts = new ArrayList<>();
+                    for (ProductModel product : products) {
+                        if (product.getProductCategoryId().equals(categoryId)) {
+                            filteredProducts.add(product);
+                        }
+                    }
+                    favoriteProductAdapter.setProducts(filteredProducts);
+                }
+            });
         }
     }
 }

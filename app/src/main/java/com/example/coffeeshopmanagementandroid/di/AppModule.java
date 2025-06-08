@@ -4,17 +4,21 @@ import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
+import com.example.coffeeshopmanagementandroid.data.api.FavoriteProductService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.FavoriteProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.FavoriteProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.FavoriteProductUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
@@ -105,5 +109,19 @@ public class AppModule {
     @Provides
     public static OrderUseCase provideOrderUseCase(OrderRepository orderRepository) {
         return new OrderUseCase(orderRepository);
+    }
+    @Provides
+    @Singleton
+    public static FavoriteProductService provideFavoriteProductService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(FavoriteProductService.class);
+    }
+    @Provides
+    @Singleton
+    public static FavoriteProductRepository provideFavoriteProductRepository(FavoriteProductService favoriteProductService) {
+        return new FavoriteProductRepositoryImpl(favoriteProductService);
+    }
+    @Provides
+    public static FavoriteProductUseCase provideFavoriteProductUseCase(FavoriteProductRepository favoriteProductRepository) {
+        return new FavoriteProductUseCase(favoriteProductRepository);
     }
 }

@@ -1,5 +1,11 @@
 package com.example.coffeeshopmanagementandroid.domain.model;
 
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import com.example.coffeeshopmanagementandroid.utils.enums.OrderStatus;
+
 import java.util.List;
 
 public class OrderModel {
@@ -13,9 +19,11 @@ public class OrderModel {
     private int orderTotalCostAfterDiscount;
     private String orderStatus;
     private String orderTrackingNumber;
+
     public OrderModel() {
         // Constructor mặc định không cần thực hiện gì
     }
+
     public OrderModel(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, int orderTotalCost, int orderDiscountCost, int orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
         this.orderId = orderId;
         this.userId = userId;
@@ -94,7 +102,18 @@ public class OrderModel {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        switch (this.orderStatus) {
+            case "PENDING":
+                return OrderStatus.PENDING.getStatus();
+            case "PROCESSING":
+                return OrderStatus.PROCESSING.getStatus();
+            case "DELIVERING":
+                return OrderStatus.DELIVERING.getStatus();
+            case "COMPLETED":
+                return OrderStatus.COMPLETED.getStatus();
+            default:
+                return OrderStatus.CANCELLED.getStatus();
+        }
     }
 
     public void setOrderStatus(String orderStatus) {

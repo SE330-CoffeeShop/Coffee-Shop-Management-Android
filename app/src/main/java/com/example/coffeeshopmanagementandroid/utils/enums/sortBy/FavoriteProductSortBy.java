@@ -1,14 +1,11 @@
-package com.example.coffeeshopmanagementandroid.utils.enums;
+package com.example.coffeeshopmanagementandroid.utils.enums.sortBy;
 
-public enum CategorySortBy {
-    NAME("categoryName"),
+public enum FavoriteProductSortBy {
     CREATED_AT("createdAt");
     private final String sortByField;
-
-    CategorySortBy(String sortByField) {
+    FavoriteProductSortBy(String sortByField) {
         this.sortByField = sortByField;
     }
-
     public String getSortByField() {
         return sortByField;
     }

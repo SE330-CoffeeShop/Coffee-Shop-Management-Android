@@ -12,12 +12,11 @@ import com.example.coffeeshopmanagementandroid.data.dto.product.response.Product
 import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
-import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 

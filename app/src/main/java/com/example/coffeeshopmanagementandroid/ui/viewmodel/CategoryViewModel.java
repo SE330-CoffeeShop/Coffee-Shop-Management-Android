@@ -9,16 +9,10 @@ import androidx.lifecycle.ViewModel;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.category.request.GetAllCategoriesRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.category.response.CategoryResponse;
-import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
-import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.CategoryMapper;
-import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.CategoryModel;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
-import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
-import com.example.coffeeshopmanagementandroid.utils.enums.CategorySortBy;
-import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;

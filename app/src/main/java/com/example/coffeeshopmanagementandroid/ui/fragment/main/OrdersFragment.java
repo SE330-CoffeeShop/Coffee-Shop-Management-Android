@@ -18,21 +18,17 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderStatusModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.StatusAdapter;
-import com.example.coffeeshopmanagementandroid.ui.viewmodel.LogoutViewModel;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.OrderViewModel;
 import com.example.coffeeshopmanagementandroid.utils.SharedPreferencesUtils;
-import com.example.coffeeshopmanagementandroid.utils.enums.OrderSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.OrderStatus;
-import com.example.coffeeshopmanagementandroid.utils.enums.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -150,6 +146,9 @@ public class OrdersFragment extends Fragment {
                     List<OrderModel> filteredOrders = new ArrayList<>();
                     for (OrderModel order : orders) {
                         if (order.getOrderStatus().equals(statusName)) {
+                            Log.d("OrderStatus", order.getOrderStatus());
+                            Log.d("statusName", statusName);
+                            Log.d("Answer", (order.getOrderStatus() != null && order.getOrderStatus().equals(statusName)) ? "true" : "false");
                             filteredOrders.add(order);
                         }
                     }

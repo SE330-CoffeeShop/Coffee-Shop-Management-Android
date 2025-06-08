@@ -23,9 +23,23 @@ public class ProductMapper {
             model.setProductIsPublished(response.getProductIsPublished());
             model.setProductIsDeleted(response.getProductIsDeleted());
             model.setProductRatingsAverage(response.getProductRatingsAverage());
-            model.setFavorite(response.isFavorite());
             productModels.add(model);
         }
         return productModels;
+    }
+    public static ProductModel mapProductResponseToProductDomain(ProductResponse productResponse) {
+        ProductModel model = new ProductModel();
+        // Chuyển các trường từ ProductResponse sang ProductModel
+        model.setProductId(productResponse.getProductId());
+        model.setProductName(productResponse.getProductName());
+        model.setProductDescription(productResponse.getProductDescription());
+        model.setProductPrice(productResponse.getProductPrice());
+        model.setProductThumb(productResponse.getProductThumb());
+        model.setProductCategoryId(productResponse.getProductCategoryId());
+        model.setProductSlug(productResponse.getProductSlug());
+        model.setProductIsPublished(productResponse.getProductIsPublished());
+        model.setProductIsDeleted(productResponse.getProductIsDeleted());
+        model.setProductRatingsAverage(productResponse.getProductRatingsAverage());
+        return model;
     }
 }

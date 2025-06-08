@@ -11,8 +11,11 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
     private int spaceBottom = 0;
     private int spaceStart = 0;
     private int spaceEnd = 0;
+    private boolean isGrid = false;
+    private int spanCount = 0; // for Grid
 
-    public SpaceItemDecoration() {}
+    public SpaceItemDecoration() {
+    }
 
     // Constructor toàn bộ khoảng cách
     public SpaceItemDecoration(int top, int start, int bottom, int end) {
@@ -54,6 +57,16 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
+    public SpaceItemDecoration grid(int spanCount, int spacing) {
+        this.isGrid = true;
+        this.spanCount = spanCount;
+        this.spaceTop = spacing;
+        this.spaceBottom = spacing;
+        this.spaceStart = spacing;
+        this.spaceEnd = spacing;
+        return this;
+    }
+
     @Override
     public void getItemOffsets(@NonNull Rect outRect,
                                @NonNull View view,
@@ -64,21 +77,36 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         int position = parent.getChildAdapterPosition(view);
         int itemCount = state.getItemCount();
 
-        // Ví dụ: không đặt khoảng cách top cho item đầu tiên (có thể điều chỉnh theo nhu cầu)
-        if (position == 0) {
-            outRect.top = 0;
-        } else {
-            outRect.top = spaceTop;
-        }
+        if (isGrid) {
+            // Grid Layout
+            int column = position % spanCount;
 
-        // Ví dụ: không đặt khoảng cách bottom cho item cuối cùng (tùy chọn)
-        if (position == itemCount - 1) {
-            outRect.bottom = 0;
-        } else {
+            // Set horizontal space for grid
+            outRect.left = column == 0 ? 0 : spaceStart / 2;
+            outRect.right = (column == spanCount - 1) ? 0 : spaceStart / 2;
+
+            // Set vertical space for grid
+            if (position >= spanCount) {
+                outRect.top = spaceTop;
+            }
+
             outRect.bottom = spaceBottom;
-        }
+        } else {
+            // Linear Layout
+            if (position == 0) {
+                outRect.top = 0;
+            } else {
+                outRect.top = spaceTop;
+            }
 
-        outRect.left = spaceStart;
-        outRect.right = spaceEnd;
+            if (position == itemCount - 1) {
+                outRect.bottom = 0;
+            } else {
+                outRect.bottom = spaceBottom;
+            }
+
+            outRect.left = spaceStart;
+            outRect.right = spaceEnd;
+        }
     }
 }

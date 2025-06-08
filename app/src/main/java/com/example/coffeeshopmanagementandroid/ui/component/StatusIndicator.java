@@ -33,13 +33,25 @@ public class StatusIndicator extends LinearLayout {
     public void setStatus(String status) {
         this.tvStatus.setText(status);
         switch (status.toLowerCase()) {
-            case "đã giao":
+            case "hoàn thành":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order_successful);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.primary_400));
                 break;
-            case "đã hủy":
+            case "đã huỷ":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order_cancel);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.error_500));
+                break;
+            case "đang chuẩn bị":
+                this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
+                this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
+                break;
+            case "chờ tiếp nhận":
+                this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
+                this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
+                break;
+            case "đang giao hàng":
+                this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
+                this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
                 break;
             default:
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);

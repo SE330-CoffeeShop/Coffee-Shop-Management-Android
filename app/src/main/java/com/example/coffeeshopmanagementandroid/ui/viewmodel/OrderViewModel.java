@@ -9,12 +9,10 @@ import androidx.lifecycle.ViewModel;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.GetAllOrdersCustomerRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
-import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.OrderMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
-import com.example.coffeeshopmanagementandroid.utils.enums.OrderSortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
 import java.util.ArrayList;

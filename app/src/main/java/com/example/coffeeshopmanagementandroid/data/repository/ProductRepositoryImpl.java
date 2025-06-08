@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
+import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 
@@ -42,5 +44,20 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public List<ProductModel> getAllRecentProducts() {
         return null;
+    }
+    @Override
+    public ProductModel getProductById(String id) throws Exception {
+        Log.d("Product RepoIml - getDetailProduct", "Called");
+
+        Call<BaseResponse<ProductResponse>> call = productService.getProductById(id);
+        Response<BaseResponse<ProductResponse>> response = call.execute();
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("Response", String.valueOf(response.body()));
+            return ProductMapper.mapProductResponseToProductDomain(response.body().getData());
+        } else {
+            String errorMessage = "Get detail product failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("GET DETAIL PRODUCT", errorMessage);
+            throw new Exception(errorMessage);
+        }
     }
 }
