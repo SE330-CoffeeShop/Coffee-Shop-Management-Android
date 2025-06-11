@@ -16,6 +16,11 @@
         <action
             android:id="@+id/action_homeFragment_to_noticationFragment"
             app:destination="@id/notificationFragment"/>
+        <action
+            android:id="@+id/action_homeFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -66,6 +71,17 @@
             app:destination="@id/notificationFragment"
             app:popUpTo="@id/otherFragment"
             app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailProductFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.product.DetailProductFragment"
+        android:label="fragment_detail_product"
+        tools:layout="@layout/fragment_detail_product">
+        <argument
+            android:name="product"
+            app:argType="com.example.coffeeshopmanagementandroid.domain.model.ProductModel"
+            app:nullable="true" />
     </fragment>
 
     <fragment

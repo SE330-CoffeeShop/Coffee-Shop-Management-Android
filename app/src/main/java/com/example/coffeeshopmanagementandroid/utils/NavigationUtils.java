@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 
 public class NavigationUtils {
 
@@ -44,7 +45,11 @@ public class NavigationUtils {
             if (navController.getCurrentDestination().getId() == currentDestinationId) {
                 try {
                     Log.d(logTag, "Attempting to navigate to " + destinationName);
-                    navController.navigate(actionId);
+                    NavOptions navOptions = new NavOptions.Builder()
+                            .setLaunchSingleTop(true)
+                            .setPopUpTo(currentDestinationId, false) // Giữ current destination trong back stack
+                            .build();
+                    navController.navigate(actionId, null, navOptions);
                     Log.d(logTag, "Navigation to " + destinationName + " successful");
                 } catch (Exception e) {
                     Log.e(logTag, "Navigation failed: " + e.getMessage());
@@ -58,16 +63,6 @@ public class NavigationUtils {
         }
     }
 
-    /**
-     * Thực hiện điều hướng (navigate) an toàn với log, kiểm tra current destination, hỗ trợ truyền Bundle
-     *
-     * @param navController NavController để điều hướng
-     * @param currentDestinationId id destination hiện tại dự kiến để thực hiện navigate
-     * @param actionId id action trong nav graph để navigate
-     * @param destinationName Tên destination dùng để log
-     * @param logTag Tag dùng để log
-     * @param args Bundle chứa dữ liệu để truyền, có thể null
-     */
     public static void safeNavigate(
             NavController navController,
             int currentDestinationId,
@@ -80,10 +75,14 @@ public class NavigationUtils {
             if (navController.getCurrentDestination().getId() == currentDestinationId) {
                 try {
                     Log.d(logTag, "Attempting to navigate to " + destinationName);
+                    NavOptions navOptions = new NavOptions.Builder()
+                            .setLaunchSingleTop(true)
+                            .setPopUpTo(currentDestinationId, false)
+                            .build();
                     if (args != null) {
-                        navController.navigate(actionId, args);
+                        navController.navigate(actionId, args, navOptions);
                     } else {
-                        navController.navigate(actionId);
+                        navController.navigate(actionId, null, navOptions);
                     }
                     Log.d(logTag, "Navigation to " + destinationName + " successful");
                 } catch (Exception e) {
@@ -98,4 +97,3 @@ public class NavigationUtils {
         }
     }
 }
-

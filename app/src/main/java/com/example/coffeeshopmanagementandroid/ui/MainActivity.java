@@ -1,8 +1,11 @@
 package com.example.coffeeshopmanagementandroid.ui;
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -109,6 +112,25 @@ public class MainActivity extends AppCompatActivity {
         }
         if(bottomNavigationView != null) {
             bottomNavigationView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_main);
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            if (navController != null && navController.getCurrentDestination() != null) {
+                if (navController.getCurrentDestination().getId() != R.id.homeFragment) {
+                    navController.popBackStack(); // Quay lại fragment trước đó
+                } else {
+                    super.onBackPressed(); // Thoát ứng dụng nếu đang ở homeFragment
+                }
+            } else {
+                super.onBackPressed(); // Gọi mặc định nếu không có NavController
+            }
+        } else {
+            super.onBackPressed(); // Gọi mặc định nếu không tìm thấy NavHostFragment
         }
     }
 }

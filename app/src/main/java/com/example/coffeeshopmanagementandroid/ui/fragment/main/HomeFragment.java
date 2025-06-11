@@ -1,6 +1,5 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
-import com.example.coffeeshopmanagementandroid.ui.activity.DetailProductActivity;
+import com.example.coffeeshopmanagementandroid.ui.fragment.product.DetailProductFragment;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
@@ -78,7 +77,6 @@ public class HomeFragment extends Fragment {
         fetchAndObserveCategories();
         fetchAndObserveRecentlyProducts();
 
-        // Thiết lập listener cho category
         categoryAdapter.setOnCategorySelectedListener(categoryId -> filterProductsByCategory(categoryId));
     }
 
@@ -86,19 +84,11 @@ public class HomeFragment extends Fragment {
         List<ProductModel> coffees = new ArrayList<>();
 
         productAdapter = new ProductAdapter(coffees,
-                product -> Toast.makeText(requireContext(),
-                        "Added " + product.getProductName() + " to cart",
-                        Toast.LENGTH_SHORT).show(),
+                product -> Toast.makeText(requireContext(), "Added " + product.getProductName() + " to cart", Toast.LENGTH_SHORT).show(),
                 product -> {
-                    Intent intent = new Intent(getActivity(), DetailProductActivity.class);
-                    intent.putExtra("product_id", product.getProductId());
-                    intent.putExtra("product_name", product.getProductName());
-                    intent.putExtra("product_description", product.getProductDescription());
-                    intent.putExtra("product_price", product.getProductPrice().doubleValue());
-                    intent.putExtra("product_image_url", product.getProductThumb());
-                    intent.putExtra("product_rating", product.getProductRatingsAverage().floatValue());
-                    intent.putExtra("product_category", product.getProductCategoryId());
-                    startActivity(intent);
+                    Bundle args = new Bundle();
+                    args.putParcelable("product", product);
+                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_detailProductFragment, "DetailProductFragment", "HomeFragment", args);
                 }
         );
         productRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -140,7 +130,7 @@ public class HomeFragment extends Fragment {
 
         recentlyProductAdapter = new ProductAdapter(new ArrayList<>(),
                 product -> Toast.makeText(requireContext(),
-                        "Added recently" + product.getProductName() + " to cart",
+                        "Added recently " + product.getProductName() + " to cart",
                         Toast.LENGTH_SHORT).show(),
                 product -> Toast.makeText(requireContext(),
                         "Selected recently: " + product.getProductName(),
@@ -194,10 +184,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
-        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-
-        });
+        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {});
 
         productViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
@@ -223,9 +210,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-
-        });
+        productViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {});
 
         productViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
@@ -250,9 +235,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        categoryViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-
-        });
+        categoryViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {});
 
         categoryViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
@@ -269,10 +252,8 @@ public class HomeFragment extends Fragment {
 
     private void filterProductsByCategory(String categoryId) {
         if (categoryId == null) {
-            // Reset về danh sách đầy đủ
             productAdapter.setProducts(productViewModel.getProductsLiveData().getValue());
         } else {
-            // Lọc danh sách sản phẩm theo categoryId
             productViewModel.getProductsLiveData().observe(getViewLifecycleOwner(), products -> {
                 if (products != null) {
                     List<ProductModel> filteredProducts = new ArrayList<>();

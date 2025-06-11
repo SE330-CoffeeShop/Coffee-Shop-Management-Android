@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.coffeeshopmanagementandroid"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -56,6 +56,8 @@ dependencies {
     implementation( "com.google.dagger:hilt-android:2.42")
     annotationProcessor("com.google.dagger:hilt-compiler:2.44")
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

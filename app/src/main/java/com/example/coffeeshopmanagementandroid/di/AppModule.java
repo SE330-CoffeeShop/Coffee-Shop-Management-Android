@@ -7,22 +7,26 @@ import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
 import com.example.coffeeshopmanagementandroid.data.api.FavoriteProductService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
+import com.example.coffeeshopmanagementandroid.data.api.UserService;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.FavoriteProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.UserRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.FavoriteProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.FavoriteProductUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.UserUseCase;
 import com.example.coffeeshopmanagementandroid.utils.RetrofitInstance;
 
 import javax.inject.Singleton;
@@ -123,5 +127,19 @@ public class AppModule {
     @Provides
     public static FavoriteProductUseCase provideFavoriteProductUseCase(FavoriteProductRepository favoriteProductRepository) {
         return new FavoriteProductUseCase(favoriteProductRepository);
+    }
+    @Provides
+    @Singleton
+    public static UserService provideUserService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(UserService.class);
+    }
+    @Provides
+    @Singleton
+    public static UserRepository provideUserRepository(UserService userService) {
+        return new UserRepositoryImpl(userService);
+    }
+    @Provides
+    public static UserUseCase provideUserUseCase(UserRepository userRepository) {
+        return new UserUseCase(userRepository);
     }
 }

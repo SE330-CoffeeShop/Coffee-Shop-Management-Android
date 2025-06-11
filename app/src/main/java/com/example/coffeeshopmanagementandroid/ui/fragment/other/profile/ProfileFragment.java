@@ -1,58 +1,53 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.other.profile;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.UserViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
+import com.example.coffeeshopmanagementandroid.utils.enums.EditMode;
+import com.example.coffeeshopmanagementandroid.utils.enums.Gender;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ProfileFragment extends BaseOtherFragment {
-    // Ảnh avatar
+    private UserViewModel userViewModel;
+    private NavController navController;
+    private EditMode currentMode = EditMode.DONE;
+
+    private LinearLayout addPictureLayout;
+    private TextView textAddPicture;
     private ImageButton customImageButton;
-
-    // Họ tên
-    private TextInputLayout lastNameInputLayout;
-    private TextInputEditText editTextLastName;
-    private TextInputLayout firstNameInputLayout;
-    private TextInputEditText editTextFirstName;
-
-    // Giới tính
-    private TextInputLayout genderInputLayout;
+    private TextInputEditText editTextLastName, editTextFirstName, editTextDateOfBirth, editTextPhoneNumber, editTextEmail;
     private AutoCompleteTextView autoCompleteGender;
-
-    // Ngày sinh
     private TextInputLayout dateOfBirthInputLayout;
-    private TextInputEditText editTextDateOfBirth;
+    private Button btnUpdateInformation;
     private Calendar calendar;
 
-    // Số điện thoại
-    private TextInputLayout phoneInputLayout;
-    private TextInputEditText editTextPhoneNumber;
-    private AutoCompleteTextView countryCodePicker;
-    private ImageView flagImageView;
-
-    // Email
-    private TextInputLayout emailInputLayout;
-    private TextInputEditText emailNumberEditText;
-
-    // Button sửa
-    private Button btnUpdateInformation;
+    private String initialLastName, initialFirstName, initialGender, initialDateOfBirth, initialPhone, initialEmail;
 
     @Override
     protected int getLayoutResId() {
@@ -61,147 +56,71 @@ public class ProfileFragment extends BaseOtherFragment {
 
     @Override
     protected void initViews(@NonNull View view) {
-        // Ảnh avatar
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        navController = NavHostFragment.findNavController(this);
+        NavigationUtils.checkAndFixNavState(navController, R.id.profileFragment, "ProfileFragment");
+
+        addPictureLayout = view.findViewById(R.id.addPictureLayout);
+        textAddPicture = view.findViewById(R.id.textAddPicture);
         customImageButton = view.findViewById(R.id.customImageButton);
-
-        // Họ tên
-        lastNameInputLayout = view.findViewById(R.id.lastNameInputLayout);
         editTextLastName = view.findViewById(R.id.editTextLastName);
-        firstNameInputLayout = view.findViewById(R.id.firstNameInputLayout);
         editTextFirstName = view.findViewById(R.id.editTextFirstName);
-
-        // Giới tính
-        genderInputLayout = view.findViewById(R.id.genderInputLayout);
         autoCompleteGender = view.findViewById(R.id.autoCompleteGender);
-
-        // Ngày sinh
         dateOfBirthInputLayout = view.findViewById(R.id.dateOfBirthInputLayout);
         editTextDateOfBirth = view.findViewById(R.id.editTextDateOfBirth);
-
-        // Số điện thoại
-        phoneInputLayout = view.findViewById(R.id.phoneInputLayout);
         editTextPhoneNumber = view.findViewById(R.id.phoneNumberEditText);
-        countryCodePicker = view.findViewById(R.id.countryCodePicker);
-        flagImageView = view.findViewById(R.id.flagImageView);
-
-        // Email
-        emailInputLayout = view.findViewById(R.id.emailInputLayout);
-        emailNumberEditText = view.findViewById(R.id.emailNumberEditText);
-
-        // Button sửa
+        editTextEmail = view.findViewById(R.id.emailEditText);
         btnUpdateInformation = view.findViewById(R.id.btnUpdateInformation);
 
-        // Khởi tạo calendar
         calendar = Calendar.getInstance();
 
-        // Kiểm tra null để tránh crash
-        if (customImageButton == null || lastNameInputLayout == null || editTextLastName == null ||
-                firstNameInputLayout == null || editTextFirstName == null || genderInputLayout == null ||
-                autoCompleteGender == null || dateOfBirthInputLayout == null || editTextDateOfBirth == null ||
-                phoneInputLayout == null || editTextPhoneNumber == null || countryCodePicker == null ||
-                flagImageView == null || emailInputLayout == null || emailNumberEditText == null ||
-                btnUpdateInformation == null) {
-            return;
-        }
-
-        // Xử lý sự kiện chọn ngày sinh
-        editTextDateOfBirth.setOnClickListener(v -> showDatePickerDialog());
-        dateOfBirthInputLayout.setEndIconOnClickListener(v -> showDatePickerDialog());
-
-        // Thiết lập dropdown giới tính
         setupGenderPicker();
 
-        // Thiết lập dropdown mã quốc gia
-        setupCountryCodePicker();
+        btnUpdateInformation.setOnClickListener(v -> setUpdateButtonClickListener());
+        customImageButton.setOnClickListener(v -> setUpBtnUpdateAvatar());
 
-        // Xử lý sự kiện cho button sửa
-        btnUpdateInformation.setOnClickListener(v -> {
-            setUpdateButtonClickListener();
-        });
-
-        // Xử lý sự kiện cho ảnh avatar
-        customImageButton.setOnClickListener(v -> {
-            setUpBtnUpdateInformation();
-        });
-    }
-
-    private void setupCountryCodePicker() {
-        String[] countryCodes = {"+84", "+1", "+44", "+91", "+61"};
-        String[] countryNames = {"Vietnam", "USA", "UK", "India", "Australia"};
-        int[] flags = {R.drawable.flag_vietnam_icon, R.drawable.flag_singapore_icon, R.drawable.flag_china_icon,
-                R.drawable.flag_vietnam_icon, R.drawable.flag_singapore_icon};
-
-        String[] displayItems = new String[countryCodes.length];
-        for (int i = 0; i < countryCodes.length; i++) {
-            displayItems[i] = countryCodes[i] + " - " + countryNames[i]; // Ví dụ: "+84 - Vietnam"
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                R.layout.country_dropdown_item,
-                R.id.countryText,
-                displayItems
-        );
-        countryCodePicker.setAdapter(adapter);
-        countryCodePicker.setThreshold(5); // Hiển thị dropdown ngay khi nhấn
-
-        // Xử lý sự kiện nhấn để hiển thị dropdown
-        countryCodePicker.setOnClickListener(v -> {
-            countryCodePicker.showDropDown();
-            countryCodePicker.requestFocus();
-        });
-
-        // Xử lý sự kiện focus để hiển thị dropdown
-        countryCodePicker.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                countryCodePicker.showDropDown();
-            }
-        });
-
-        // Xử lý sự kiện chọn mã quốc gia
-        countryCodePicker.setOnItemClickListener((parent, itemView, position, id) -> {
-            String selectedCode = countryCodes[position];
-            countryCodePicker.setText(selectedCode);
-            flagImageView.setImageResource(flags[position]);
-            phoneInputLayout.setPrefixText(selectedCode + " ");
-        });
-
-        // Thiết lập giá trị mặc định
-        countryCodePicker.setText(countryCodes[0]);
-        flagImageView.setImageResource(flags[0]);
-        phoneInputLayout.setPrefixText(countryCodes[0] + " ");
+        fetchAndObserverUserLive();
+        updateUIForMode(EditMode.DONE);
     }
 
     private void setupGenderPicker() {
-        String[] genders = {"Nam", "Nữ", "Khác"};
+        Gender[] genderEnums = Gender.values();
+        String[] genders = new String[genderEnums.length];
+
+        for (int i = 0; i < genderEnums.length; i++) {
+            genders[i] = genderEnums[i].getGender();
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
                 genders
         );
+
         autoCompleteGender.setAdapter(adapter);
-        autoCompleteGender.setThreshold(0);
-
-        // Hiển thị dropdown khi nhấn
-        autoCompleteGender.setOnClickListener(v -> {
-            autoCompleteGender.showDropDown();
-            autoCompleteGender.requestFocus();
-        });
-
-        autoCompleteGender.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                autoCompleteGender.showDropDown();
-            }
-        });
+        autoCompleteGender.setThreshold(0); // Hiển thị dropdown ngay khi click
+        autoCompleteGender.setOnClickListener(v -> autoCompleteGender.showDropDown());
+        autoCompleteGender.setKeyListener(null);
     }
 
     private void showDatePickerDialog() {
-        // Lấy ngày hiện tại
+        String currentDob = editTextDateOfBirth.getText().toString().trim();
+        if (!currentDob.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                calendar.setTime(Objects.requireNonNull(sdf.parse(currentDob)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                calendar = Calendar.getInstance();
+            }
+        } else {
+            calendar = Calendar.getInstance();
+        }
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Tạo DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 requireContext(),
                 (view1, selectedYear, selectedMonth, selectedDay) -> {
@@ -214,22 +133,154 @@ public class ProfileFragment extends BaseOtherFragment {
                 day
         );
 
-        // Giới hạn không chọn ngày trong tương lai
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
 
-    void setUpdateButtonClickListener() {
-        Toast.makeText(requireContext(), "Button Update Information clicked", Toast.LENGTH_SHORT).show();
+    private void setUpBtnUpdateAvatar() {
+        // Bỏ qua logic liên quan đến ảnh theo yêu cầu
     }
 
-    void setUpBtnUpdateInformation() {
-        Toast.makeText(requireContext(), "Button Update Image clicked", Toast.LENGTH_SHORT).show();
+    private void setUpdateButtonClickListener() {
+        if (currentMode == EditMode.DONE) {
+            currentMode = EditMode.EDIT;
+            updateUIForMode(currentMode);
+        } else {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Xác nhận")
+                    .setMessage("Bạn có chắc chắn muốn lưu các thay đổi không?")
+                    .setPositiveButton("Xác nhận", (dialog, which) -> updateUserInformation())
+                    .setNegativeButton("Huỷ", (dialog, which) -> {
+                        updateUIForMode(EditMode.DONE);
+                        restoreInitialValues();
+                    })
+                    .show();
+        }
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Có thể thêm logic khởi tạo khác nếu cần
+    private void updateUIForMode(EditMode mode) {
+        boolean editable = (mode == EditMode.EDIT);
+        btnUpdateInformation.setText((mode == EditMode.DONE) ? EditMode.EDIT.getMode() : EditMode.DONE.getMode());
+
+        editTextFirstName.setEnabled(editable);
+        editTextLastName.setEnabled(editable);
+        autoCompleteGender.setEnabled(editable);
+        editTextDateOfBirth.setEnabled(editable);
+        editTextPhoneNumber.setEnabled(editable);
+        editTextEmail.setEnabled(editable);
+        dateOfBirthInputLayout.setEndIconVisible(editable);
+
+        if (editable) {
+            editTextDateOfBirth.setKeyListener(null); // Ngăn nhập tay
+            editTextDateOfBirth.setOnClickListener(v -> showDatePickerDialog());
+            dateOfBirthInputLayout.setEndIconOnClickListener(v -> showDatePickerDialog());
+        } else {
+            editTextDateOfBirth.setOnClickListener(null);
+            dateOfBirthInputLayout.setEndIconOnClickListener(null);
+        }
+
+        customImageButton.setEnabled(editable);
+    }
+
+    private void fetchAndObserverUserLive() {
+        userViewModel.fetchInformationCustomer();
+        userViewModel.getUserLiveData().observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                editTextFirstName.setText(user.getUserName());
+                editTextLastName.setText(user.getUserLastName());
+                autoCompleteGender.setText(user.getUserGender() != null ? user.getUserGender() : "");
+                if (user.getUserBirthday() != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    editTextDateOfBirth.setText(sdf.format(user.getUserBirthday()));
+                }
+                editTextPhoneNumber.setText(user.getUserPhone());
+                editTextEmail.setText(user.getUserEmail());
+
+                loadUserAvatar(user.getUserAvatar());
+
+                initialFirstName = user.getUserName();
+                initialLastName = user.getUserLastName();
+                initialGender = user.getUserGender();
+                initialPhone = user.getUserPhone();
+                initialEmail = user.getUserEmail();
+                if (user.getUserBirthday() != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    initialDateOfBirth = sdf.format(user.getUserBirthday());
+                }
+            } else {
+                Toast.makeText(requireContext(), "No user data available", Toast.LENGTH_SHORT).show();
+            }
+        });
+        userViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {});
+        userViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void restoreInitialValues() {
+        editTextFirstName.setText(initialFirstName);
+        editTextLastName.setText(initialLastName);
+        autoCompleteGender.setText(initialGender);
+        editTextPhoneNumber.setText(initialPhone);
+        editTextEmail.setText(initialEmail);
+        editTextDateOfBirth.setText(initialDateOfBirth);
+    }
+
+    private void updateUserInformation() {
+        String firstName = editTextFirstName.getText().toString().trim();
+        String lastName = editTextLastName.getText().toString().trim();
+        String genderText = autoCompleteGender.getText().toString().trim();
+        String phone = editTextPhoneNumber.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
+        String dob = editTextDateOfBirth.getText().toString().trim();
+
+        // Kiểm tra email hợp lệ
+        if (!isValidEmail(email)) {
+            Toast.makeText(requireContext(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Gender gender = null;
+        for (Gender g : Gender.values()) {
+            if (g.getGender().equals(genderText)) {
+                gender = g;
+                break;
+            }
+        }
+
+        // userViewModel.updateUserInfo(firstName, lastName, gender != null ? gender.name() : null, phone, email, dob);
+        currentMode = EditMode.DONE;
+        updateUIForMode(currentMode);
+    }
+
+    private void loadUserAvatar(String avatarUrl) {
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Glide.with(requireContext())
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .into(customImageButton);
+
+            textAddPicture.setVisibility(View.GONE);
+            addPictureLayout.setGravity(Gravity.CENTER);
+
+            customImageButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            ));
+        } else {
+            customImageButton.setImageResource(R.drawable.plus_icon);
+            textAddPicture.setVisibility(View.VISIBLE);
+            customImageButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    getResources().getDimensionPixelSize(R.dimen.image_button_width),
+                    getResources().getDimensionPixelSize(R.dimen.image_button_height)
+            ));
+        }
+    }
+
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

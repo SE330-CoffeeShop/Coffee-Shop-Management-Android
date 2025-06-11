@@ -1,5 +1,6 @@
-package com.example.coffeeshopmanagementandroid.ui.activity;
+package com.example.coffeeshopmanagementandroid.ui.fragment.product;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -12,31 +13,34 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.VariantProductAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
-public class DetailProductActivity extends AppCompatActivity {
+import java.util.List;
+
+public class DetailProductFragment extends Fragment {
 
     private TextView descriptionTextView;
     private ImageButton backButton;
@@ -44,77 +48,99 @@ public class DetailProductActivity extends AppCompatActivity {
     private TextView productNameTextView;
     private TextView categoryTextView;
     private ImageView productImage;
+    private NavController navController;
 
     private boolean isExpanded = false;
     private static final String READ_MORE = "Read more";
     private static final String COLLAPSE = "Collapse";
     private static final String ELLIPSIS = "... ";
     private static final int MAX_LINES = 3;
-    private final int expandCollapseColor = Color.parseColor("#4CAF50"); // Green color
-    private final String fullDescription = "A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85 ml of fresh milk the fo A cappuccino cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85 ml of fresh milk the fo A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85 ml of fresh milk the fo";
+    private final int expandCollapseColor = Color.parseColor("#4CAF50");
 
     private VariantProductAdapter variantProductAdapter;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_product);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_detail_product, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         initializeViews();
-        setupExpandableText(fullDescription);
+        navController = NavHostFragment.findNavController(this);
 
-        List<String> variantsProduct = new ArrayList<>();
-        variantsProduct.add("M");
-        variantsProduct.add("S");
-        variantsProduct.add("L");
-        variantsProduct.add("XL");
+        // Lấy dữ liệu sản phẩm từ arguments
+        Bundle args = getArguments();
+        ProductModel product = args != null ? args.getParcelable("product") : null;
 
-        variantProductAdapter = new VariantProductAdapter(variantsProduct);
-        RecyclerView variantProductRecyclerView = findViewById(R.id.variantProductRecyclerView);
-
-        // Cấu hình FlexboxLayoutManager
-        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(this);
-        flexboxLayoutManager.setFlexDirection(FlexDirection.ROW);
-        flexboxLayoutManager.setJustifyContent(JustifyContent.SPACE_BETWEEN);
-        flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
-        variantProductRecyclerView.setLayoutManager(flexboxLayoutManager);
-
-        // Thêm khoảng cách giữa các hàng
-        int verticalSpacing = getResources().getDimensionPixelSize(R.dimen.vertical_spacing);
-        variantProductRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(verticalSpacing));
-
-        variantProductRecyclerView.setAdapter(variantProductAdapter);
+        if (product != null) {
+            productNameTextView.setText(product.getProductName());
+            descriptionTextView.setText(product.getProductDescription());
+            categoryTextView.setText(product.getProductCategoryId());
+            loadProductImage(product.getProductThumb());
+            setupExpandableText(product.getProductDescription());
+//            setupVariants(product.getVariants() != null ? product.getVariants() : new ArrayList<>());
+        } else {
+            Toast.makeText(requireContext(), "Product data not found", Toast.LENGTH_SHORT).show();
+            // Không dùng finish(), thay bằng navigateUp hoặc popBackStack
+            if (navController != null) {
+                navController.popBackStack();
+            }
+        }
     }
 
     private void initializeViews() {
-
-        descriptionTextView = findViewById(R.id.descriptionTextView);
-        descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        descriptionTextView.setHighlightColor(Color.TRANSPARENT);
-
-        backButton = findViewById(R.id.backButtonDetailProduct);
-        backButton.setOnClickListener(v -> {
-            finish();
-        });
-
-        favoriteButton = findViewById(R.id.favoriteButtonDetailProduct);
-        favoriteButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Favorite button clicked", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    // Lớp ItemDecoration để thêm khoảng cách dọc
-    public static class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
-        private final int verticalSpaceHeight;
-
-        public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
-            this.verticalSpaceHeight = verticalSpaceHeight;
+        descriptionTextView = requireView().findViewById(R.id.descriptionTextView);
+        if (descriptionTextView != null) {
+            descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            descriptionTextView.setHighlightColor(Color.TRANSPARENT);
         }
 
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
-                outRect.bottom = verticalSpaceHeight;
-            }
+        backButton = requireView().findViewById(R.id.backButtonDetailProduct);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> {
+                if (navController != null) {
+                    navController.popBackStack();
+                }
+            });
+        }
+
+        favoriteButton = requireView().findViewById(R.id.favoriteButtonDetailProduct);
+        if (favoriteButton != null) {
+            favoriteButton.setOnClickListener(v -> Toast.makeText(requireContext(), "Favorite button clicked", Toast.LENGTH_SHORT).show());
+        }
+
+        productNameTextView = requireView().findViewById(R.id.productNameTextView);
+        categoryTextView = requireView().findViewById(R.id.categoryTextView);
+        productImage = requireView().findViewById(R.id.productImage);
+    }
+
+    private void loadProductImage(String imageUrl) {
+        if (productImage != null && imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(requireContext())
+                    .load(imageUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .into(productImage);
+        } else {
+            productImage.setImageResource(R.drawable.placeholder_image);
+        }
+    }
+
+    private void setupVariants(List<String> variants) {
+        variantProductAdapter = new VariantProductAdapter(variants);
+        RecyclerView variantProductRecyclerView = requireView().findViewById(R.id.variantProductRecyclerView);
+        if (variantProductRecyclerView != null) {
+            FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(requireContext());
+            flexboxLayoutManager.setFlexDirection(FlexDirection.ROW);
+            flexboxLayoutManager.setJustifyContent(JustifyContent.SPACE_BETWEEN);
+            flexboxLayoutManager.setFlexWrap(FlexWrap.WRAP);
+            variantProductRecyclerView.setLayoutManager(flexboxLayoutManager);
+            int verticalSpacing = getResources().getDimensionPixelSize(R.dimen.vertical_spacing);
+            variantProductRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(verticalSpacing));
+            variantProductRecyclerView.setAdapter(variantProductAdapter);
         }
     }
 
@@ -126,13 +152,11 @@ public class DetailProductActivity extends AppCompatActivity {
         descriptionTextView.setMaxLines(isExpanded ? Integer.MAX_VALUE : MAX_LINES);
 
         if (isExpanded) {
-            // Hiển thị toàn bộ text với tùy chọn thu gọn
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
             builder.append("\n");
 
             SpannableString collapseSpannable = new SpannableString(COLLAPSE);
 
-            // Tạo clickable span cho "Collapse"
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
@@ -148,27 +172,20 @@ public class DetailProductActivity extends AppCompatActivity {
                 }
             };
 
-            // Thêm style bold cho text "Collapse"
             StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
 
-            // Áp dụng cả 2 span cho text
             collapseSpannable.setSpan(clickableSpan, 0, COLLAPSE.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             collapseSpannable.setSpan(boldSpan, 0, COLLAPSE.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             builder.append(collapseSpannable);
             descriptionTextView.setText(builder);
 
-            // Log để debug
             Log.d("ExpandableText", "Text expanded, showing collapse option");
         } else {
-            // Ban đầu đặt text đầy đủ
             descriptionTextView.setText(text);
 
-            // Post để đo lường text sau khi layout hoàn thành
             descriptionTextView.post(() -> {
-                // Kiểm tra xem text có cần mở rộng không
                 if (descriptionTextView.getLineCount() > MAX_LINES) {
-                    // Log để debug
                     Log.d("ExpandableText", "Text needs expanding, line count: " + descriptionTextView.getLineCount());
 
                     Layout layout = descriptionTextView.getLayout();
@@ -180,7 +197,6 @@ public class DetailProductActivity extends AppCompatActivity {
                     int lineEndIndex;
                     try {
                         lineEndIndex = layout.getLineEnd(MAX_LINES - 1);
-                        // Giảm một chút để đảm bảo có đủ chỗ cho ELLIPSIS và READ_MORE
                         int reserve = ELLIPSIS.length() + READ_MORE.length() + 10;
                         if (lineEndIndex - reserve < 0) {
                             lineEndIndex = text.length();
@@ -192,10 +208,8 @@ public class DetailProductActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Tính toán vị trí cắt text
                     String truncatedText = text.substring(0, lineEndIndex);
 
-                    // Log để debug
                     Log.d("ExpandableText", "Truncated at index: " + lineEndIndex);
                     Log.d("ExpandableText", "Truncated text: " + truncatedText);
 
@@ -204,7 +218,6 @@ public class DetailProductActivity extends AppCompatActivity {
 
                     SpannableString readMoreSpannable = new SpannableString(READ_MORE);
 
-                    // Tạo clickable span cho "Read more"
                     ClickableSpan clickableSpan = new ClickableSpan() {
                         @Override
                         public void onClick(@NonNull View widget) {
@@ -221,21 +234,33 @@ public class DetailProductActivity extends AppCompatActivity {
                         }
                     };
 
-                    // Thêm style bold cho text "Read more"
                     StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
 
-                    // Áp dụng cả 2 span cho text
                     readMoreSpannable.setSpan(clickableSpan, 0, READ_MORE.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     readMoreSpannable.setSpan(boldSpan, 0, READ_MORE.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     builder.append(readMoreSpannable);
                     descriptionTextView.setText(builder);
                 } else {
-                    // Text không cần mở rộng, chỉ hiển thị nguyên bản
                     Log.d("ExpandableText", "Text doesn't need expanding");
                     descriptionTextView.setText(text);
                 }
             });
+        }
+    }
+
+    public static class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+        private final int verticalSpaceHeight;
+
+        public VerticalSpaceItemDecoration(int verticalSpaceHeight) {
+            this.verticalSpaceHeight = verticalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                outRect.bottom = verticalSpaceHeight;
+            }
         }
     }
 }

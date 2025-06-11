@@ -1,6 +1,7 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.other;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,13 +9,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.BackButton;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public abstract class BaseOtherFragment extends Fragment {
     protected BackButton backButton;
+    protected NavController navController;
 
     @Nullable
     @Override
@@ -27,22 +34,29 @@ public abstract class BaseOtherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = NavHostFragment.findNavController(this);
 
         initViews(view);
         initBackButton(view);
     }
 
-
     private void initBackButton(View view) {
         backButton = view.findViewById(R.id.back_button);
         if (backButton != null) {
-            backButton.setOnClickListener(v -> handleBackPressed());
+            backButton.setOnBackClickListener(v -> {
+                handleBackPressed();
+            });
         }
     }
 
+
     protected void handleBackPressed() {
-        if (isAdded()) {
-            requireActivity().onBackPressed();
+        if (isAdded() && navController != null) {
+            if (navController.getPreviousBackStackEntry() != null) {
+                navController.popBackStack();
+            } else {
+                requireActivity().onBackPressed();
+            }
         }
     }
 
@@ -66,6 +80,7 @@ public abstract class BaseOtherFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         backButton = null;
+        navController = null;
     }
 
     protected abstract int getLayoutResId();

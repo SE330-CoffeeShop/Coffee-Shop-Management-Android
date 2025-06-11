@@ -4,11 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 import android.widget.TextView;
-import com.example.coffeeshopmanagementandroid.R; // Đổi thành package thực tế của bạn
+
+import com.example.coffeeshopmanagementandroid.R;
 
 public class BackButton extends LinearLayout {
     private Toolbar toolbar;
@@ -33,19 +34,23 @@ public class BackButton extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.back_button, this, true);
         toolbar = findViewById(R.id.toolbar);
         backButtonText = findViewById(R.id.back_button_text);
-
-        toolbar.setNavigationOnClickListener(v -> {
-            if (context instanceof FragmentActivity) {
-                FragmentActivity activity = (FragmentActivity) context;
-                if (!activity.getSupportFragmentManager().isStateSaved()) {
-                    activity.getSupportFragmentManager().popBackStack();
-                }
-            }
-        });
     }
 
+    /**
+     * Gán click listener cho nút back trong Toolbar.
+     */
+    public void setOnBackClickListener(OnClickListener listener) {
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(listener);
+        }
+    }
+
+    /**
+     * Cho phép set lại text hiển thị bên cạnh nút back (nếu có).
+     */
     public void setText(String text) {
-        backButtonText.setText(text);
+        if (backButtonText != null) {
+            backButtonText.setText(text);
+        }
     }
-
 }

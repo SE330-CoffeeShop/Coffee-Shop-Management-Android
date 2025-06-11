@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 import com.google.android.material.button.MaterialButton;
@@ -79,7 +80,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             // Xử lý sự kiện nhấn vào item
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if(position != RecyclerView.NO_POSITION) {
+                if (position != RecyclerView.NO_POSITION) {
                     onItemClick.onItemClick(products.get(position));
                 }
             });
@@ -94,12 +95,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         public void bind(ProductModel product) {
-            // Một vấn đề là ảnh được lưu như thế nào
-            productImageView.setImageResource(R.drawable.demo_image);
+            // Sử dụng Glide để tải ảnh từ URL
+            if (product.getProductThumb() != null && !product.getProductThumb().isEmpty()) {
+                Glide.with(productImageView.getContext())
+                        .load(product.getProductThumb())
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.placeholder_image)
+                        .into(productImageView);
+            } else {
+                productImageView.setImageResource(R.drawable.placeholder_image);
+            }
+
             nameTextView.setText(product.getProductName());
             descriptionTextView.setText(product.getProductDescription());
-            priceTextView.setText("$" + product.getProductPrice());
-            ratingTextView.setText(String.valueOf(product.getProductRatingsAverage()));
+            priceTextView.setText(product.getProductPrice().toString() + " VND");
+            ratingTextView.setText(product.getProductRatingsAverage().toString());
         }
     }
 }
