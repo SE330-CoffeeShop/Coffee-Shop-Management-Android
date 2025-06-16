@@ -3,9 +3,12 @@ package com.example.coffeeshopmanagementandroid.domain.usecase;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllFavoriteProductsUserRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductVariantsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductVariantModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 
 import java.util.List;
@@ -28,5 +31,15 @@ public class ProductUseCase {
 
     public List<ProductModel> getRecentProducts() throws Exception {
         return productRepository.getAllRecentProducts();
+    }
+
+    public List<ProductVariantModel> getAllProductVariants(GetAllProductVariantsRequest request) throws Exception {
+        Log.d("Product Use Case", "Called");
+        return productRepository.getProductVariantsByProductId(request);
+    }
+
+    public BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception {
+        Log.d("Favorite Product Use Case", "Called");
+        return productRepository.getAllFavoriteProducts(request);
     }
 }

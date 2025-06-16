@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
             nameTextView.setText(product.getProductName());
             descriptionTextView.setText(product.getProductDescription());
-            priceTextView.setText(product.getProductPrice().toString() + " VND");
+            priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
             ratingTextView.setText(product.getProductRatingsAverage().toString());
         }
     }

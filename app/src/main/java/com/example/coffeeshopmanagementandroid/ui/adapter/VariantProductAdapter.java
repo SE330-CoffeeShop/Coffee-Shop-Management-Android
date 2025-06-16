@@ -8,15 +8,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductVariantModel;
 import com.example.coffeeshopmanagementandroid.ui.component.VariantProductChipButton;
 
 import java.util.List;
 
 public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAdapter.ViewHolder> {
-    private final List<String> variantsList;
+    private final List<ProductVariantModel> variantsList;
     private int selectedPosition = -1;
 
-    public VariantProductAdapter(List<String> variantsList) {
+    public VariantProductAdapter(List<ProductVariantModel> variantsList) {
         this.variantsList = variantsList;
     }
 
@@ -30,7 +31,7 @@ public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAd
 
     @Override
     public void onBindViewHolder(@NonNull VariantProductAdapter.ViewHolder holder, int position) {
-        holder.variantProductChipButton.setText(variantsList.get(position));
+        holder.variantProductChipButton.setText(variantsList.get(position).getVariantTierIdx());
         holder.variantProductChipButton.setSeletected(position == selectedPosition);
         holder.variantProductChipButton.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
@@ -53,6 +54,13 @@ public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAd
     @Override
     public int getItemCount() {
         return variantsList.size();
+    }
+
+    public String getSelectedVariant() {
+        if (selectedPosition != -1) {
+            return variantsList.get(selectedPosition).getId();
+        }
+        return null; // Hoặc giá trị mặc định nếu không có chip nào được chọn
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

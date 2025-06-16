@@ -19,8 +19,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
-import com.example.coffeeshopmanagementandroid.ui.fragment.product.DetailProductFragment;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
@@ -87,7 +87,8 @@ public class HomeFragment extends Fragment {
                 product -> Toast.makeText(requireContext(), "Added " + product.getProductName() + " to cart", Toast.LENGTH_SHORT).show(),
                 product -> {
                     Bundle args = new Bundle();
-                    args.putParcelable("product", product);
+                    Log.d("HomeFragment", "Selected product: " + product.getProductId());
+                    args.putString("productId", product.getProductId());
                     NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_detailProductFragment, "DetailProductFragment", "HomeFragment", args);
                 }
         );
@@ -201,7 +202,6 @@ public class HomeFragment extends Fragment {
 
     private void fetchAndObserveRecentlyProducts() {
         productViewModel.fetchRecentlyProducts(1, 10, SortType.DESC, ProductSortBy.CREATED_AT);
-
         productViewModel.getRecentlyProductsLiveData().observe(getViewLifecycleOwner(), products -> {
             if (products != null) {
                 recentlyProductAdapter.setProducts(products);
@@ -248,6 +248,14 @@ public class HomeFragment extends Fragment {
                 Log.d("HomeFragment", "All data loaded, no more fetching");
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showBottomNavigation();
+        }
     }
 
     private void filterProductsByCategory(String categoryId) {

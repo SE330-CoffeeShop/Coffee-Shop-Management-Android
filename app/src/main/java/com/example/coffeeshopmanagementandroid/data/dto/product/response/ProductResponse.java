@@ -1,11 +1,11 @@
 package com.example.coffeeshopmanagementandroid.data.dto.product.response;
 
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class ProductResponse {
+    @SerializedName("id")
     private String productId;
     private String productName;
     private String productThumb;

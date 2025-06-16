@@ -1,9 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.mapper;
 
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
-import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
 
 import java.util.ArrayList;
 import java.util.List;

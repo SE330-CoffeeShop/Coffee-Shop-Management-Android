@@ -1,6 +1,5 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.product;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -17,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,14 +25,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductVariantModel;
+import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.VariantProductAdapter;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.DetailProductViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -40,6 +47,9 @@ import com.google.android.flexbox.JustifyContent;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DetailProductFragment extends Fragment {
 
     private TextView descriptionTextView;
@@ -49,6 +59,10 @@ public class DetailProductFragment extends Fragment {
     private TextView categoryTextView;
     private ImageView productImage;
     private NavController navController;
+    private TextView priceTextView;
+    private ImageButton addToCardButton;
+
+    private Button buyButton;
 
     private boolean isExpanded = false;
     private static final String READ_MORE = "Read more";
@@ -59,6 +73,13 @@ public class DetailProductFragment extends Fragment {
 
     private VariantProductAdapter variantProductAdapter;
 
+    private DetailProductViewModel detailProductViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_detail_product, container, false);
@@ -67,28 +88,40 @@ public class DetailProductFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initializeViews();
+
         navController = NavHostFragment.findNavController(this);
+        detailProductViewModel = new ViewModelProvider(this).get(DetailProductViewModel.class);
 
-        // Lấy dữ liệu sản phẩm từ arguments
-        Bundle args = getArguments();
-        ProductModel product = args != null ? args.getParcelable("product") : null;
+        // Get productId from arguments
+        String productId = requireArguments().getString("productId");
 
-        if (product != null) {
-            productNameTextView.setText(product.getProductName());
-            descriptionTextView.setText(product.getProductDescription());
-            categoryTextView.setText(product.getProductCategoryId());
-            loadProductImage(product.getProductThumb());
-            setupExpandableText(product.getProductDescription());
-//            setupVariants(product.getVariants() != null ? product.getVariants() : new ArrayList<>());
+        Log.d("DetailProductFragment", "Received productId: " + productId);
+        if (productId != null) {
+            detailProductViewModel.fetchProductDetailAndVariants(productId);
         } else {
-            Toast.makeText(requireContext(), "Product data not found", Toast.LENGTH_SHORT).show();
-            // Không dùng finish(), thay bằng navigateUp hoặc popBackStack
-            if (navController != null) {
-                navController.popBackStack();
-            }
+            Toast.makeText(requireContext(), "Missing product ID", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Observe live data
+        detailProductViewModel.getProductLiveData().observe(getViewLifecycleOwner(), product -> {
+            if (product != null) {
+                productNameTextView.setText(product.getProductName());
+                categoryTextView.setText(product.getProductCategoryId());
+                priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
+                loadProductImage(product.getProductThumb());
+                setupExpandableText(product.getProductDescription());
+            }
+        });
+
+        detailProductViewModel.getVariantListLiveData().observe(getViewLifecycleOwner(), this::setupVariants);
+
+        detailProductViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initializeViews() {
@@ -112,8 +145,19 @@ public class DetailProductFragment extends Fragment {
             favoriteButton.setOnClickListener(v -> Toast.makeText(requireContext(), "Favorite button clicked", Toast.LENGTH_SHORT).show());
         }
 
+        addToCardButton = requireView().findViewById(R.id.addToCardButton);
+        if (addToCardButton != null) {
+            addToCardButton.setOnClickListener(v -> onAddToCart());
+        }
+
+        buyButton = requireView().findViewById(R.id.buyButton);
+        if (buyButton != null) {
+            buyButton.setOnClickListener(v -> onBuyButton());
+        }
+
         productNameTextView = requireView().findViewById(R.id.productNameTextView);
         categoryTextView = requireView().findViewById(R.id.categoryTextView);
+        priceTextView = requireView().findViewById(R.id.priceTextView);
         productImage = requireView().findViewById(R.id.productImage);
     }
 
@@ -129,7 +173,7 @@ public class DetailProductFragment extends Fragment {
         }
     }
 
-    private void setupVariants(List<String> variants) {
+    private void setupVariants(List<ProductVariantModel> variants) {
         variantProductAdapter = new VariantProductAdapter(variants);
         RecyclerView variantProductRecyclerView = requireView().findViewById(R.id.variantProductRecyclerView);
         if (variantProductRecyclerView != null) {
@@ -249,6 +293,46 @@ public class DetailProductFragment extends Fragment {
         }
     }
 
+    private void onAddToCart() {
+        if (variantProductAdapter == null || variantProductAdapter.getSelectedVariant() == null) {
+            Toast.makeText(requireContext(), "Please select a variant", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String variantId = variantProductAdapter.getSelectedVariant();
+        int quantity = 1; // Default quantity, can be modified to get from user input
+        detailProductViewModel.addToCart(variantId, quantity, new AddToCartCallback() {
+            @Override
+            public void onSuccess(String message) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onError(String error) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+    }
+
+    private void onBuyButton() {
+        NavigationUtils.safeNavigate(navController,
+                R.id.detailProductFragment,
+                R.id.action_detailProductFragment_to_cartFragment,
+                "CartFragment",
+                "DetailProductFragment");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideBottomNavigation();
+        }
+    }
+
     public static class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {
         private final int verticalSpaceHeight;
 
@@ -262,5 +346,9 @@ public class DetailProductFragment extends Fragment {
                 outRect.bottom = verticalSpaceHeight;
             }
         }
+    }
+    public interface AddToCartCallback {
+        void onSuccess(String message);
+        void onError(String error);
     }
 }

@@ -10,7 +10,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;

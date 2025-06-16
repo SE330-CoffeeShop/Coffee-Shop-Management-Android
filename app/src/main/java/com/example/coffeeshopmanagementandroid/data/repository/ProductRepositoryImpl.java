@@ -5,12 +5,17 @@ import android.util.Log;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllFavoriteProductsUserRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductVariantsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllProductsRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductVariantResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductVariantModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,6 +62,41 @@ public class ProductRepositoryImpl implements ProductRepository {
         } else {
             String errorMessage = "Get detail product failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
             Log.e("GET DETAIL PRODUCT", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
+
+    @Override
+    public List<ProductVariantModel> getProductVariantsByProductId(GetAllProductVariantsRequest request) throws Exception {
+        Call<BasePagingResponse<List<ProductVariantResponse>>> call = productService.getAllProductVariants(request.getProductId(), request.getPage(), request.getLimit(), request.getSortType(), request.getSortBy());
+        Response<BasePagingResponse<List<ProductVariantResponse>>> response = call.execute();
+
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("Response", String.valueOf(response.body().getData()));
+            List<ProductVariantResponse> listVariants = response.body().getData();
+            List<ProductVariantModel> result = new ArrayList<>();
+            for (ProductVariantResponse item : listVariants) {
+                result.add(ProductMapper.mapProductVariantResponseToProductVariantDomain(item));
+            }
+            return result;
+        } else {
+            String errorMessage = "Get products failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("GET PRODUCTS", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
+
+    @Override
+    public BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception {
+        Log.d("Favorite Product RepoIml - getAllFavoriteProductsCustomer", "Called");
+        Call<BasePagingResponse<List<ProductResponse>>> call = productService.getAllFavoriteProducts(request.getPage(), request.getLimit(), request.getSortType().toString(), request.getSortBy().toString());
+        Response<BasePagingResponse<List<ProductResponse>>> response = call.execute();
+        if(response.isSuccessful() && response.body() != null) {
+            Log.d("Response", String.valueOf(response.body().getData()));
+            return response.body();
+        } else {
+            String errorMessage = "Get favorite products failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("GET FAVORITE PRODUCTS", errorMessage);
             throw new Exception(errorMessage);
         }
     }

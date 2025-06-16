@@ -214,6 +214,7 @@
 
             <TextView
                 style="@style/text_base_semibold"
+                android:id="@+id/priceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="200.000VND"
@@ -222,7 +223,7 @@
 
         <!-- ImageButton -->
         <ImageButton
-            android:id="@+id/addToCardImageButton"
+            android:id="@+id/addToCardButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"

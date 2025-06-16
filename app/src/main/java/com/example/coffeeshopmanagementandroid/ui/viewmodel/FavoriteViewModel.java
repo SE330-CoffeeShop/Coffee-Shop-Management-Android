@@ -8,14 +8,13 @@ import androidx.lifecycle.ViewModel;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.category.request.GetAllCategoriesRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.category.response.CategoryResponse;
-import com.example.coffeeshopmanagementandroid.data.dto.favoriteproduct.request.GetAllFavoriteProductsUserRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.product.request.GetAllFavoriteProductsUserRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.CategoryMapper;
-import com.example.coffeeshopmanagementandroid.data.mapper.FavoriteProductMapper;
+import com.example.coffeeshopmanagementandroid.data.mapper.ProductMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.CategoryModel;
-import com.example.coffeeshopmanagementandroid.domain.model.FavoriteProductModel;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
-import com.example.coffeeshopmanagementandroid.domain.usecase.FavoriteProductUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
@@ -30,10 +29,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class FavoriteViewModel extends ViewModel {
-    FavoriteProductUseCase favoriteProductUseCase;
     ProductUseCase productUseCase;
     CategoryUseCase categoryUseCase;
-    private final MutableLiveData<List<FavoriteProductModel>> favoriteProductsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<ProductModel>> favoriteProductsLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<ProductModel>> detailFavoriteProductsLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<CategoryModel>> categoriesLiveData = new MutableLiveData<>();
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
@@ -44,17 +42,16 @@ public class FavoriteViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isAllDataLoaded = new MutableLiveData<>(false);
 
     @Inject
-    public FavoriteViewModel(FavoriteProductUseCase favoriteProductUseCase, ProductUseCase productUseCase, CategoryUseCase categoryUseCase) {
-        this.favoriteProductUseCase = favoriteProductUseCase;
+    public FavoriteViewModel(ProductUseCase productUseCase, CategoryUseCase categoryUseCase) {
         this.productUseCase = productUseCase;
         this.categoryUseCase = categoryUseCase;
     }
 
-    public MutableLiveData<List<FavoriteProductModel>> getFavoriteProductsLiveData() {
+    public MutableLiveData<List<ProductModel>> getFavoriteProductsLiveData() {
         return favoriteProductsLiveData;
     }
 
-    public void setFavoriteProductsLiveData(List<FavoriteProductModel> favoriteProducts) {
+    public void setFavoriteProductsLiveData(List<ProductModel> favoriteProducts) {
         favoriteProductsLiveData.postValue(favoriteProducts);
     }
 
@@ -127,16 +124,16 @@ public class FavoriteViewModel extends ViewModel {
         new Thread(() -> {
             try {
                 GetAllFavoriteProductsUserRequest request = new GetAllFavoriteProductsUserRequest(page, limit, userId, sortType, sortBy);
-                BasePagingResponse<List<String>> result = favoriteProductUseCase.getAllFavoriteProducts(request);
+                BasePagingResponse<List<ProductResponse>> result = productUseCase.getAllFavoriteProducts(request);
                 if (result != null && result.getData() != null) {
                     setTotal(result.getPaging().getTotal());
                     // Set FavoriteProductId
-                    List<FavoriteProductModel> newFavoriteProducts = FavoriteProductMapper.mapFavoriteProductResponsesToProductsDomain(result.getData());
+                    List<ProductModel> newFavoriteProducts = ProductMapper.mapProductResponsesToProductsDomain(result.getData());
                     appendFavoriteProducts(newFavoriteProducts);
                     // Set DetailFavoriteProduct
                     List<ProductModel> newDetailFavoriteProducts = new ArrayList<>();
-                    for (FavoriteProductModel favoriteProductId : newFavoriteProducts) {
-                        ProductModel detailFavoriteProduct = fetchDetailFavoriteProduct(favoriteProductId.getFavoriteProductId());
+                    for (ProductModel favoriteProductId : newFavoriteProducts) {
+                        ProductModel detailFavoriteProduct = fetchDetailFavoriteProduct(favoriteProductId.getProductId());
                         newDetailFavoriteProducts.add(detailFavoriteProduct);
                     }
                     appendDetailFavoriteProducts(newDetailFavoriteProducts);
@@ -151,9 +148,9 @@ public class FavoriteViewModel extends ViewModel {
         }).start();
     }
 
-    private void appendFavoriteProducts(List<FavoriteProductModel> newProducts) {
-        List<FavoriteProductModel> currentProducts = favoriteProductsLiveData.getValue() != null ? new ArrayList<>(favoriteProductsLiveData.getValue()) : new ArrayList<>();
-        for (FavoriteProductModel newProduct : newProducts) {
+    private void appendFavoriteProducts(List<ProductModel> newProducts) {
+        List<ProductModel> currentProducts = favoriteProductsLiveData.getValue() != null ? new ArrayList<>(favoriteProductsLiveData.getValue()) : new ArrayList<>();
+        for (ProductModel newProduct : newProducts) {
             if (!currentProducts.contains(newProduct)) {
                 currentProducts.add(newProduct);
             }

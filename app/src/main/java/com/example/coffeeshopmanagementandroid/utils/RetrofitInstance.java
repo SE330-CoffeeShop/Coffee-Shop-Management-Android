@@ -1,12 +1,14 @@
 package com.example.coffeeshopmanagementandroid.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -21,6 +23,15 @@ public class RetrofitInstance {
 
     public Retrofit getRetrofit() {
         if (retrofit == null) {
+            // Thêm interceptor để log request/response
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    Log.d("API_LOG", message);
+                }
+            });
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(context))
                     .authenticator(new TokenAuthenticator(context))

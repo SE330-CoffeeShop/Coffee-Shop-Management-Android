@@ -3,25 +3,25 @@ package com.example.coffeeshopmanagementandroid.di;
 import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
+import com.example.coffeeshopmanagementandroid.data.api.CartService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
-import com.example.coffeeshopmanagementandroid.data.api.FavoriteProductService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.api.UserService;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.CartRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
-import com.example.coffeeshopmanagementandroid.data.repository.FavoriteProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.UserRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
-import com.example.coffeeshopmanagementandroid.domain.repository.FavoriteProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
+import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
-import com.example.coffeeshopmanagementandroid.domain.usecase.FavoriteProductUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
@@ -36,7 +36,6 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import retrofit2.Retrofit;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -88,6 +87,21 @@ public class AppModule {
     }
     @Provides
     @Singleton
+    public static CartService provideCartService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(CartService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static CartRepository provideCartRepository(CartService cartService) {
+        return new CartRepositoryImpl(cartService);
+    }
+    @Provides
+    public static CartUseCase provideCartUseCase(CartRepository cartRepository) {
+        return new CartUseCase(cartRepository);
+    }
+    @Provides
+    @Singleton
     public static CategoryService provideCategoryService(RetrofitInstance retrofitInstance) {
         return retrofitInstance.createService(CategoryService.class);
     }
@@ -113,20 +127,6 @@ public class AppModule {
     @Provides
     public static OrderUseCase provideOrderUseCase(OrderRepository orderRepository) {
         return new OrderUseCase(orderRepository);
-    }
-    @Provides
-    @Singleton
-    public static FavoriteProductService provideFavoriteProductService(RetrofitInstance retrofitInstance) {
-        return retrofitInstance.createService(FavoriteProductService.class);
-    }
-    @Provides
-    @Singleton
-    public static FavoriteProductRepository provideFavoriteProductRepository(FavoriteProductService favoriteProductService) {
-        return new FavoriteProductRepositoryImpl(favoriteProductService);
-    }
-    @Provides
-    public static FavoriteProductUseCase provideFavoriteProductUseCase(FavoriteProductRepository favoriteProductRepository) {
-        return new FavoriteProductUseCase(favoriteProductRepository);
     }
     @Provides
     @Singleton

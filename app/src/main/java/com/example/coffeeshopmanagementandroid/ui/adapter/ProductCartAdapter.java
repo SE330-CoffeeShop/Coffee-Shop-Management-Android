@@ -12,20 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductCartModel;
+import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.ProductCartViewHolder> {
 
-    private final List<ProductCartModel> products;
+    private final List<CartItemModel> products;
     private final OnMinusQuantityListener onMinusQuantity;
     private final OnDeleteProductListener onDeleteProduct;
     private final OnPlusQuantityListener onPlusQuantity;
     private final OnItemClickListener onItemClickListener;
 
-    public ProductCartAdapter(List<ProductCartModel> products, OnMinusQuantityListener onMinusQuantity, OnDeleteProductListener onDeleteProduct, OnPlusQuantityListener onPlusQuantity, OnItemClickListener onItemClickListener) {
+    public ProductCartAdapter(List<CartItemModel> products, OnMinusQuantityListener onMinusQuantity, OnDeleteProductListener onDeleteProduct, OnPlusQuantityListener onPlusQuantity, OnItemClickListener onItemClickListener) {
         this.products = products != null ? products : new ArrayList<>();
         this.onMinusQuantity = onMinusQuantity;
         this.onDeleteProduct = onDeleteProduct;
@@ -51,19 +51,34 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
     }
 
     public interface OnMinusQuantityListener {
-        void onMinusQuantity(ProductCartModel product);
+        void onMinusQuantity(CartItemModel product);
     }
 
     public interface OnPlusQuantityListener {
-        void onPlusQuantity(ProductCartModel product);
+        void onPlusQuantity(CartItemModel product);
     }
 
     public interface OnDeleteProductListener {
-        void onDeleteProduct(ProductCartModel product);
+        void onDeleteProduct(CartItemModel product);
     }
 
     public interface OnItemClickListener {
-        void onItemClick(ProductCartModel product);
+        void onItemClick(CartItemModel product);
+    }
+
+    public void updateList(List<CartItemModel> newList) {
+        this.products.clear();
+        this.products.addAll(newList);
+        notifyDataSetChanged(); // hoặc dùng DiffUtil nếu bạn muốn tối ưu
+    }
+
+    public int getItemPosition(CartItemModel targetProduct) {
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getVariantId() == targetProduct.getVariantId()) {
+                return i;
+            }
+        }
+        return -1; // không tìm thấy
     }
 
     public class ProductCartViewHolder extends RecyclerView.ViewHolder {
@@ -114,11 +129,11 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
                 }
             });
         }
-        public void bind(ProductCartModel product){
+        public void bind(CartItemModel product){
             productNameTextView.setText(product.getProductName());
-            variantProductTextView.setText(product.getProductVarient());
-            priceTextView.setText(product.getProductPrice() + " VND");
-            quantityTextView.setText(String.valueOf(product.getQuantity()));
+            variantProductTextView.setText(product.getVariantTierIdx());
+            priceTextView.setText(product.getCartDetailUnitPriceAfterDiscount() + " VND");
+            quantityTextView.setText(String.valueOf(product.getCartDetailQuantity()));
         }
     }
 }

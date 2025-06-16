@@ -1,8 +1,9 @@
 package com.example.coffeeshopmanagementandroid.data.mapper;
 
-import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LoginResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
-import com.example.coffeeshopmanagementandroid.domain.model.ProductModel;
+import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductVariantResponse;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.domain.model.product.ProductVariantModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,20 @@ public class ProductMapper {
         model.setProductIsPublished(productResponse.getProductIsPublished());
         model.setProductIsDeleted(productResponse.getProductIsDeleted());
         model.setProductRatingsAverage(productResponse.getProductRatingsAverage());
+        return model;
+    }
+
+    public static ProductVariantModel mapProductVariantResponseToProductVariantDomain(ProductVariantResponse response) {
+        ProductVariantModel model = new ProductVariantModel();
+
+        model.setId(response.getId());
+        model.setProductId(response.getProductId());
+        model.setVariantDefault(response.getVariantDefault());
+        model.setVariantPrice(response.getVariantPrice());
+        model.setVariantSlug(response.getVariantSlug());
+        model.setVariantSort(response.getVariantSort());
+        model.setVariantTierIdx(response.getVariantTierIdx());
+
         return model;
     }
 }

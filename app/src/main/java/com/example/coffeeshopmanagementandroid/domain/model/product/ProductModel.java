@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.domain.model;
+package com.example.coffeeshopmanagementandroid.domain.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
