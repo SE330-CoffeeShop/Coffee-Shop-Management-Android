@@ -5,13 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.AddressModel;
+import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +74,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             if (address == null) return;
             String twoLineAddress = address.getAddressLine() + "\n" + address.getAddressDistrict() + ", " + address.getAddressCity();
             tvAddress.setText(twoLineAddress);
-            // Nếu muốn, set iconLocation và iconEditAddress drawable tại đây (hoặc giữ mặc định trong XML)
         }
     }
 

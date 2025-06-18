@@ -9,16 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.AddressModel;
 import com.example.coffeeshopmanagementandroid.domain.model.NotificationModel;
-import com.example.coffeeshopmanagementandroid.ui.adapter.AddressAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.NotificationAdapter;
-import com.example.coffeeshopmanagementandroid.ui.component.BackButton;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationFragment extends BaseOtherFragment {

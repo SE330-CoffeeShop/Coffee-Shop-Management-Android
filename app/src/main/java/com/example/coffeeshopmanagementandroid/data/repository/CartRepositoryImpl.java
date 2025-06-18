@@ -43,7 +43,7 @@ public class CartRepositoryImpl implements CartRepository {
 
     @Override
     public BasePagingResponse<List<CartDetailResponse>> getCartItem(GetAllCartItemRequest request) throws Exception {
-        Log.d("Product RepoIml - getAllProducts", "Called");
+        Log.d("Product RepoIml", "Called");
 
         Call<BasePagingResponse<List<CartDetailResponse>>> call = cartService.getCartDetails(request.getPage(), request.getLimit(), request.getSortType().toString(), request.getSortBy().toString());
         Response<BasePagingResponse<List<CartDetailResponse>>> response = call.execute();
@@ -73,6 +73,25 @@ public class CartRepositoryImpl implements CartRepository {
             }
         } catch (Exception e) {
             Log.e("UPDATE CART ITEM", "Exception: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Void deleteCartitem(String variantId) throws Exception {
+        try {
+            Call<Void> call = cartService.deleteCartItem(variantId);
+            Response<Void> response = call.execute();
+            if(response.isSuccessful()) {
+                Log.d("DeleteCartItem", "Cart item deleted successfully");
+                return null;
+            } else {
+                String errorMessage = "Delete cart item failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+                Log.e("DELETE CART ITEM", errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            Log.e("DELETE CART ITEM", e.getMessage());
             return null;
         }
     }

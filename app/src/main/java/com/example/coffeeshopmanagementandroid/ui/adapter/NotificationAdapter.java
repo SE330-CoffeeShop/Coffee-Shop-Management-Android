@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.AddressModel;
 import com.example.coffeeshopmanagementandroid.domain.model.NotificationModel;
 
 import java.util.List;

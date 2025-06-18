@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -13,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.AddressModel;
+import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.AddressAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;

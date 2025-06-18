@@ -1,16 +1,17 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.orders;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -19,18 +20,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
-import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
-import com.example.coffeeshopmanagementandroid.domain.model.PaymentMethodModel;
+import com.example.coffeeshopmanagementandroid.domain.model.payment.PaymentMethodModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.PaymentMethodAdapter;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.ConfirmOrderViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ConfirmOrderFragment extends Fragment {
+    private ConfirmOrderViewModel confirmOrderViewModel;
     private OrderProductAdapter orderProductAdapter;
     private RecyclerView orderProductRecyclerView;
     private PaymentMethodAdapter paymentMethodAdapter;
@@ -38,8 +45,11 @@ public class ConfirmOrderFragment extends Fragment {
     private PaymentMethodModel selectedPaymentMethod;
     private NavController navController;
     private View applyDiscountLayout;
+    private View chooseAddressLayout;
     private ImageButton backButton;
     private MaterialButton buyButton;
+    private TextView totalPrice;
+    private TextView tvAddress;
     private DiscountModel selectedDiscount;
 
     @Nullable
@@ -51,9 +61,11 @@ public class ConfirmOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        confirmOrderViewModel = new ViewModelProvider(this).get(ConfirmOrderViewModel.class);
         initViews(view);
         setupOrderProducts();
         setupPaymentMethods();
+        setupAddress();
         getParentFragmentManager().setFragmentResultListener("discountResult", this, (requestKey, result) -> {
             if (result.containsKey("selectedDiscount")) {
                 selectedDiscount = result.getParcelable("selectedDiscount");
@@ -68,10 +80,13 @@ public class ConfirmOrderFragment extends Fragment {
     private void initViews(View view) {
         navController = NavHostFragment.findNavController(this);
         applyDiscountLayout = view.findViewById(R.id.applyDiscountLayout);
+        chooseAddressLayout = view.findViewById(R.id.chooseAddressLayout);
         orderProductRecyclerView = view.findViewById(R.id.orderProductRecyclerView);
         paymentMethodRecyclerView = view.findViewById(R.id.paymentMethodRecyclerView);
         backButton = view.findViewById(R.id.backButtonToCart);
         buyButton = view.findViewById(R.id.buyButton);
+        totalPrice = view.findViewById(R.id.totalPrice);
+        tvAddress = view.findViewById(R.id.tvAddress);
 
         // Set Listener
         backButton.setOnClickListener(v -> handleBackPressed());
@@ -79,6 +94,7 @@ public class ConfirmOrderFragment extends Fragment {
 
         // Xử lý bấm vào applyDiscountLayout
         applyDiscountLayout.setOnClickListener(v -> navigateToDiscountFragment());
+        chooseAddressLayout.setOnClickListener(v -> navigateToChooseAddressFragment());
     }
 
     private void navigateToDiscountFragment() {
@@ -90,39 +106,69 @@ public class ConfirmOrderFragment extends Fragment {
                 null);
     }
 
+    private void navigateToChooseAddressFragment() {
+        NavigationUtils.safeNavigate(navController,
+                R.id.confirmOrderFragment,
+                R.id.action_cartFragment_to_chooseAddressFragment,
+                "ChooseAddressFragment",
+                "ConfirmOrderFragment",
+                null);
+    }
+
     private void setupOrderProducts() {
-        List<OrderItemModel> products = new ArrayList<>();
-        products.add(new OrderItemModel("https://example.com/cappuccino.jpg", "Classic Cappuccino", "Size M, 100% đá, 50% đường", 2, 45.13));
-        products.add(new OrderItemModel("https://example.com/caramel_macchiato.jpg", "Caramel Macchiato", "Size L, 70% đá, 100% đường", 1, 50.00));
-        products.add(new OrderItemModel("https://example.com/vanilla_latte.jpg", "Vanilla Latte", "Size S, 50% đá, 30% đường", 3, 48.75));
-        products.add(new OrderItemModel("https://example.com/americano.jpg", "Americano", "Size M, không đá, không đường", 2, 35.50));
+        confirmOrderViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT);
+
+        confirmOrderViewModel.getCartItemsLiveData().observe(getViewLifecycleOwner(), cartItems -> {
+            orderProductAdapter.updateList(cartItems);
+        });
+
+        confirmOrderViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            // Show/hide loading if needed
+        });
+
+        confirmOrderViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        confirmOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
+            if (price != null) {
+                totalPrice.setText("Total Price: " + price + " VND");
+            }
+        });
 
         orderProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
-        orderProductAdapter = new OrderProductAdapter(products);
+        orderProductAdapter = new OrderProductAdapter(new ArrayList<>());
         orderProductRecyclerView.setAdapter(orderProductAdapter);
     }
 
     private void setupPaymentMethods() {
-        List<PaymentMethodModel> paymentMethods = new ArrayList<>();
-        paymentMethods.add(new PaymentMethodModel("0001", "CASH", "Tiền mặt", true, "user1"));
-        paymentMethods.add(new PaymentMethodModel("0002", "BANK_CARD", "Thẻ ngân hàng", false, "user1"));
-        paymentMethods.add(new PaymentMethodModel("0003", "MOMO", "MoMo", false, "user1"));
-        paymentMethods.add(new PaymentMethodModel("0004", "ZALOPAY", "ZaloPay", false, "user1"));
+        paymentMethodAdapter = new PaymentMethodAdapter(
+                new ArrayList<>(), // khởi tạo danh sách trống ban đầu
+                -1, // chưa chọn mặc định
+                method -> selectedPaymentMethod = method // callback khi chọn
+        );
 
-        // Tìm vị trí phương thức mặc định
-        int defaultPosition = -1;
-        for (int i = 0; i < paymentMethods.size(); i++) {
-            if (paymentMethods.get(i).isPaymentMethodIsDefault()) {
-                defaultPosition = i;
-                break;
-            }
-        }
-
-        paymentMethodAdapter = new PaymentMethodAdapter(paymentMethods, defaultPosition, selectedPayment -> {
-            this.selectedPaymentMethod = selectedPayment;
-        });
+        paymentMethodRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         paymentMethodRecyclerView.setAdapter(paymentMethodAdapter);
-        paymentMethodRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        confirmOrderViewModel.fetchAllPaymentMethods();
+        confirmOrderViewModel.getPaymentMethodsLiveData().observe(getViewLifecycleOwner(), paymentMethods -> {
+            paymentMethodAdapter.updateList(paymentMethods);
+        });
+    }
+
+    private void setupAddress() {
+        confirmOrderViewModel.fetchAllAddresses();
+        confirmOrderViewModel.getAddressesLiveData().observe(getViewLifecycleOwner(), addresses -> {
+            if (addresses != null && !addresses.isEmpty()) {
+                // Giả sử bạn muốn hiển thị địa chỉ đầu tiên
+                tvAddress.setText(addresses.get(0).getAddressLine());
+            } else {
+                tvAddress.setText("Không có địa chỉ nào");
+            }
+        });
     }
 
     private void handleBackPressed() {
@@ -134,7 +180,7 @@ public class ConfirmOrderFragment extends Fragment {
     private void handleBuyNow() {
         PaymentMethodModel selectedFromAdapter = paymentMethodAdapter.getSelectedPaymentMethod();
         if (selectedPaymentMethod != null && selectedPaymentMethod.equals(selectedFromAdapter)) {
-            Toast.makeText(getContext(), "Phương thức: " + selectedPaymentMethod.getPaymentMethodType(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Phương thức: " + selectedPaymentMethod.getPaymentMethodName(), Toast.LENGTH_SHORT).show();
             // Gửi selectedPaymentMethod lên server hoặc xử lý tiếp
         } else {
             Toast.makeText(getContext(), "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();

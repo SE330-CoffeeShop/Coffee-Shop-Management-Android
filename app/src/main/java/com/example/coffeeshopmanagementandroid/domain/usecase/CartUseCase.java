@@ -54,4 +54,18 @@ public class CartUseCase {
 
         }
     }
+
+    public String deleteCartItem(String variantId) {
+        if (variantId == null || variantId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid variant ID");
+        }
+        try {
+            cartRepository.deleteCartitem(variantId);
+            return "Cart item deleted successfully";
+        } catch (Exception e) {
+            // Handle exceptions, possibly rethrow or log
+            throw new RuntimeException("Failed to delete cart item", e);
+        }
+    }
+
 }

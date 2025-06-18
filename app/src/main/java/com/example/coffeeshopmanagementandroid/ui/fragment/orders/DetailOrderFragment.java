@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
+import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
 
@@ -61,11 +62,7 @@ public class DetailOrderFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-        List<OrderItemModel> products = new ArrayList<>();
-        products.add(new OrderItemModel("https://example.com/cappuccino.jpg", "Classic Cappuccino", "Size M, 100% đá, 50% đường", 2, 45.13));
-        products.add(new OrderItemModel("https://example.com/caramel_macchiato.jpg", "Caramel Macchiato", "Size L, 70% đá, 100% đường", 1, 50.00));
-        products.add(new OrderItemModel("https://example.com/vanilla_latte.jpg", "Vanilla Latte", "Size S, 50% đá, 30% đường", 3, 48.75));
-        products.add(new OrderItemModel("https://example.com/americano.jpg", "Americano", "Size M, không đá, không đường", 2, 35.50));
+        List<CartItemModel> products = new ArrayList<>();
 
         orderProductRecyclerView = view.findViewById(R.id.orderProductRecyclerView);
         orderProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));

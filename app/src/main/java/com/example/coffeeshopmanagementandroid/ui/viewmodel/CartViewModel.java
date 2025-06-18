@@ -36,7 +36,7 @@ public class CartViewModel extends ViewModel {
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> limit = new MutableLiveData<>(10);
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
-    private final MutableLiveData<Double> totalPrice = new MutableLiveData<>(0.0); // Thêm cờ này
+    private final MutableLiveData<Double> totalPrice = new MutableLiveData<>(0.0);
     private final Handler debounceHandler = new Handler(Looper.getMainLooper());
     private final Map<String, Runnable> debounceMap = new HashMap<>();
 
@@ -197,4 +197,29 @@ public class CartViewModel extends ViewModel {
             }
         }).start();
     }
+
+    public void deleteCartItem(CartItemModel item) {
+        String cartItemId = item.getVariantId(); // hoặc item.getCartDetailId() nếu API yêu cầu
+
+        List<CartItemModel> currentCartItems = cartItemsLiveData.getValue();
+        if (currentCartItems == null) return;
+
+        // Xóa item khỏi danh sách
+        currentCartItems.remove(item);
+
+        // Cập nhật giao diện
+        cartItemsLiveData.postValue(new ArrayList<>(currentCartItems));
+        calculateTotalPrice(currentCartItems);
+
+        // Gọi API xoá khỏi server
+        new Thread(() -> {
+            try {
+                cartUseCase.deleteCartItem(cartItemId); // giả định method này tồn tại trong use case
+            } catch (Exception e) {
+                errorLiveData.postValue("Không thể xoá mục khỏi giỏ hàng: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
 }

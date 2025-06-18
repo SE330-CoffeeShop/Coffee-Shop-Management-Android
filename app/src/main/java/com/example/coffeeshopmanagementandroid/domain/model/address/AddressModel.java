@@ -1,4 +1,4 @@
-package com.example.coffeeshopmanagementandroid.domain.model;
+package com.example.coffeeshopmanagementandroid.domain.model.address;
 
 public class AddressModel {
     private String addressId;

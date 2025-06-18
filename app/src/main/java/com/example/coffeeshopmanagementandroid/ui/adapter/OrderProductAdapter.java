@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
+import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder> {
-    private final List<OrderItemModel> productList;
+    private final List<CartItemModel> productList;
     @NonNull
     @Override
     public OrderProductAdapter.OrderProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -24,14 +25,20 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
         return new OrderProductViewHolder(view);
     }
 
-    public OrderProductAdapter(List<OrderItemModel> productList) {
+    public OrderProductAdapter(List<CartItemModel> productList) {
         this.productList = productList != null ? productList : new ArrayList<>();
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderProductAdapter.OrderProductViewHolder holder, int position) {
-        OrderItemModel product = productList.get(position);
+        CartItemModel product = productList.get(position);
         holder.bind(product);
+    }
+
+    public void updateList(List<CartItemModel> newList) {
+        this.productList.clear();
+        this.productList.addAll(newList);
+        notifyDataSetChanged(); // hoặc dùng DiffUtil nếu bạn muốn tối ưu
     }
 
     @Override
@@ -54,13 +61,13 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
             priceTextView = itemView.findViewById(R.id.priceTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
         }
-        public void bind(OrderItemModel product) {
+        public void bind(CartItemModel product) {
             // Bind dữ liệu vào các thành phần giao diện ở đây
 //            productImageView.setImageResource(R.drawable.product_image);
             productNameTextView.setText(product.getProductName());
-            variantProductTextView.setText(product.getVariant());
-            priceTextView.setText(product.getUnitPrice() + "đ");
-            quantityTextView.setText(String.valueOf(product.getQuantity()));
+            variantProductTextView.setText(product.getVariantTierIdx());
+            priceTextView.setText(product.getCartDetailUnitPrice() + "đ");
+            quantityTextView.setText(String.valueOf(product.getCartDetailQuantity()));
         }
     }
 }

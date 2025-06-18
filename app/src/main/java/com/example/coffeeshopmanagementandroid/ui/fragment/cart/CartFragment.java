@@ -110,8 +110,9 @@ public class CartFragment extends Fragment {
     }
 
     private void onDeleteProduct(CartItemModel product) {
+        cartViewModel.deleteCartItem(product);
         Toast.makeText(requireContext(),
-                "Click Delete " + product.getProductName() + " on cart",
+                "Đã xoá " + product.getProductName() + " khỏi giỏ hàng",
                 Toast.LENGTH_SHORT).show();
     }
 

@@ -2,29 +2,37 @@ package com.example.coffeeshopmanagementandroid.di;
 
 import android.content.Context;
 
+import com.example.coffeeshopmanagementandroid.data.api.AddressService;
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.api.CartService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
+import com.example.coffeeshopmanagementandroid.data.api.PaymentService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.api.UserService;
+import com.example.coffeeshopmanagementandroid.data.repository.AddressRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CartRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.PaymentRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.UserRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.domain.repository.AddressRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.PaymentRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
+import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.PaymentUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.UserUseCase;
 import com.example.coffeeshopmanagementandroid.utils.RetrofitInstance;
@@ -100,6 +108,39 @@ public class AppModule {
     public static CartUseCase provideCartUseCase(CartRepository cartRepository) {
         return new CartUseCase(cartRepository);
     }
+
+    @Provides
+    @Singleton
+    public static PaymentService providePaymentService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(PaymentService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static PaymentRepository providePaymentRepository(PaymentService paymentService) {
+        return new PaymentRepositoryImpl(paymentService);
+    }
+    @Provides
+    public static PaymentUseCase providePaymentUseCase(PaymentRepository paymentRepository) {
+        return new PaymentUseCase(paymentRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static AddressService provideAddressService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(AddressService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static AddressRepository provideAddressRepository(AddressService addressService) {
+        return new AddressRepositoryImpl(addressService);
+    }
+    @Provides
+    public static AddressUseCase provideAddressUseCase(AddressRepository addressRepository) {
+        return new AddressUseCase(addressRepository);
+    }
+
     @Provides
     @Singleton
     public static CategoryService provideCategoryService(RetrofitInstance retrofitInstance) {

@@ -150,6 +150,7 @@
     <string name="confirm_order">Xác nhận đơn hàng</string>
     <string name="choosed_products">Sản phẩm đã chọn</string>
     <string name="apply_discount">Áp dụng ưu đãi</string>
+    <string name="choose_address">Chọn địa chỉ</string>
     <string name="navigate_to_discount">Di chuyển sang màn áp dụng voucher</string>
     <string name="discount_icon">Icon mã giảm giá</string>
     <string name="default_price">Default price</string>
