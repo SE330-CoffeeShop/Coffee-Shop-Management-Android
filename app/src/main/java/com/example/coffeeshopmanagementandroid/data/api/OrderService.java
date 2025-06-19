@@ -20,4 +20,10 @@ public interface OrderService {
                                                                        @Query("sortType") String sortType,
                                                                        @Query("sortBy") String sortBy
     );
+
+    @POST("/orders/")
+    Call<Void> createOrder(@Query("shippingAddressId") String addressId,
+                           @Query("paymentMethodId") String paymentMethodId,
+                           @Query("branchId") String branchId
+    );
 }

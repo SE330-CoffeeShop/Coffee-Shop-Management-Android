@@ -103,9 +103,7 @@ public class CartViewModel extends ViewModel {
     }
 
     private void appendCartItems(List<CartItemModel> cartItems) {
-        List<CartItemModel> currentCartItems = cartItemsLiveData.getValue() != null
-                ? new ArrayList<>(cartItemsLiveData.getValue())
-                : new ArrayList<>();
+        List<CartItemModel> currentCartItems = new ArrayList<>();
 
         for (CartItemModel newItem : cartItems) {
             if (!currentCartItems.contains(newItem)) {

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.GetAllOrdersCustomerRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
@@ -31,6 +32,25 @@ public class OrderRepositoryImpl implements OrderRepository {
             String errorMessage = "Get orders failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
             Log.e("GET ORDERS", errorMessage);
             throw new Exception(errorMessage);
+        }
+    }
+
+    @Override
+    public Void createOrder(CreateOrderRequest request) throws Exception {
+        try {
+            Call<Void> call = orderService.createOrder(request.getShippingAddressId(), request.getPaymentMethodId(), request.getBranchId());
+            Response<Void> response = call.execute();
+            if (response.isSuccessful()) {
+                Log.d("UpdateCartItem", "Cart item updated successfully");
+                return null;
+            } else {
+                String errorMessage = "Update cart item failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+                Log.e("UPDATE CART ITEM", errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            Log.e("UPDATE CART ITEM", "Exception: " + e.getMessage());
+            return null;
         }
     }
 }

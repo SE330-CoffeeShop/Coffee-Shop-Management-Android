@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
+import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 import com.example.coffeeshopmanagementandroid.domain.model.payment.PaymentMethodModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
@@ -61,7 +62,7 @@ public class ConfirmOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        confirmOrderViewModel = new ViewModelProvider(this).get(ConfirmOrderViewModel.class);
+        confirmOrderViewModel = new ViewModelProvider(requireActivity()).get(ConfirmOrderViewModel.class);
         initViews(view);
         setupOrderProducts();
         setupPaymentMethods();
@@ -115,6 +116,15 @@ public class ConfirmOrderFragment extends Fragment {
                 null);
     }
 
+    private void navigateToOrderFragment() {
+        NavigationUtils.safeNavigate(navController,
+                R.id.confirmOrderFragment,
+                R.id.action_confirmOrderFragment_to_orderFragment,
+                "OrderFragment",
+                "ConfirmOrderFragment",
+                null);
+    }
+
     private void setupOrderProducts() {
         confirmOrderViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT);
 
@@ -160,13 +170,14 @@ public class ConfirmOrderFragment extends Fragment {
     }
 
     private void setupAddress() {
-        confirmOrderViewModel.fetchAllAddresses();
-        confirmOrderViewModel.getAddressesLiveData().observe(getViewLifecycleOwner(), addresses -> {
-            if (addresses != null && !addresses.isEmpty()) {
-                // Giả sử bạn muốn hiển thị địa chỉ đầu tiên
-                tvAddress.setText(addresses.get(0).getAddressLine());
+        if (confirmOrderViewModel.getSelectedAddress().getValue() == null) {
+            confirmOrderViewModel.fetchAllAddresses();
+        }
+        confirmOrderViewModel.getSelectedAddress().observe(getViewLifecycleOwner(), address -> {
+            if (address != null) {
+                tvAddress.setText("Địa chỉ: " + address.getAddressLine());
             } else {
-                tvAddress.setText("Không có địa chỉ nào");
+                tvAddress.setText("Chưa chọn địa chỉ");
             }
         });
     }
@@ -178,13 +189,16 @@ public class ConfirmOrderFragment extends Fragment {
     }
 
     private void handleBuyNow() {
-        PaymentMethodModel selectedFromAdapter = paymentMethodAdapter.getSelectedPaymentMethod();
-        if (selectedPaymentMethod != null && selectedPaymentMethod.equals(selectedFromAdapter)) {
-            Toast.makeText(getContext(), "Phương thức: " + selectedPaymentMethod.getPaymentMethodName(), Toast.LENGTH_SHORT).show();
-            // Gửi selectedPaymentMethod lên server hoặc xử lý tiếp
-        } else {
-            Toast.makeText(getContext(), "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
-        }
+        // Lấy thông tin từ các ViewModel và Adapter
+        PaymentMethodModel selectedPaymentMethods = paymentMethodAdapter.getSelectedPaymentMethod();
+        AddressModel address = confirmOrderViewModel.getSelectedAddress().getValue() != null ? confirmOrderViewModel.getSelectedAddress().getValue() : null;
+        List<DiscountModel> discounts = selectedDiscount != null ? List.of(selectedDiscount) : new ArrayList<>();
+
+        // Gọi ViewModel để tạo đơn hàng
+        assert address != null;
+        confirmOrderViewModel.createOrder(address.getAddressId() ,selectedPaymentMethods.getPaymentMethodId(), "d2e92863-21c6-45d6-a4d4-01a94df5b558");
+        Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
+        navigateToOrderFragment();
     }
 
     @Override

@@ -204,6 +204,12 @@
             app:popUpTo="@id/cartFragment"
             app:popUpToInclusive="false"
             app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_confirmOrderFragment_to_orderFragment"
+            app:destination="@id/orderFragment"
+            app:popUpTo="@id/confirmOrderFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
     </fragment>
 
     <fragment

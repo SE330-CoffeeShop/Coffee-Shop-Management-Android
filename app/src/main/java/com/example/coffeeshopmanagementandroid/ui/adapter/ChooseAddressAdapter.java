@@ -32,7 +32,7 @@ public class ChooseAddressAdapter extends RecyclerView.Adapter<ChooseAddressAdap
     @NonNull
     @Override
     public ChooseAddressAdapter.ChooseAddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.discount_item_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.choosee_address_item_layout, parent, false);
         return new ChooseAddressAdapter.ChooseAddressViewHolder(view);
     }
 

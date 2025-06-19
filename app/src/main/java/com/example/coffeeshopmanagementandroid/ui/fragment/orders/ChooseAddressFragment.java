@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,7 @@ public class ChooseAddressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        confirmOrderViewModel = new ViewModelProvider(this).get(ConfirmOrderViewModel.class);
+        confirmOrderViewModel = new ViewModelProvider(requireActivity()).get(ConfirmOrderViewModel.class);
         initViews(view);
         setupAddress();
 
@@ -76,18 +77,33 @@ public class ChooseAddressFragment extends Fragment {
     }
 
     private void setupAddress() {
+        addressRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+
         confirmOrderViewModel.getAddressesLiveData().observe(getViewLifecycleOwner(), addresses -> {
             if (addresses != null && !addresses.isEmpty()) {
-                chooseAddressAdapter.updateList(addresses);
+                AddressModel selected = confirmOrderViewModel.getSelectedAddress().getValue();
+                int selectedIndex = -1;
+                if (selected != null) {
+                    for (int i = 0; i < addresses.size(); i++) {
+                        if (addresses.get(i).getAddressId().equals(selected.getAddressId())) {
+                            selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                chooseAddressAdapter = new ChooseAddressAdapter(
+                        addresses,
+                        selectedIndex,
+                        method -> {
+                            selectedAddress = method;
+                            confirmOrderViewModel.getSelectedAddress().setValue(method); // cập nhật ViewModel
+                        }
+                );
+
+                addressRecyclerView.setAdapter(chooseAddressAdapter);
             }
         });
-        addressRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
-        chooseAddressAdapter = new ChooseAddressAdapter(
-                new ArrayList<>(), // khởi tạo danh sách trống ban đầu
-                -1, // chưa chọn mặc định
-                method -> selectedAddress = method // callback khi chọn
-        );
-        addressRecyclerView.setAdapter(chooseAddressAdapter);
     }
 
     @Override

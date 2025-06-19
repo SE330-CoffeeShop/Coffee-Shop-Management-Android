@@ -10,6 +10,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.address.response.Address
 import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.GetAddressRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.request.GetAllPaymentRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.response.PaymentResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.AddressMapper;
@@ -20,6 +21,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.payment.PaymentMethodModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.PaymentUseCase;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.AddressSortBy;
@@ -38,10 +40,11 @@ public class ConfirmOrderViewModel extends ViewModel {
     private final CartUseCase cartUseCase;
     private final PaymentUseCase paymentUseCase;
     private final AddressUseCase addressUseCase;
+    private final OrderUseCase orderUseCase;
     private final MutableLiveData<List<CartItemModel>> cartItemsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<PaymentMethodModel>> paymentMethodsLiveData = new MutableLiveData<>(new ArrayList<>());
-
     private final MutableLiveData<List<AddressModel>> addressesLiveDate = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<AddressModel> selectedAddress = new MutableLiveData<>(null);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
@@ -63,10 +66,11 @@ public class ConfirmOrderViewModel extends ViewModel {
         errorLiveData.postValue(errorMessage);
     }
     @Inject
-    public ConfirmOrderViewModel(CartUseCase cartUseCase, PaymentUseCase paymentUseCase, AddressUseCase addressUseCase) {
+    public ConfirmOrderViewModel(CartUseCase cartUseCase, PaymentUseCase paymentUseCase, AddressUseCase addressUseCase, OrderUseCase orderUseCase) {
         this.cartUseCase = cartUseCase;
         this.paymentUseCase = paymentUseCase;
         this.addressUseCase = addressUseCase;
+        this.orderUseCase = orderUseCase;
     }
 
     public MutableLiveData<List<CartItemModel>> getCartItemsLiveData() {
@@ -91,6 +95,10 @@ public class ConfirmOrderViewModel extends ViewModel {
 
     public MutableLiveData<List<AddressModel>> getAddressesLiveData() {
         return addressesLiveDate;
+    }
+
+    public MutableLiveData<AddressModel> getSelectedAddress() {
+        return selectedAddress;
     }
 
     public void fetchAllCartItems(int page, int limit, SortType sortType, CartSortBy sortBy) {
@@ -149,10 +157,32 @@ public class ConfirmOrderViewModel extends ViewModel {
                     setTotal(result.getPaging().getTotal());
                     List<AddressModel> addresses = AddressMapper.mapToAddressModelList(result.getData());
                     appendAddresses(addresses);
+                    for( AddressModel address : addresses) {
+                        if (address.getAddressIsDefault() == true) {
+                            selectedAddress.postValue(address);
+                            break;
+                        }
+                    }
                 }
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());
                 Log.e("ConfirmViewModel", "Fetch all products failed: " + e.getMessage(), e);
+            } finally {
+                setIsLoading(false);
+            }
+        }).start();
+    }
+
+    public void createOrder(String shippingAddressId, String paymentMethodId, String branchId) {
+        setIsLoading(true);
+        new Thread(() -> {
+            try {
+                CreateOrderRequest request = new CreateOrderRequest(shippingAddressId, paymentMethodId, branchId);
+                orderUseCase.createOrder(request);
+                Log.d("ConfirmOrderViewModel", "Order created successfully");
+            } catch (Exception e) {
+                setErrorLiveData(e.getMessage());
+                Log.e("ConfirmOrderViewModel", "Create order failed: " + e.getMessage(), e);
             } finally {
                 setIsLoading(false);
             }
@@ -168,9 +198,7 @@ public class ConfirmOrderViewModel extends ViewModel {
     }
 
     public void appendAddresses(List<AddressModel> addresses) {
-        List<AddressModel> currentAddresses = addressesLiveDate.getValue() != null
-                ? new ArrayList<>(addressesLiveDate.getValue())
-                : new ArrayList<>();
+        List<AddressModel> currentAddresses = new ArrayList<>();
         for (AddressModel newItem : addresses) {
             if (!currentAddresses.contains(newItem)) {
                 currentAddresses.add(newItem);
@@ -180,9 +208,7 @@ public class ConfirmOrderViewModel extends ViewModel {
     }
 
     public void appendPaymentMethod(List<PaymentMethodModel> paymentMethods) {
-        List<PaymentMethodModel> currentPaymentMethods = paymentMethodsLiveData.getValue() != null
-                ? new ArrayList<>(paymentMethodsLiveData.getValue())
-                : new ArrayList<>();
+        List<PaymentMethodModel> currentPaymentMethods = new ArrayList<>();
         for (PaymentMethodModel newMethod : paymentMethods) {
             if (!currentPaymentMethods.contains(newMethod)) {
                 currentPaymentMethods.add(newMethod);
