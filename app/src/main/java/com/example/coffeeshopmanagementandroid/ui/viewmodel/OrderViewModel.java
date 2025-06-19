@@ -94,11 +94,11 @@ public class OrderViewModel extends ViewModel {
         this.total.postValue(total);
     }
 
-    public void fetchAllOrdersCustomer(String id, int page, int limit, SortType sortType, OrderSortBy sortBy) {
+    public void fetchAllOrdersCustomer(int page, int limit, SortType sortType, OrderSortBy sortBy) {
         setIsLoading(true);
         new Thread(() -> {
             try {
-                GetAllOrdersCustomerRequest request = new GetAllOrdersCustomerRequest(page, limit,id, sortType, sortBy);
+                GetAllOrdersCustomerRequest request = new GetAllOrdersCustomerRequest(page, limit, sortType, sortBy);
                 BasePagingResponse<List<OrderResponse>> result = orderUseCase.getAllOrdersCustomer(request);
                 if (result != null && result.getData() != null) {
                     setTotal(result.getPaging().getTotal());
@@ -113,7 +113,7 @@ public class OrderViewModel extends ViewModel {
             }
         }).start();
     }
-    public void fetchMoreOrdersCustomer(String id, SortType sortType, OrderSortBy sortBy) {
+    public void fetchMoreOrdersCustomer(SortType sortType, OrderSortBy sortBy) {
         if (isAllDataLoaded.getValue() != null && isAllDataLoaded.getValue()) {
             Log.d("OrderViewModel", "All data already loaded, skipping fetch");
             return;
@@ -121,14 +121,14 @@ public class OrderViewModel extends ViewModel {
         int currentPage = page.getValue() != null ? page.getValue() : 1;
         int nextPage = currentPage + 1;
         setPage(nextPage);
-        fetchAllOrdersCustomer(id, nextPage, limit.getValue(), sortType, sortBy);
+        fetchAllOrdersCustomer(nextPage, limit.getValue(), sortType, sortBy);
         if (ordersLiveData.getValue() != null && total.getValue() != null && ordersLiveData.getValue().size() >= total.getValue()) {
             setIsAllDataLoaded(true);
         }
     }
     // Phương thức append dữ liệu mới vào danh sách hiện tại
     private void appendOrders(List<OrderModel> newOrders) {
-        List<OrderModel> currentOrders = ordersLiveData.getValue() != null ? new ArrayList<>(ordersLiveData.getValue()) : new ArrayList<>();
+        List<OrderModel> currentOrders = new ArrayList<>();
         for (OrderModel newOrder : newOrders) {
             if (!currentOrders.contains(newOrder)) {
                 currentOrders.add(newOrder);

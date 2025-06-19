@@ -3,11 +3,12 @@ package com.example.coffeeshopmanagementandroid.utils.enums;
 import androidx.annotation.NonNull;
 
 public enum OrderStatus {
-    PENDING("Chờ tiếp nhận"),
-    PROCESSING("Đang chuẩn bị"),
-    DELIVERING("Đang giao hàng"),
-    COMPLETED("Hoàn thành"),
-    CANCELLED("Đã huỷ");
+    PENDING("ĐANG CHỜ"),
+    PROCESSING("ĐANG XỬ LÝ"),
+    COMPLETED("HOÀN TẤT"),
+    DELIVERING("ĐANG GIAO HÀNG"),
+    DELIVERED("ĐÃ GIAO HÀNG"),
+    CANCELLED("ĐÃ HỦY"),;
     private final String status;
     OrderStatus(String status) {
         this.status = status;

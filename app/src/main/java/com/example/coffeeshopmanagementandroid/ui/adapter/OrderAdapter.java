@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
 import com.example.coffeeshopmanagementandroid.ui.component.StatusIndicator;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             // Bind dữ liệu vào các thành phần giao diện ở đây
             orderIdTextView.setText(order.getOrderId());
             statusIndicator.setStatus(order.getOrderStatus());
-            totalOrderTextView.setText(order.getOrderTotalCost() + " VND");
+            totalOrderTextView.setText(CurrencyFormat.formatVND(order.getOrderTotalCost()));
         }
     }
 }

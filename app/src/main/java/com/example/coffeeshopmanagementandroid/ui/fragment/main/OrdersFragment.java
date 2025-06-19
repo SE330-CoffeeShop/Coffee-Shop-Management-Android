@@ -94,7 +94,7 @@ public class OrdersFragment extends Fragment {
                         int totalItemCount = lm.getItemCount();
                         int lastVisibleItem = lm.findLastVisibleItemPosition();
                         if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
-                            orderViewModel.fetchMoreOrdersCustomer(customerId, SortType.DESC, OrderSortBy.CREATED_AT);
+                            orderViewModel.fetchMoreOrdersCustomer(SortType.DESC, OrderSortBy.CREATED_AT);
                         }
                     }
                 }
@@ -104,7 +104,7 @@ public class OrdersFragment extends Fragment {
 
     private void fetchAndObserveOrders() {
         if (customerId != null) {
-            orderViewModel.fetchAllOrdersCustomer(customerId, 1, 15, SortType.DESC, OrderSortBy.CREATED_AT);
+            orderViewModel.fetchAllOrdersCustomer( 1, 15, SortType.DESC, OrderSortBy.CREATED_AT);
         } else {
             Toast.makeText(getContext(), "Can not fetch ORDERS", Toast.LENGTH_SHORT).show();
             return;

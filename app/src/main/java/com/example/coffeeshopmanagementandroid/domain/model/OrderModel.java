@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.example.coffeeshopmanagementandroid.utils.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrderModel {
@@ -14,9 +15,9 @@ public class OrderModel {
     private String employeeId;
     private String shippingAddressId;
     private String paymentMethodId;
-    private int orderTotalCost;
-    private int orderDiscountCost;
-    private int orderTotalCostAfterDiscount;
+    private BigDecimal orderTotalCost;
+    private BigDecimal orderDiscountCost;
+    private BigDecimal orderTotalCostAfterDiscount;
     private String orderStatus;
     private String orderTrackingNumber;
 
@@ -24,7 +25,7 @@ public class OrderModel {
         // Constructor mặc định không cần thực hiện gì
     }
 
-    public OrderModel(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, int orderTotalCost, int orderDiscountCost, int orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
+    public OrderModel(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, BigDecimal orderTotalCost, BigDecimal orderDiscountCost, BigDecimal orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
         this.orderId = orderId;
         this.userId = userId;
         this.employeeId = employeeId;
@@ -77,39 +78,41 @@ public class OrderModel {
         this.paymentMethodId = paymentMethodId;
     }
 
-    public int getOrderTotalCost() {
+    public BigDecimal getOrderTotalCost() {
         return orderTotalCost;
     }
 
-    public void setOrderTotalCost(int orderTotalCost) {
+    public void setOrderTotalCost(BigDecimal orderTotalCost) {
         this.orderTotalCost = orderTotalCost;
     }
 
-    public int getOrderDiscountCost() {
+    public BigDecimal getOrderDiscountCost() {
         return orderDiscountCost;
     }
 
-    public void setOrderDiscountCost(int orderDiscountCost) {
+    public void setOrderDiscountCost(BigDecimal orderDiscountCost) {
         this.orderDiscountCost = orderDiscountCost;
     }
 
-    public int getOrderTotalCostAfterDiscount() {
+    public BigDecimal getOrderTotalCostAfterDiscount() {
         return orderTotalCostAfterDiscount;
     }
 
-    public void setOrderTotalCostAfterDiscount(int orderTotalCostAfterDiscount) {
+    public void setOrderTotalCostAfterDiscount(BigDecimal orderTotalCostAfterDiscount) {
         this.orderTotalCostAfterDiscount = orderTotalCostAfterDiscount;
     }
 
     public String getOrderStatus() {
         switch (this.orderStatus) {
-            case "PENDING":
+            case "ĐANG CHỜ":
                 return OrderStatus.PENDING.getStatus();
-            case "PROCESSING":
+            case "ĐANG XỬ LÝ":
                 return OrderStatus.PROCESSING.getStatus();
-            case "DELIVERING":
+            case "ĐANG GIAO HÀNG":
                 return OrderStatus.DELIVERING.getStatus();
-            case "COMPLETED":
+            case "ĐÃ GIAO HÀNG":
+                return OrderStatus.DELIVERED.getStatus();
+            case "HOÀN TẤT":
                 return OrderStatus.COMPLETED.getStatus();
             default:
                 return OrderStatus.CANCELLED.getStatus();

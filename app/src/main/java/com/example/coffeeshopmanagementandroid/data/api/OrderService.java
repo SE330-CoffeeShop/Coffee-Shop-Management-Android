@@ -13,9 +13,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OrderService {
-    @GET("/orders/customer/{customerId}")
-    Call<BasePagingResponse<List<OrderResponse>>> getAllOrdersCustomer(@Path("customerId") String customerId,
-                                                                       @Query("page") int page,
+    @GET("/orders/customer")
+    Call<BasePagingResponse<List<OrderResponse>>> getAllOrdersCustomer(@Query("page") int page,
                                                                        @Query("limit") int limit,
                                                                        @Query("sortType") String sortType,
                                                                        @Query("sortBy") String sortBy
@@ -26,4 +25,8 @@ public interface OrderService {
                            @Query("paymentMethodId") String paymentMethodId,
                            @Query("branchId") String branchId
     );
+
+    //@GET("/orders/{orderId}")
+    //Call<GetDetailOrderResponse> getDetailOrder(@Path("orderId") String orderId);
+
 }

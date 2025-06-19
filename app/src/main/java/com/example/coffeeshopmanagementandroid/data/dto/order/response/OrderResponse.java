@@ -1,18 +1,20 @@
 package com.example.coffeeshopmanagementandroid.data.dto.order.response;
 
+import java.math.BigDecimal;
+
 public class OrderResponse {
     private String orderId;
     private String userId;
     private String employeeId;
     private String shippingAddressId;
     private String paymentMethodId;
-    private int orderTotalCost;
-    private int orderDiscountCost;
-    private int orderTotalCostAfterDiscount;
+    private BigDecimal orderTotalCost;
+    private BigDecimal orderDiscountCost;
+    private BigDecimal orderTotalCostAfterDiscount;
     private String orderStatus;
     private String orderTrackingNumber;
 
-    public OrderResponse(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, int orderTotalCost, int orderDiscountCost, int orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
+    public OrderResponse(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, BigDecimal orderTotalCost, BigDecimal orderDiscountCost, BigDecimal orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
         this.orderId = orderId;
         this.userId = userId;
         this.employeeId = employeeId;
@@ -65,27 +67,27 @@ public class OrderResponse {
         this.paymentMethodId = paymentMethodId;
     }
 
-    public int getOrderTotalCost() {
+    public BigDecimal getOrderTotalCost() {
         return orderTotalCost;
     }
 
-    public void setOrderTotalCost(int orderTotalCost) {
+    public void setOrderTotalCost(BigDecimal orderTotalCost) {
         this.orderTotalCost = orderTotalCost;
     }
 
-    public int getOrderDiscountCost() {
+    public BigDecimal getOrderDiscountCost() {
         return orderDiscountCost;
     }
 
-    public void setOrderDiscountCost(int orderDiscountCost) {
+    public void setOrderDiscountCost(BigDecimal orderDiscountCost) {
         this.orderDiscountCost = orderDiscountCost;
     }
 
-    public int getOrderTotalCostAfterDiscount() {
+    public BigDecimal getOrderTotalCostAfterDiscount() {
         return orderTotalCostAfterDiscount;
     }
 
-    public void setOrderTotalCostAfterDiscount(int orderTotalCostAfterDiscount) {
+    public void setOrderTotalCostAfterDiscount(BigDecimal orderTotalCostAfterDiscount) {
         this.orderTotalCostAfterDiscount = orderTotalCostAfterDiscount;
     }
 

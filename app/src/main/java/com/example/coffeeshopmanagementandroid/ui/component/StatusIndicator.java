@@ -32,27 +32,30 @@ public class StatusIndicator extends LinearLayout {
 
     public void setStatus(String status) {
         this.tvStatus.setText(status);
-        switch (status.toLowerCase()) {
-            case "hoàn thành":
+        switch (status) {
+            case "HOÀN TẤT":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order_successful);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.primary_400));
                 break;
-            case "đã huỷ":
+            case "ĐÃ HUỶ":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order_cancel);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.error_500));
                 break;
-            case "đang chuẩn bị":
+            case "ĐANG XỬ LÝ":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
                 break;
-            case "chờ tiếp nhận":
+            case "ĐANG CHỜ":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
                 break;
-            case "đang giao hàng":
+            case "ĐANG GIAO HÀNG":
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));
                 break;
+            case "ĐÃ GIAO HÀNG":
+                this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order_successful);
+                this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.primary_400));
             default:
                 this.viewIndicator.setBackgroundResource(R.drawable.bg_status_order);
                 this.tvStatus.setTextColor(ContextCompat.getColor(getContext(), R.color.warning_500));

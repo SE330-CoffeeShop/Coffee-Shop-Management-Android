@@ -21,8 +21,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
     @Override
     public BasePagingResponse<List<OrderResponse>> getAllOrdersCustomer(GetAllOrdersCustomerRequest request) throws Exception {
-        Log.d("Order RepoIml - getAllOrdersCustomer", "Called");
-        Call<BasePagingResponse<List<OrderResponse>>> call = orderService.getAllOrdersCustomer(request.getId(), request.getPage(), request.getLimit(), request.getSortType().toString(), request.getSortBy().toString());
+        Log.d("Order RepoIml", "Called");
+        Call<BasePagingResponse<List<OrderResponse>>> call = orderService.getAllOrdersCustomer(request.getPage(), request.getLimit(), request.getSortType().toString(), request.getSortBy().toString());
         Response<BasePagingResponse<List<OrderResponse>>> response = call.execute();
 
         if (response.isSuccessful() && response.body() != null) {
