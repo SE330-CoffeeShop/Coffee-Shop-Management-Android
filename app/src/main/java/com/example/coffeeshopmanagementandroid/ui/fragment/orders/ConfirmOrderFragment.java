@@ -196,7 +196,7 @@ public class ConfirmOrderFragment extends Fragment {
 
         // Gọi ViewModel để tạo đơn hàng
         assert address != null;
-        confirmOrderViewModel.createOrder(address.getAddressId() ,selectedPaymentMethods.getPaymentMethodId(), "d2e92863-21c6-45d6-a4d4-01a94df5b558");
+        confirmOrderViewModel.createOrder(address.getAddressId() ,selectedPaymentMethods.getPaymentMethodId(), "79b284c7-b6e9-4c16-be41-74e533ef59a2");
         Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
         navigateToOrderFragment();
     }

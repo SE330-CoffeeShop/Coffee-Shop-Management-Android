@@ -2,6 +2,8 @@ package com.example.coffeeshopmanagementandroid.domain.model.cart;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.math.BigDecimal;
+
 public class CartItemModel {
     private String variantId;
     private Integer cartDetailQuantity;
@@ -13,6 +15,10 @@ public class CartItemModel {
     private String productThumb;
     private String productName;
     private String variantTierIdx;
+
+    public CartItemModel() {
+
+    }
 
     public String getVariantId() {
         return variantId;

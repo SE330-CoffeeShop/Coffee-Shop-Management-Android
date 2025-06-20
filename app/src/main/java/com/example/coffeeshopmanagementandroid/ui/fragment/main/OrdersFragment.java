@@ -23,6 +23,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.OrderStatusModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.StatusAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.OrderViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SharedPreferencesUtils;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.OrderStatus;
@@ -81,7 +82,9 @@ public class OrdersFragment extends Fragment {
         orderRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         orderAdapter = new OrderAdapter(orders, order -> {
             NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.action_orderFragment_to_detailOrderFragment);
+            Bundle args = new Bundle();
+            args.putString("orderId", order.getOrderId());
+            NavigationUtils.safeNavigate(navController, R.id.orderFragment, R.id.action_orderFragment_to_detailOrderFragment, "DetailOrderFragment", "OrderFragment", args);
         });
         orderRecyclerView.setAdapter(orderAdapter);
         orderRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

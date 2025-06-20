@@ -1,7 +1,9 @@
 package com.example.coffeeshopmanagementandroid.data.mapper;
 
+import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderDetailResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderModel;
+import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,5 +27,26 @@ public class OrderMapper {
             orderModels.add(model);
         }
         return orderModels;
+    }
+
+    public static CartItemModel mapOrderDetailResponseToCartItemModel(OrderDetailResponse orderDetailResponse) {
+        CartItemModel cartItemModel = new CartItemModel();
+        cartItemModel.setCartDetailQuantity(orderDetailResponse.getOrderDetailQuantity());
+        cartItemModel.setCartDetailUnitPrice(orderDetailResponse.getOrderDetailUnitPrice().doubleValue());
+        cartItemModel.setCartDetailTotalPrice(orderDetailResponse.getOrderDetailUnitPrice().doubleValue() * orderDetailResponse.getOrderDetailQuantity());
+        cartItemModel.setVariantId(orderDetailResponse.getProductVariantId());
+        cartItemModel.setProductName(orderDetailResponse.getProductName());
+        cartItemModel.setProductThumb(orderDetailResponse.getProductThumb());
+        cartItemModel.setVariantTierIdx(orderDetailResponse.getVariantTierId());
+        // Assuming discount cost and prices after discount are not provided in OrderDetailResponse
+        return cartItemModel;
+    }
+    public static List<CartItemModel> mapOrderDetailResponsesToCartItems(List<OrderDetailResponse> orderDetailResponses) {
+        List<CartItemModel> cartItems = new ArrayList<>();
+        for (OrderDetailResponse response : orderDetailResponses) {
+            CartItemModel item = mapOrderDetailResponseToCartItemModel(response);
+            cartItems.add(item);
+        }
+        return cartItems;
     }
 }

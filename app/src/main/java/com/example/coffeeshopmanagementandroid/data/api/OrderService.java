@@ -1,12 +1,16 @@
 package com.example.coffeeshopmanagementandroid.data.api;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.order.response.GetDetailOrderResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.product.response.ProductResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -21,12 +25,10 @@ public interface OrderService {
     );
 
     @POST("/orders/")
-    Call<Void> createOrder(@Query("shippingAddressId") String addressId,
-                           @Query("paymentMethodId") String paymentMethodId,
-                           @Query("branchId") String branchId
+    Call<Void> createOrder(@Body CreateOrderRequest createOrderRequest
     );
 
-    //@GET("/orders/{orderId}")
-    //Call<GetDetailOrderResponse> getDetailOrder(@Path("orderId") String orderId);
+    @GET("/orders/{orderId}")
+    Call<BaseResponse<GetDetailOrderResponse>> getDetailOrder(@Path("orderId") String orderId);
 
 }

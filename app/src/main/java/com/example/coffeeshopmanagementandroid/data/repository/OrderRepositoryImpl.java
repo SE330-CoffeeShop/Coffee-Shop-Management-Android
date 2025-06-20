@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.GetAllOrdersCustomerRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.order.response.GetDetailOrderResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 
@@ -38,7 +40,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Void createOrder(CreateOrderRequest request) throws Exception {
         try {
-            Call<Void> call = orderService.createOrder(request.getShippingAddressId(), request.getPaymentMethodId(), request.getBranchId());
+            Call<Void> call = orderService.createOrder(request);
             Response<Void> response = call.execute();
             if (response.isSuccessful()) {
                 Log.d("UpdateCartItem", "Cart item updated successfully");
@@ -51,6 +53,25 @@ public class OrderRepositoryImpl implements OrderRepository {
         } catch (Exception e) {
             Log.e("UPDATE CART ITEM", "Exception: " + e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public GetDetailOrderResponse getDetailOrder(String orderId) throws Exception {
+        try {
+            Call<BaseResponse<GetDetailOrderResponse>> call = orderService.getDetailOrder(orderId);
+            Response<BaseResponse<GetDetailOrderResponse>> response = call.execute();
+            if (response.isSuccessful() && response.body() != null) {
+                Log.d("GetDetailOrder", "Order details retrieved successfully");
+                return response.body().getData();
+            } else {
+                String errorMessage = "Get order details failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+                Log.e("GET ORDER DETAILS", errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            Log.e("GET ORDER DETAILS", "Exception: " + e.getMessage());
+            throw new Exception("Failed to get order details", e);
         }
     }
 }

@@ -1,12 +1,20 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.orders;
 
+import static com.example.coffeeshopmanagementandroid.data.mapper.OrderMapper.mapOrderDetailResponsesToCartItems;
+
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,13 +24,30 @@ import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.DetailOrderViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.DetailProductViewModel;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
+import com.example.coffeeshopmanagementandroid.utils.helper.StatusFormat;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DetailOrderFragment extends Fragment {
     private OrderProductAdapter orderProductAdapter;
     private RecyclerView orderProductRecyclerView;
+
+    private DetailOrderViewModel detailOrderViewModel;
+    private TextView tvShippingAddress;
+    private TextView customerNameTextView;
+    private TextView customerPhoneTextView;
+    private TextView statusOrderTextView;
+    private TextView tvTotalOrder;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,6 +62,63 @@ public class DetailOrderFragment extends Fragment {
 
         setupRecyclerView(view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Initialize ViewModel
+        detailOrderViewModel = new ViewModelProvider(this).get(DetailOrderViewModel.class);
+        String orderId = requireArguments().getString("orderId");
+
+        Log.d("DetailProductFragment", "Received productId: " + orderId);
+        if (orderId != null) {
+            detailOrderViewModel.fetchOrderDetail(orderId);
+        } else {
+            Toast.makeText(requireContext(), "Missing product ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        initView();
+        // setupOrderItems();
+
+    }
+
+    private void initView() {
+        tvShippingAddress = requireView().findViewById(R.id.tvShippingAddress);
+        customerNameTextView = requireView().findViewById(R.id.customerNameTextView);
+        customerPhoneTextView = requireView().findViewById(R.id.customerPhoneTextView);
+        statusOrderTextView = requireView().findViewById(R.id.statusOrderTextView);
+        orderProductRecyclerView = requireView().findViewById(R.id.orderProductRecyclerView);
+        tvTotalOrder = requireView().findViewById(R.id.tvTotalOrder);
+
+        detailOrderViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
+            tvShippingAddress.setText(address);
+        });
+        detailOrderViewModel.getUserName().observe(getViewLifecycleOwner(), userName -> {
+            customerNameTextView.setText(userName);
+        });
+        detailOrderViewModel.getUserPhoneNumber().observe(getViewLifecycleOwner(), userPhoneNumber -> {
+            customerPhoneTextView.setText(userPhoneNumber);
+        });
+        detailOrderViewModel.getOrderStatus().observe(getViewLifecycleOwner(), orderStatus -> {
+            statusOrderTextView.setText(orderStatus);
+            statusOrderTextView.setTextColor(StatusFormat.getColor(requireContext(),orderStatus));
+        });
+        detailOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), totalPrice -> {
+            tvTotalOrder.setText(CurrencyFormat.formatVND(totalPrice));
+        });
+    }
+
+    private void setupOrderItems() {
+
+        detailOrderViewModel.getOrderItems().observe(getViewLifecycleOwner(), cartItems -> {
+            List<CartItemModel> list = mapOrderDetailResponsesToCartItems(cartItems);
+            orderProductAdapter.updateList(list);
+        });
+
+        orderProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        orderProductAdapter = new OrderProductAdapter(new ArrayList<>());
+        orderProductRecyclerView.setAdapter(orderProductAdapter);
     }
 
     private void handleBackPressed() {

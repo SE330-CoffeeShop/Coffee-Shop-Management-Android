@@ -1,8 +1,11 @@
 package com.example.coffeeshopmanagementandroid.data.dto.order.response;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.math.BigDecimal;
 
 public class OrderResponse {
+    @SerializedName("id")
     private String orderId;
     private String userId;
     private String employeeId;

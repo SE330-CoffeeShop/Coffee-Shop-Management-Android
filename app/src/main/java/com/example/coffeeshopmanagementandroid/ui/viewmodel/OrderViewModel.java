@@ -128,7 +128,7 @@ public class OrderViewModel extends ViewModel {
     }
     // Phương thức append dữ liệu mới vào danh sách hiện tại
     private void appendOrders(List<OrderModel> newOrders) {
-        List<OrderModel> currentOrders = new ArrayList<>();
+        List<OrderModel> currentOrders = ordersLiveData.getValue() != null ? new ArrayList<>(ordersLiveData.getValue()) : new ArrayList<>();
         for (OrderModel newOrder : newOrders) {
             if (!currentOrders.contains(newOrder)) {
                 currentOrders.add(newOrder);

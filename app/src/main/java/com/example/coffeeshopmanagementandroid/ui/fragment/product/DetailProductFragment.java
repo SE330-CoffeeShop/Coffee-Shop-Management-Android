@@ -318,11 +318,34 @@ public class DetailProductFragment extends Fragment {
     }
 
     private void onBuyButton() {
-        NavigationUtils.safeNavigate(navController,
-                R.id.detailProductFragment,
-                R.id.action_detailProductFragment_to_cartFragment,
-                "CartFragment",
-                "DetailProductFragment");
+        if (variantProductAdapter == null || variantProductAdapter.getSelectedVariant() == null) {
+            Toast.makeText(requireContext(), "Please select a variant", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String variantId = variantProductAdapter.getSelectedVariant();
+        int quantity = 1; // Default quantity, can be modified to get from user input
+        detailProductViewModel.addToCart(variantId, quantity, new AddToCartCallback() {
+            @Override
+            public void onSuccess(String message) {
+                requireActivity().runOnUiThread(() ->
+                        {
+                            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                            NavigationUtils.safeNavigate(navController,
+                                    R.id.detailProductFragment,
+                                    R.id.action_detailProductFragment_to_cartFragment,
+                                    "CartFragment",
+                                    "DetailProductFragment");
+                        }
+                );
+            }
+
+            @Override
+            public void onError(String error) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
     }
 
     @Override
