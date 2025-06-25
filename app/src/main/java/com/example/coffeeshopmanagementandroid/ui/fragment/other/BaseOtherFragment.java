@@ -36,7 +36,11 @@ public abstract class BaseOtherFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = NavHostFragment.findNavController(this);
 
-        initViews(view);
+        try {
+            initViews(view);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         initBackButton(view);
     }
 
@@ -85,5 +89,5 @@ public abstract class BaseOtherFragment extends Fragment {
 
     protected abstract int getLayoutResId();
 
-    protected abstract void initViews(View view);
+    protected abstract void initViews(View view) throws Exception;
 }

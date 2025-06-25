@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.NotificationModel;
+import com.example.coffeeshopmanagementandroid.domain.model.notification.NotificationModel;
 
 import java.util.List;
 
@@ -71,14 +71,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             tvNotificationLabel.setText(notification.getNotificationType());
             tvNotificationContent.setText(notification.getNotificationContent());
 
-            // Thiết lập icon trạng thái đọc/chưa đọc
-            if (notification.isNotificationIsRead()) {
+            if (notification.isRead()) {
                 ivReadStatus.setVisibility(View.GONE);
                 itemView.setBackgroundResource(R.drawable.bg_notification_read);
             } else {
-                ivReadStatus.setImageResource(R.drawable.unread_icon); // Icon chưa đọc
+                ivReadStatus.setImageResource(R.drawable.unread_icon);
             }
         }
+    }
+
+    public void updateNotifications(List<NotificationModel> newNotifications) {
+        notifications.clear();
+        notifications.addAll(newNotifications);
+        notifyDataSetChanged();
     }
 
     public interface OnItemClickListener {
