@@ -5,12 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 
@@ -89,6 +91,7 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
         private final ImageButton minusButton;
         private final Button deleteButton;
         private final ImageButton plusButton;
+        private final ImageView productImageView;
 
 
         public ProductCartViewHolder(@NonNull View itemView) {
@@ -100,6 +103,7 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
             this.minusButton = itemView.findViewById(R.id.minusButton);
             this.deleteButton = itemView.findViewById(R.id.deleteButton);
             this.plusButton = itemView.findViewById(R.id.plusButton);
+            this.productImageView = itemView.findViewById(R.id.productImageView);
 
             this.minusButton.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -134,6 +138,16 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
             variantProductTextView.setText(product.getVariantTierIdx());
             priceTextView.setText(product.getCartDetailUnitPriceAfterDiscount() + " VND");
             quantityTextView.setText(String.valueOf(product.getCartDetailQuantity()));
+
+            if (product.getProductThumb() != null && !product.getProductThumb().isEmpty()) {
+                Glide.with(productImageView.getContext())
+                        .load(product.getProductThumb())
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.placeholder_image)
+                        .into(productImageView);
+            } else {
+                productImageView.setImageResource(R.drawable.placeholder_image);
+            }
         }
     }
 }

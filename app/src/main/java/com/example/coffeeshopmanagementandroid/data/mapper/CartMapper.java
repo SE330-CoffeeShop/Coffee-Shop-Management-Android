@@ -23,6 +23,7 @@ public class CartMapper {
         cartItemModel.setProductThumb(response.getProductThumb());
         cartItemModel.setProductName(response.getProductName());
         cartItemModel.setVariantTierIdx(response.getVariantTierIdx());
+        cartItemModel.setProductId(response.getProductId());
         return cartItemModel;
     }
 
