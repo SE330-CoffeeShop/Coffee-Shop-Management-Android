@@ -169,4 +169,5 @@
     <string name="default_content_notification">Nội dung thông báo dài hơn một dòng sẽ bị cắt...</string>
     <string name="all_notifications">Tất cả thông báo</string>
     <string name="menu">Menu</string>
+    <string name="default_cost_order">Tạm tính</string>
 </resources>

@@ -9,6 +9,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -20,7 +21,7 @@ public interface ProductService {
                                                                    @Query("sortBy") String sortBy
     );
 
-    @GET("/product/{id}")
+    @GET("/product/user/{id}")
     Call<BaseResponse<ProductResponse>> getProductById(@Path("id") String id);
 
     @GET("/product-variant/by-product/{productId}")
@@ -34,5 +35,16 @@ public interface ProductService {
                                                                   @Query("limit") int limit,
                                                                   @Query("sortType") String sortType,
                                                                   @Query("sortBy") String sortBy
+    );
+
+    @POST("/favorite-drinks/{drinkId}")
+    Call<BaseResponse<Void>> addProductToFavorite(@Path("drinkId") String drinkId);
+
+    @POST("/favorite-drinks/user")
+    Call<BasePagingResponse<List<ProductResponse>>> getAllFavoriteProductsByUser(
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("sortType") String sortType,
+            @Query("sortBy") String sortBy
     );
 }

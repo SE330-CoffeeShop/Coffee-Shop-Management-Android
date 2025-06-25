@@ -28,7 +28,7 @@ public interface OrderService {
     Call<Void> createOrder(@Body CreateOrderRequest createOrderRequest
     );
 
-    @GET("/orders/{orderId}")
+    @GET("/orders/me/{orderId}")
     Call<BaseResponse<GetDetailOrderResponse>> getDetailOrder(@Path("orderId") String orderId);
 
 }

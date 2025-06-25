@@ -19,4 +19,7 @@ public interface ProductRepository {
     List<ProductVariantModel> getProductVariantsByProductId(GetAllProductVariantsRequest request) throws Exception;
 
     BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception;
+
+    void addProductToFavorite(String drinkId) throws Exception;
+
 }

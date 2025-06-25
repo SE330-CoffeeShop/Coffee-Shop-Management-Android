@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/favoriteFragment"
-        android:icon="@drawable/favorites_icon"
+        android:icon="@drawable/unfavorites_icon"
         android:title="Yêu thích" />
     <item
         android:id="@+id/otherFragment"

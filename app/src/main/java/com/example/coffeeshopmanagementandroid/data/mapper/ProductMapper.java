@@ -41,6 +41,11 @@ public class ProductMapper {
         model.setProductIsPublished(productResponse.getProductIsPublished());
         model.setProductIsDeleted(productResponse.getProductIsDeleted());
         model.setProductRatingsAverage(productResponse.getProductRatingsAverage());
+        if (productResponse.getIsFavorite()) {
+            model.setFavorite(true);
+        } else {
+            model.setFavorite(false);
+        }
         return model;
     }
 

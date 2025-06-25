@@ -84,7 +84,12 @@ public class HomeFragment extends Fragment {
         List<ProductModel> coffees = new ArrayList<>();
 
         productAdapter = new ProductAdapter(coffees,
-                product -> Toast.makeText(requireContext(), "Added " + product.getProductName() + " to cart", Toast.LENGTH_SHORT).show(),
+                product -> {
+                    Bundle args = new Bundle();
+                    Log.d("HomeFragment", "Selected product: " + product.getProductId());
+                    args.putString("productId", product.getProductId());
+                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_detailProductFragment, "DetailProductFragment", "HomeFragment", args);
+                },
                 product -> {
                     Bundle args = new Bundle();
                     Log.d("HomeFragment", "Selected product: " + product.getProductId());
@@ -130,12 +135,18 @@ public class HomeFragment extends Fragment {
         });
 
         recentlyProductAdapter = new ProductAdapter(new ArrayList<>(),
-                product -> Toast.makeText(requireContext(),
-                        "Added recently " + product.getProductName() + " to cart",
-                        Toast.LENGTH_SHORT).show(),
-                product -> Toast.makeText(requireContext(),
-                        "Selected recently: " + product.getProductName(),
-                        Toast.LENGTH_SHORT).show());
+                product -> {
+                    Bundle args = new Bundle();
+                    Log.d("HomeFragment", "Selected product: " + product.getProductId());
+                    args.putString("productId", product.getProductId());
+                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_detailProductFragment, "DetailProductFragment", "HomeFragment", args);
+                },
+                product -> {
+                    Bundle args = new Bundle();
+                    Log.d("HomeFragment", "Selected product: " + product.getProductId());
+                    args.putString("productId", product.getProductId());
+                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_detailProductFragment, "DetailProductFragment", "HomeFragment", args);
+                });
         recentlyProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         recentlyProductRecyclerView.setAdapter(recentlyProductAdapter);
         recentlyProductRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

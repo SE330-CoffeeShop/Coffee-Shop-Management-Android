@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
@@ -38,8 +39,13 @@ public class ProductUseCase {
         return productRepository.getProductVariantsByProductId(request);
     }
 
+    @SuppressLint("LongLogTag")
     public BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception {
         Log.d("Favorite Product Use Case", "Called");
         return productRepository.getAllFavoriteProducts(request);
+    }
+
+    public void addProductToFavorite(String drinkId) throws Exception {
+        productRepository.addProductToFavorite(drinkId);
     }
 }

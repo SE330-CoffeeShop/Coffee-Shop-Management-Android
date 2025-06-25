@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
@@ -29,6 +30,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         this.productService = productService;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public BasePagingResponse<List<ProductResponse>> getAllProducts(GetAllProductsRequest request) throws Exception {
         Log.d("Product RepoIml - getAllProducts", "Called");
@@ -50,6 +52,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<ProductModel> getAllRecentProducts() {
         return null;
     }
+    @SuppressLint("LongLogTag")
     @Override
     public ProductModel getProductById(String id) throws Exception {
         Log.d("Product RepoIml - getDetailProduct", "Called");
@@ -86,6 +89,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         }
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception {
         Log.d("Favorite Product RepoIml - getAllFavoriteProductsCustomer", "Called");
@@ -97,6 +101,21 @@ public class ProductRepositoryImpl implements ProductRepository {
         } else {
             String errorMessage = "Get favorite products failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
             Log.e("GET FAVORITE PRODUCTS", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    @Override
+    public void addProductToFavorite(String drinkId) throws Exception {
+        Log.d("Product RepoIml - addProductToFavorite", "Called");
+        Call<BaseResponse<Void>> call = productService.addProductToFavorite(drinkId);
+        Response<BaseResponse<Void>> response = call.execute();
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("Response", "Product added to favorite successfully");
+        } else {
+            String errorMessage = "Add product to favorite failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("ADD PRODUCT TO FAVORITE", errorMessage);
             throw new Exception(errorMessage);
         }
     }

@@ -50,7 +50,7 @@
             android:layout_height="48dp"
             android:background="@null"
             android:contentDescription="Favorite button"
-            android:src="@drawable/favorites_icon" />
+            android:src="@drawable/unfavorites_icon" />
 
     </LinearLayout>
     <!--body-->

@@ -19,6 +19,7 @@ public class ProductModel implements Parcelable {
     private Boolean productIsPublished;
     private Boolean productIsDeleted;
     private String productCategoryId;
+    private boolean isFavorite;
 
     // Default constructor
     public ProductModel() {
@@ -34,7 +35,8 @@ public class ProductModel implements Parcelable {
                         String productCategoryId,
                         String productSlug,
                         Boolean productIsPublished,
-                        Boolean productIsDeleted) {
+                        Boolean productIsDeleted,
+                        boolean isFavorite) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -45,6 +47,7 @@ public class ProductModel implements Parcelable {
         this.productSlug = productSlug;
         this.productIsPublished = productIsPublished;
         this.productIsDeleted = productIsDeleted;
+        this.isFavorite = isFavorite;
     }
 
     protected ProductModel(Parcel in) {
@@ -58,6 +61,7 @@ public class ProductModel implements Parcelable {
         productIsPublished = (Boolean) in.readValue(Boolean.class.getClassLoader());
         productIsDeleted = (Boolean) in.readValue(Boolean.class.getClassLoader());
         productCategoryId = in.readString();
+        isFavorite = in.readByte() != 0; // Read boolean value from Parcel
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -132,5 +136,13 @@ public class ProductModel implements Parcelable {
         parcel.writeValue(productIsPublished);
         parcel.writeValue(productIsDeleted);
         parcel.writeString(productCategoryId);
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }
