@@ -39,4 +39,12 @@ public interface ProductService {
 
     @POST("/favorite-drinks/{drinkId}")
     Call<BaseResponse<Void>> addProductToFavorite(@Path("drinkId") String drinkId);
+
+    @POST("/favorite-drinks/user")
+    Call<BasePagingResponse<List<ProductResponse>>> getAllFavoriteProductsByUser(
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("sortType") String sortType,
+            @Query("sortBy") String sortBy
+    );
 }

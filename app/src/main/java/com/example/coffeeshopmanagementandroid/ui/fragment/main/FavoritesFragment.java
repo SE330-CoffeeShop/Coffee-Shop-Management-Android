@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +23,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.FavoriteViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SharedPreferencesUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
@@ -41,6 +44,7 @@ public class FavoritesFragment extends Fragment {
     private RecyclerView categoryRecyclerView;
     private FavoriteViewModel favoriteViewModel;
     private String customerId;
+    private NavController navController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +54,9 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        navController = NavHostFragment.findNavController(this);
+        favoriteViewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
 
         favoriteViewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
 
@@ -91,14 +98,26 @@ public class FavoritesFragment extends Fragment {
         List<ProductModel> coffees = new ArrayList<>();
 
         favoriteProductAdapter = new ProductAdapter(coffees,
-                // Xử lý thêm vào giỏ hàng
-                product -> Toast.makeText(requireContext(),
-                        "Added " + product.getProductName() + " to cart",
-                        Toast.LENGTH_SHORT).show(),
-                // Xử lý click vào sản phẩm
-                product -> Toast.makeText(requireContext(),
-                        "Selected: " + product.getProductName(),
-                        Toast.LENGTH_SHORT).show()
+                product -> {
+                    Bundle args = new Bundle();
+                    args.putString("productId", product.getProductId());
+                    NavigationUtils.safeNavigate(navController,
+                            R.id.favoriteFragment,
+                            R.id.action_favoritesFragment_to_detailProductFragment,
+                            "DetailProductFragment",
+                            "FavoritesFragment",
+                            args);
+                },
+                product -> {
+                    Bundle args = new Bundle();
+                    args.putString("productId", product.getProductId());
+                    NavigationUtils.safeNavigate(navController,
+                            R.id.favoriteFragment,
+                            R.id.action_favoritesFragment_to_detailProductFragment,
+                            "DetailProductFragment",
+                            "FavoritesFragment",
+                            args);
+                }
         );
         GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
         favoriteProductRecyclerView.setLayoutManager(gridLayoutManager);

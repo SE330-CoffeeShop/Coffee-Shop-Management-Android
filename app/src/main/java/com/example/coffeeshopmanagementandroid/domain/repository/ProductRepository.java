@@ -21,4 +21,5 @@ public interface ProductRepository {
     BasePagingResponse<List<ProductResponse>> getAllFavoriteProducts(GetAllFavoriteProductsUserRequest request) throws Exception;
 
     void addProductToFavorite(String drinkId) throws Exception;
+
 }

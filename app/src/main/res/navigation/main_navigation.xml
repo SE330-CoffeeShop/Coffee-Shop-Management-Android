@@ -44,7 +44,15 @@
         android:id="@+id/favoriteFragment"
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.main.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+
+        <action
+            android:id="@+id/action_favoritesFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:popUpTo="@id/favoriteFragment"
+            app:popUpToInclusive="false" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/otherFragment"
