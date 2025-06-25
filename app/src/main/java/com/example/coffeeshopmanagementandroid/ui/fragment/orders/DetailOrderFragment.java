@@ -47,6 +47,8 @@ public class DetailOrderFragment extends Fragment {
     private TextView customerPhoneTextView;
     private TextView statusOrderTextView;
     private TextView tvTotalOrder;
+    private TextView tvOriginalTotal;
+    private TextView tvDiscount;
 
 
     @Override
@@ -79,8 +81,7 @@ public class DetailOrderFragment extends Fragment {
             return;
         }
         initView();
-        // setupOrderItems();
-
+        setupOrderItems();
     }
 
     private void initView() {
@@ -89,6 +90,9 @@ public class DetailOrderFragment extends Fragment {
         customerPhoneTextView = requireView().findViewById(R.id.customerPhoneTextView);
         statusOrderTextView = requireView().findViewById(R.id.statusOrderTextView);
         orderProductRecyclerView = requireView().findViewById(R.id.orderProductRecyclerView);
+
+        tvOriginalTotal = requireView().findViewById(R.id.tvOriginalTotal);
+        tvDiscount = requireView().findViewById(R.id.tvDiscount);
         tvTotalOrder = requireView().findViewById(R.id.tvTotalOrder);
 
         detailOrderViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
@@ -102,23 +106,33 @@ public class DetailOrderFragment extends Fragment {
         });
         detailOrderViewModel.getOrderStatus().observe(getViewLifecycleOwner(), orderStatus -> {
             statusOrderTextView.setText(orderStatus);
-            statusOrderTextView.setTextColor(StatusFormat.getColor(requireContext(),orderStatus));
+            statusOrderTextView.setTextColor(StatusFormat.getColor(requireContext(), orderStatus));
         });
+
+        detailOrderViewModel.getOrderTotalCost().observe(getViewLifecycleOwner(), originalTotal -> {
+            tvOriginalTotal.setText(CurrencyFormat.formatVND(originalTotal));
+        });
+
+        detailOrderViewModel.getOrderDiscountCost().observe(getViewLifecycleOwner(), discount -> {
+            tvDiscount.setText("-" + CurrencyFormat.formatVND(discount));
+        });
+
         detailOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), totalPrice -> {
             tvTotalOrder.setText(CurrencyFormat.formatVND(totalPrice));
         });
     }
 
     private void setupOrderItems() {
-
-        detailOrderViewModel.getOrderItems().observe(getViewLifecycleOwner(), cartItems -> {
-            List<CartItemModel> list = mapOrderDetailResponsesToCartItems(cartItems);
-            orderProductAdapter.updateList(list);
-        });
-
         orderProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         orderProductAdapter = new OrderProductAdapter(new ArrayList<>());
         orderProductRecyclerView.setAdapter(orderProductAdapter);
+
+        detailOrderViewModel.getOrderItems().observe(getViewLifecycleOwner(), cartItems -> {
+            if (cartItems != null) {
+                List<CartItemModel> list = mapOrderDetailResponsesToCartItems(cartItems);
+                orderProductAdapter.updateList(list);
+            }
+        });
     }
 
     private void handleBackPressed() {

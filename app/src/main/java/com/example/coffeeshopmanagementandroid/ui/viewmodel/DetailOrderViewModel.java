@@ -23,6 +23,8 @@ public class DetailOrderViewModel extends ViewModel {
     private final MutableLiveData<String> userName = new MutableLiveData<>();
     private final MutableLiveData<String> userPhoneNumber = new MutableLiveData<>();
     private final MutableLiveData<String> orderStatus = new MutableLiveData<>();
+    private final MutableLiveData<BigDecimal> orderTotalCost = new MutableLiveData<>();
+    private final MutableLiveData<BigDecimal> orderDiscountCost = new MutableLiveData<>();
     private final MutableLiveData<List<OrderDetailResponse>> orderItems = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
@@ -65,6 +67,14 @@ public class DetailOrderViewModel extends ViewModel {
         errorLiveData.postValue(errorMessage);
     }
 
+    public MutableLiveData<BigDecimal> getOrderTotalCost() {
+        return orderTotalCost;
+    }
+
+    public MutableLiveData<BigDecimal> getOrderDiscountCost() {
+        return orderDiscountCost;
+    }
+
     @Inject
     public DetailOrderViewModel(OrderUseCase orderUseCase) {
         this.orderUseCase = orderUseCase;
@@ -74,22 +84,23 @@ public class DetailOrderViewModel extends ViewModel {
         setIsLoading(true);
         new Thread(() -> {
             try {
-                // Fetch product detail
                 GetDetailOrderResponse orderDetail = orderUseCase.getDetailOrder(orderId);
                 address.postValue(orderDetail.getShippingAddressName());
                 userName.postValue(orderDetail.getUserName());
                 userPhoneNumber.postValue(orderDetail.getUserPhoneNumber());
                 orderStatus.postValue(orderDetail.getOrderStatus());
+
+                // Set order items
                 orderItems.postValue(orderDetail.getOrderDetails());
-                totalPrice.postValue(orderDetail.getOrderTotalCost());
-                // Fetch variant list by productId
-                if (orderDetail == null) {
-                    setErrorLiveData("Product not found");
-                    return;
-                }
+
+                // Set pricing information
+                orderTotalCost.postValue(orderDetail.getOrderTotalCost());
+                orderDiscountCost.postValue(orderDetail.getOrderDiscountCost());
+                totalPrice.postValue(orderDetail.getOrderTotalCostAfterDiscount());
+
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());
-                Log.e("DetailProductViewModel", "Failed to fetch product detail or variants: " + e.getMessage(), e);
+                Log.e("DetailOrderViewModel", "Failed to fetch order details: " + e.getMessage(), e);
             } finally {
                 setIsLoading(false);
             }

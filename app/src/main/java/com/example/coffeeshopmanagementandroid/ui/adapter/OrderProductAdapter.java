@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
@@ -63,7 +64,16 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
         }
         public void bind(CartItemModel product) {
             // Bind dữ liệu vào các thành phần giao diện ở đây
-//            productImageView.setImageResource(R.drawable.product_image);
+            // Sử dụng Glide để tải ảnh từ URL
+            if (product.getProductThumb() != null && !product.getProductThumb().isEmpty()) {
+                Glide.with(productImageView.getContext())
+                        .load(product.getProductThumb())
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.placeholder_image)
+                        .into(productImageView);
+            } else {
+                productImageView.setImageResource(R.drawable.placeholder_image);
+            }
             productNameTextView.setText(product.getProductName());
             variantProductTextView.setText(product.getVariantTierIdx());
             priceTextView.setText(product.getCartDetailUnitPrice() + "đ");

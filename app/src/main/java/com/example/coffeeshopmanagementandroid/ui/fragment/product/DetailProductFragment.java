@@ -112,6 +112,12 @@ public class DetailProductFragment extends Fragment {
                 priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
                 loadProductImage(product.getProductThumb());
                 setupExpandableText(product.getProductDescription());
+
+                if (product.isFavorite()) {
+                    favoriteButton.setImageResource(R.drawable.favorites_icon);
+                } else {
+                    favoriteButton.setImageResource(R.drawable.unfavorites_icon);
+                }
             }
         });
 
@@ -142,7 +148,17 @@ public class DetailProductFragment extends Fragment {
 
         favoriteButton = requireView().findViewById(R.id.favoriteButtonDetailProduct);
         if (favoriteButton != null) {
-            favoriteButton.setOnClickListener(v -> Toast.makeText(requireContext(), "Favorite button clicked", Toast.LENGTH_SHORT).show());
+            favoriteButton.setOnClickListener(v -> {
+                if (detailProductViewModel.getProductLiveData().getValue() != null) {
+                    ProductModel product = detailProductViewModel.getProductLiveData().getValue();
+                    boolean isFavorite = !product.isFavorite();
+                    product.setFavorite(isFavorite);
+                    detailProductViewModel.addProductToFavorite(product.getProductId());
+                    favoriteButton.setImageResource(isFavorite ? R.drawable.favorites_icon : R.drawable.unfavorites_icon);
+                } else {
+                    Toast.makeText(requireContext(), "Product not found", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         addToCardButton = requireView().findViewById(R.id.addToCardButton);

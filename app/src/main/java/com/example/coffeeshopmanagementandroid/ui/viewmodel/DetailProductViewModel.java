@@ -98,4 +98,14 @@ public class DetailProductViewModel extends ViewModel {
             }
         }).start();
     }
+
+    public void addProductToFavorite(String drinkId) {
+        new Thread(() -> {
+            try {
+                productUseCase.addProductToFavorite(drinkId);
+            } catch (Exception e) {
+                Log.e("DetailProductViewModel", "Failed to add product to favorite: " + e.getMessage(), e);
+            }
+        }).start();
+    }
 }

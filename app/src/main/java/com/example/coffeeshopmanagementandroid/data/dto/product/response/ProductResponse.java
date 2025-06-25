@@ -16,6 +16,8 @@ public class ProductResponse {
     private Boolean productIsPublished;
     private Boolean productIsDeleted;
     private String productCategoryId;
+    @SerializedName("favorite")
+    private boolean isFavorite;
 
     public String getProductId() {
         return productId;
@@ -95,5 +97,13 @@ public class ProductResponse {
 
     public void setProductCategoryId(String productCategoryId) {
         this.productCategoryId = productCategoryId;
+    }
+
+    public boolean getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 }
