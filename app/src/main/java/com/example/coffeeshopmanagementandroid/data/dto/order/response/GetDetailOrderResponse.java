@@ -20,6 +20,7 @@ public class GetDetailOrderResponse {
     private String userName;
     private String userPhoneNumber;
     private String shippingAddressName;
+    private String approvalLink;
 
     @SerializedName("orderDetails")
     private List<OrderDetailResponse> orderDetails;
@@ -92,4 +93,11 @@ public class GetDetailOrderResponse {
         return orderDetails;
     }
 
+    public String getApprovalLink() {
+        return approvalLink;
+    }
+
+    public void setApprovalLink(String approvalLink) {
+        this.approvalLink = approvalLink;
+    }
 }

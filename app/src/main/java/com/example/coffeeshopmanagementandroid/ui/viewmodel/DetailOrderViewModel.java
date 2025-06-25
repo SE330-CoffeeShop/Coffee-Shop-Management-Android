@@ -30,6 +30,10 @@ public class DetailOrderViewModel extends ViewModel {
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<BigDecimal> totalPrice = new MutableLiveData<>();
+    private final MutableLiveData<String> approvalLinkLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> getApprovalLinkLiveData() {
+        return approvalLinkLiveData;
+    }
 
     public OrderUseCase getOrderUseCase() {
         return orderUseCase;
@@ -97,6 +101,10 @@ public class DetailOrderViewModel extends ViewModel {
                 orderTotalCost.postValue(orderDetail.getOrderTotalCost());
                 orderDiscountCost.postValue(orderDetail.getOrderDiscountCost());
                 totalPrice.postValue(orderDetail.getOrderTotalCostAfterDiscount());
+
+                if (orderDetail.getApprovalLink() != null) {
+                    approvalLinkLiveData.postValue(orderDetail.getApprovalLink());
+                }
 
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());

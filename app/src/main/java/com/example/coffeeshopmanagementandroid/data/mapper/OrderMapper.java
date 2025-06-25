@@ -24,6 +24,10 @@ public class OrderMapper {
             model.setOrderTotalCostAfterDiscount(response.getOrderTotalCostAfterDiscount());
             model.setOrderStatus(response.getOrderStatus());
             model.setOrderTrackingNumber(response.getOrderTrackingNumber());
+            if (response.getApprovalLink() != null)
+                model.setApprovalLink(response.getApprovalLink());
+            else
+                model.setApprovalLink(null);
             orderModels.add(model);
         }
         return orderModels;
@@ -38,7 +42,6 @@ public class OrderMapper {
         cartItemModel.setProductName(orderDetailResponse.getProductName());
         cartItemModel.setProductThumb(orderDetailResponse.getProductThumb());
         cartItemModel.setVariantTierIdx(orderDetailResponse.getVariantTierId());
-        // Assuming discount cost and prices after discount are not provided in OrderDetailResponse
         return cartItemModel;
     }
     public static List<CartItemModel> mapOrderDetailResponsesToCartItems(List<OrderDetailResponse> orderDetailResponses) {

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface OrderRepository {
     BasePagingResponse<List<OrderResponse>> getAllOrdersCustomer(GetAllOrdersCustomerRequest request) throws Exception;
-    Void createOrder(CreateOrderRequest request) throws Exception;
+    OrderResponse createOrder(CreateOrderRequest request) throws Exception;
 
     GetDetailOrderResponse getDetailOrder(String orderId) throws Exception;
 }

@@ -20,6 +20,7 @@ public class OrderModel {
     private BigDecimal orderTotalCostAfterDiscount;
     private String orderStatus;
     private String orderTrackingNumber;
+    private String approvalLink;
 
     public OrderModel() {
         // Constructor mặc định không cần thực hiện gì
@@ -129,5 +130,13 @@ public class OrderModel {
 
     public void setOrderTrackingNumber(String orderTrackingNumber) {
         this.orderTrackingNumber = orderTrackingNumber;
+    }
+
+    public String getApprovalLink() {
+        return approvalLink;
+    }
+
+    public void setApprovalLink(String approvalLink) {
+        this.approvalLink = approvalLink;
     }
 }

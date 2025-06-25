@@ -25,7 +25,7 @@ public interface OrderService {
     );
 
     @POST("/orders/")
-    Call<Void> createOrder(@Body CreateOrderRequest createOrderRequest
+    Call<BaseResponse<OrderResponse>> createOrder(@Body CreateOrderRequest createOrderRequest
     );
 
     @GET("/orders/me/{orderId}")
