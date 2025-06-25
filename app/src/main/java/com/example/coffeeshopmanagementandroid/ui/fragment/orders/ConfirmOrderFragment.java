@@ -1,5 +1,7 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.orders;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +76,12 @@ public class ConfirmOrderFragment extends Fragment {
             } else {
                 selectedDiscount = null;
                 // Xử lý trường hợp không chọn mã giảm giá
+            }
+        });
+        confirmOrderViewModel.getApprovalLinkLiveData().observe(getViewLifecycleOwner(), link -> {
+            if (link != null) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                startActivity(browserIntent);
             }
         });
     }

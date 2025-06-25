@@ -92,16 +92,20 @@ public class CartFragment extends Fragment {
     }
 
     private void onItemClick(CartItemModel product) {
-        Toast.makeText(requireContext(),
-                "Click " + product.getProductName() + " on cart",
-                Toast.LENGTH_SHORT).show();
+        Bundle args = new Bundle();
+        args.putString("productId", product.getProductId()); // Replace productId with your actual product id variable
+
+        if (navController.getCurrentDestination() != null &&
+                navController.getCurrentDestination().getId() == R.id.cartFragment) {
+            navController.navigate(R.id.action_cartFragment_to_detailProductFragment, args);
+        }
     }
 
     private void onMinusProduct(CartItemModel product) {
         if (product.getCartDetailQuantity() > 1) {
             cartViewModel.decrementCartItemWithDebounce(product);
         } else {
-            Toast.makeText(requireContext(), "Quantity can't be less than 1", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Số lượng sản phẩm không nhỏ hơn 1", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -150,7 +154,7 @@ public class CartFragment extends Fragment {
 
         cartViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
             if (price != null) {
-                totalPrice.setText("Total Price: " + price + " VND");
+                totalPrice.setText(price + " VND");
             }
         });
     }

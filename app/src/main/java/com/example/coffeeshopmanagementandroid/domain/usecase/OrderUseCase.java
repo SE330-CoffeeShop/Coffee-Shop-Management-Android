@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
@@ -24,7 +25,8 @@ public class OrderUseCase {
         return orderRepository.getAllOrdersCustomer(request);
     }
 
-    public Void createOrder(CreateOrderRequest request) throws Exception {
+    @SuppressLint("LongLogTag")
+    public OrderResponse createOrder(CreateOrderRequest request) throws Exception {
         Log.d("Order Use Case - createOrder", "Called");
         try {
             return orderRepository.createOrder(request);
@@ -35,6 +37,7 @@ public class OrderUseCase {
 
     }
 
+    @SuppressLint("LongLogTag")
     public GetDetailOrderResponse getDetailOrder(String orderId) throws Exception {
         Log.d("Order Use Case - getDetailOrder", "Called");
         try {

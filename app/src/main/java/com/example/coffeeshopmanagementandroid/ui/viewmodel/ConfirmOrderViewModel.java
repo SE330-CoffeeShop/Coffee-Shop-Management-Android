@@ -11,6 +11,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.GetAddr
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.request.GetAllPaymentRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.response.PaymentResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.AddressMapper;
@@ -51,6 +52,11 @@ public class ConfirmOrderViewModel extends ViewModel {
     private final MutableLiveData<Integer> limit = new MutableLiveData<>(10);
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
     private final MutableLiveData<Double> totalPrice = new MutableLiveData<>(0.0);
+
+    private final MutableLiveData<String> approvalLinkLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> getApprovalLinkLiveData() {
+        return approvalLinkLiveData;
+    }
 
     public void setIsLoading(Boolean loading) {
         isLoading.postValue(loading);
@@ -178,7 +184,10 @@ public class ConfirmOrderViewModel extends ViewModel {
         new Thread(() -> {
             try {
                 CreateOrderRequest request = new CreateOrderRequest(shippingAddressId, paymentMethodId, branchId);
-                orderUseCase.createOrder(request);
+                OrderResponse orderResponse = orderUseCase.createOrder(request);
+                if (orderResponse.getApprovalLink() != null) {
+                    approvalLinkLiveData.postValue(orderResponse.getApprovalLink());
+                }
                 Log.d("ConfirmOrderViewModel", "Order created successfully");
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());

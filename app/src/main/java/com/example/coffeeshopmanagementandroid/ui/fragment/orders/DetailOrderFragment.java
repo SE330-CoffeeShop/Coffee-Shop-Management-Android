@@ -2,7 +2,9 @@ package com.example.coffeeshopmanagementandroid.ui.fragment.orders;
 
 import static com.example.coffeeshopmanagementandroid.data.mapper.OrderMapper.mapOrderDetailResponsesToCartItems;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -96,7 +98,11 @@ public class DetailOrderFragment extends Fragment {
         tvTotalOrder = requireView().findViewById(R.id.tvTotalOrder);
 
         detailOrderViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
-            tvShippingAddress.setText(address);
+            if (address == null || address.trim().isEmpty()) {
+                tvShippingAddress.setText("Tại quầy");
+            } else {
+                tvShippingAddress.setText(address);
+            }
         });
         detailOrderViewModel.getUserName().observe(getViewLifecycleOwner(), userName -> {
             customerNameTextView.setText(userName);

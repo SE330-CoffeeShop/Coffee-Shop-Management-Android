@@ -105,6 +105,11 @@
             app:destination="@id/confirmOrderFragment"
             app:popUpTo="@id/cartFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_cartFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:popUpTo="@id/cartFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

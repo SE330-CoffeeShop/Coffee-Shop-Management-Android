@@ -105,7 +105,7 @@ public class ProductViewModel extends ViewModel {
         new Thread(() -> {
             try {
                 GetAllProductsRequest request = new GetAllProductsRequest(page, limit, sortType, sortBy);
-                BasePagingResponse<List<ProductResponse>> result = productUseCase.getAllProducts(request);
+                BasePagingResponse<List<ProductResponse>> result = productUseCase.getBestSellingProducts(request);
                 if (result != null && result.getData() != null) {
                     List<ProductModel> newProducts = ProductMapper.mapProductResponsesToProductsDomain(result.getData());
                     setRecentlyProductsResult(newProducts);

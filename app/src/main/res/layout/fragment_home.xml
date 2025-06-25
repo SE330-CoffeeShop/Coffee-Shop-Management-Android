@@ -151,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="@string/recently"
+                android:text="@string/best_seller"
                 style="@style/text_xl_semibold"
                 />
             <!-- Recently Product -->

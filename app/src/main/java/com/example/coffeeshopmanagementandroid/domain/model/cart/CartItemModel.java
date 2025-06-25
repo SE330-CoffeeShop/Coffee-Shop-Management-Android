@@ -12,6 +12,7 @@ public class CartItemModel {
     private Double cartDetailDiscountCost;
     private Double cartDetailUnitPriceAfterDiscount;
     private Double cartDetailTotalPriceAfterDiscount;
+    private String productId;
     private String productThumb;
     private String productName;
     private String variantTierIdx;
@@ -98,5 +99,13 @@ public class CartItemModel {
 
     public void setVariantTierIdx(String variantTierIdx) {
         this.variantTierIdx = variantTierIdx;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 }

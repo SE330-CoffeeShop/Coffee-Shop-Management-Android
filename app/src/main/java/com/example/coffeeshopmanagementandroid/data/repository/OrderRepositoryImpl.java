@@ -1,5 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
@@ -38,13 +40,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Void createOrder(CreateOrderRequest request) throws Exception {
+    public OrderResponse createOrder(CreateOrderRequest request) throws Exception {
         try {
-            Call<Void> call = orderService.createOrder(request);
-            Response<Void> response = call.execute();
+            Call<BaseResponse<OrderResponse>> call = orderService.createOrder(request);
+            Response<BaseResponse<OrderResponse>> response = call.execute();
             if (response.isSuccessful()) {
                 Log.d("UpdateCartItem", "Cart item updated successfully");
-                return null;
+                return response.body().getData();
             } else {
                 String errorMessage = "Update cart item failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
                 Log.e("UPDATE CART ITEM", errorMessage);

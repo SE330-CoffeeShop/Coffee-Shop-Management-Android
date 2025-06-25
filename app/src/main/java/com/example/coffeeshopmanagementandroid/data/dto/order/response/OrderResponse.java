@@ -17,6 +17,8 @@ public class OrderResponse {
     private String orderStatus;
     private String orderTrackingNumber;
 
+    private String approvalLink;
+
     public OrderResponse(String orderId, String userId, String employeeId, String shippingAddressId, String paymentMethodId, BigDecimal orderTotalCost, BigDecimal orderDiscountCost, BigDecimal orderTotalCostAfterDiscount, String orderStatus, String orderTrackingNumber) {
         this.orderId = orderId;
         this.userId = userId;
@@ -110,4 +112,11 @@ public class OrderResponse {
         this.orderTrackingNumber = orderTrackingNumber;
     }
 
+    public String getApprovalLink() {
+        return approvalLink;
+    }
+
+    public void setApprovalLink(String approvalLink) {
+        this.approvalLink = approvalLink;
+    }
 }
