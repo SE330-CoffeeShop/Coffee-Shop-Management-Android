@@ -107,6 +107,22 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @SuppressLint("LongLogTag")
     @Override
+    public BasePagingResponse<List<ProductResponse>> getBestSellingProducts(GetAllProductsRequest request) throws Exception {
+        Log.d("Product RepoIml - getBestSellingProducts", "Called");
+        Call<BasePagingResponse<List<ProductResponse>>> call = productService.getBestSellingProducts(request.getPage(), request.getLimit(), request.getSortType(), request.getSortBy());
+        Response<BasePagingResponse<List<ProductResponse>>> response = call.execute();
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("Response", String.valueOf(response.body().getData()));
+            return response.body();
+        } else {
+            String errorMessage = "Get best selling products failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("GET BEST SELLING PRODUCTS", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    @Override
     public void addProductToFavorite(String drinkId) throws Exception {
         Log.d("Product RepoIml - addProductToFavorite", "Called");
         Call<BaseResponse<Void>> call = productService.addProductToFavorite(drinkId);

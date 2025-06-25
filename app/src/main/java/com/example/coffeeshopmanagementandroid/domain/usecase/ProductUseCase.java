@@ -45,6 +45,12 @@ public class ProductUseCase {
         return productRepository.getAllFavoriteProducts(request);
     }
 
+    @SuppressLint("LongLogTag")
+    public BasePagingResponse<List<ProductResponse>> getBestSellingProducts(GetAllProductsRequest request) throws Exception {
+        Log.d("Best Selling Product Use Case", "Called");
+        return productRepository.getBestSellingProducts(request);
+    }
+
     public void addProductToFavorite(String drinkId) throws Exception {
         productRepository.addProductToFavorite(drinkId);
     }
