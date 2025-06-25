@@ -49,6 +49,12 @@ import dagger.hilt.components.SingletonComponent;
 @InstallIn(SingletonComponent.class)
 public class AppModule {
 
+    private static Context context;
+
+    public AppModule(@ApplicationContext Context context) {
+        this.context = context;
+    }
+
     @Provides
     @Singleton
     public static RetrofitInstance provideRetrofitInstance(@ApplicationContext Context context) {
@@ -64,7 +70,7 @@ public class AppModule {
     @Provides
     @Singleton
     public static AuthRepository provideAuthRepository(AuthService authService) {
-        return new AuthRepositoryImpl(authService);
+        return new AuthRepositoryImpl(authService, context);
     }
 
     @Provides

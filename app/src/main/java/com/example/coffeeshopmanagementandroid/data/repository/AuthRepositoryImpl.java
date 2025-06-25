@@ -1,4 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
+import static android.content.ContentValues.TAG;
+
+import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
@@ -11,6 +14,13 @@ import com.example.coffeeshopmanagementandroid.data.mapper.AuthMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.auth.AuthModel;
 import com.example.coffeeshopmanagementandroid.domain.model.auth.UserModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -18,15 +28,54 @@ import retrofit2.Response;
 
 public class AuthRepositoryImpl implements AuthRepository {
     private final AuthService authService;
+    private final Context context;
 
-    public AuthRepositoryImpl(AuthService authService) {
+    public AuthRepositoryImpl(
+            AuthService authService,
+            Context context
+    ) {
         this.authService = authService;
+        this.context = context;
     }
 
     @Override
     public Pair<AuthModel, UserModel> login(String email, String password) throws Exception {
         Log.d("AuthRepoImpl", "Login called");
-        Call<BaseResponse<LoginResponse>> call = authService.login(new LoginRequest(email, password));
+
+        // Get firebase token
+        FirebaseApp.initializeApp(context);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicReference<String> tokenRef = new AtomicReference<>();
+        final AtomicReference<Exception> exceptionRef = new AtomicReference<>();
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Firebase token retrieved successfully");
+                        tokenRef.set(task.getResult());
+                    } else {
+                        Log.w(TAG, "Failed to get FCM token", task.getException());
+                        exceptionRef.set(task.getException());
+                    }
+                    latch.countDown(); // Signal completion
+                });
+
+        // Wait for the token with a timeout
+        String firebaseToken = null;
+        try {
+            if (latch.await(10, TimeUnit.SECONDS)) {
+                firebaseToken = tokenRef.get();
+                Log.d(TAG, "Firebase token: " + (firebaseToken != null ? "obtained" : "null"));
+            } else {
+                Log.e(TAG, "Timeout waiting for Firebase token");
+            }
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Interrupted while waiting for Firebase token", e);
+            Thread.currentThread().interrupt();
+        }
+
+        Call<BaseResponse<LoginResponse>> call = authService.login(new LoginRequest(email, password, firebaseToken));
         Response<BaseResponse<LoginResponse>> response = call.execute();
 
         Log.d("LOGIN", "Response received: " + response);
