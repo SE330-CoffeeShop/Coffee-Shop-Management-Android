@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AddressService;
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
+import com.example.coffeeshopmanagementandroid.data.api.BranchService;
 import com.example.coffeeshopmanagementandroid.data.api.CartService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
 import com.example.coffeeshopmanagementandroid.data.api.NotificationService;
@@ -13,6 +14,7 @@ import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.api.UserService;
 import com.example.coffeeshopmanagementandroid.data.repository.AddressRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.BranchRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CartRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.NotificationRepositoryImpl;
@@ -22,6 +24,7 @@ import com.example.coffeeshopmanagementandroid.data.repository.ProductRepository
 import com.example.coffeeshopmanagementandroid.data.repository.UserRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AddressRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.BranchRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.NotificationRepository;
@@ -30,6 +33,7 @@ import com.example.coffeeshopmanagementandroid.domain.repository.PaymentReposito
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.BranchUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
@@ -209,5 +213,22 @@ public class AppModule {
     @Provides
     public static NotificationUseCase provideNotificationUseCase(NotificationRepository notificationRepository) {
         return new NotificationUseCase(notificationRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static BranchService provideBranchService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(BranchService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static BranchRepository provideBranchRepository(BranchService branchService) {
+        return new BranchRepositoryImpl(branchService);
+    }
+
+    @Provides
+    public static BranchUseCase provideBranchUseCase(BranchRepository branchRepository) {
+        return new BranchUseCase(branchRepository);
     }
 }

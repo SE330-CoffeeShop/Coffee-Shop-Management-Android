@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.address.response.AddressResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.GetAddressRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.branch.request.GetAllBranchRequest;
+import com.example.coffeeshopmanagementandroid.data.dto.branch.response.BranchResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
@@ -15,12 +17,15 @@ import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResp
 import com.example.coffeeshopmanagementandroid.data.dto.payment.request.GetAllPaymentRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.response.PaymentResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.AddressMapper;
+import com.example.coffeeshopmanagementandroid.data.mapper.BranchMapper;
 import com.example.coffeeshopmanagementandroid.data.mapper.CartMapper;
 import com.example.coffeeshopmanagementandroid.data.mapper.PaymentMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
+import com.example.coffeeshopmanagementandroid.domain.model.branch.BranchModel;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.payment.PaymentMethodModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.BranchUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.PaymentUseCase;
@@ -42,10 +47,12 @@ public class ConfirmOrderViewModel extends ViewModel {
     private final PaymentUseCase paymentUseCase;
     private final AddressUseCase addressUseCase;
     private final OrderUseCase orderUseCase;
+    private final BranchUseCase branchUseCase;
     private final MutableLiveData<List<CartItemModel>> cartItemsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<PaymentMethodModel>> paymentMethodsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<AddressModel>> addressesLiveDate = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<AddressModel> selectedAddress = new MutableLiveData<>(null);
+    private final MutableLiveData<BranchModel> selectedBranch = new MutableLiveData<>(null);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
@@ -72,11 +79,12 @@ public class ConfirmOrderViewModel extends ViewModel {
         errorLiveData.postValue(errorMessage);
     }
     @Inject
-    public ConfirmOrderViewModel(CartUseCase cartUseCase, PaymentUseCase paymentUseCase, AddressUseCase addressUseCase, OrderUseCase orderUseCase) {
+    public ConfirmOrderViewModel(CartUseCase cartUseCase, PaymentUseCase paymentUseCase, AddressUseCase addressUseCase, OrderUseCase orderUseCase, BranchUseCase branchUseCase) {
         this.cartUseCase = cartUseCase;
         this.paymentUseCase = paymentUseCase;
         this.addressUseCase = addressUseCase;
         this.orderUseCase = orderUseCase;
+        this.branchUseCase = branchUseCase;
     }
 
     public MutableLiveData<List<CartItemModel>> getCartItemsLiveData() {
@@ -215,7 +223,6 @@ public class ConfirmOrderViewModel extends ViewModel {
         }
         addressesLiveDate.postValue(currentAddresses);
     }
-
     public void appendPaymentMethod(List<PaymentMethodModel> paymentMethods) {
         List<PaymentMethodModel> currentPaymentMethods = new ArrayList<>();
         for (PaymentMethodModel newMethod : paymentMethods) {
@@ -236,5 +243,9 @@ public class ConfirmOrderViewModel extends ViewModel {
         }
 
         cartItemsLiveData.postValue(currentCartItems);
+    }
+
+    public MutableLiveData<BranchModel> getSelectedBranch() {
+        return selectedBranch;
     }
 }

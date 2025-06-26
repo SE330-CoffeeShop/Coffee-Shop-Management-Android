@@ -2,6 +2,7 @@ package com.example.coffeeshopmanagementandroid.data.repository;
 
 import com.example.coffeeshopmanagementandroid.data.api.NotificationService;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.notification.request.GetAllReceivedNotificationRequests;
 import com.example.coffeeshopmanagementandroid.data.dto.notification.response.NotificationResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.NotificationRepository;
 
@@ -15,9 +16,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
-    public BasePagingResponse<List<NotificationResponse>> getReceivedNotifications() throws Exception {
+    public BasePagingResponse<List<NotificationResponse>> getReceivedNotifications(GetAllReceivedNotificationRequests requests) throws Exception {
         try {
-            return notificationService.getReceivedNotifications().execute().body();
+            return notificationService.getReceivedNotifications(requests.getPage(), requests.getLimit(), requests.getSortType().toString(), requests.getSortBy().toString()).execute().body();
         } catch (Exception e) {
             throw new Exception("Failed to fetch received notifications", e);
         }

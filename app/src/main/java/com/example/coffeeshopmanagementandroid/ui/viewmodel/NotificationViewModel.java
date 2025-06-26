@@ -4,10 +4,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.notification.request.GetAllReceivedNotificationRequests;
 import com.example.coffeeshopmanagementandroid.data.dto.notification.response.NotificationResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.NotificationMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.notification.NotificationModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.NotificationUseCase;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 
 import java.util.List;
 
@@ -33,10 +36,11 @@ public class NotificationViewModel extends ViewModel {
         return errorLiveData;
     }
 
-    public void fetchNotifications() {
+    public void fetchNotifications(int page, int limit, SortType sortType, OrderSortBy sortBy) {
         new Thread(() -> {
             try {
-                BasePagingResponse<List<NotificationResponse>> response = notificationUseCase.getReceivedNotifications();
+                GetAllReceivedNotificationRequests request = new GetAllReceivedNotificationRequests(page, limit, sortType, sortBy);
+                BasePagingResponse<List<NotificationResponse>> response = notificationUseCase.getReceivedNotifications(request);
                 List<NotificationModel> models = NotificationMapper.mapToNotificationModelList(response.getData());
                 notificationModelsLiveData.postValue(models);
             } catch (Exception e) {

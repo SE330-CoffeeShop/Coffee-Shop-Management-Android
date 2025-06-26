@@ -71,6 +71,52 @@
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintStart_toStartOf="@id/bodyLayout"
                 app:layout_constraintTop_toBottomOf="@+id/tvChooseProductLabel" />
+
+            <LinearLayout
+                android:id="@+id/chooseBranchLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_ripple_discount"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/vertical_spacing"
+                android:paddingBottom="@dimen/vertical_spacing"
+                android:paddingStart="@dimen/vertical_spacing"
+                android:paddingEnd="@dimen/vertical_spacing"
+                app:layout_constraintEnd_toEndOf="@id/bodyLayout"
+                app:layout_constraintStart_toStartOf="@id/bodyLayout"
+                app:layout_constraintTop_toBottomOf="@id/orderProductRecyclerView">
+
+                <ImageView
+                    android:id="@+id/iconBranchLeft"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/ch_n_chi_nh_nh_giao_h_ng"
+                    android:src="@drawable/kopi_icon" />
+
+                <TextView
+                    android:id="@+id/tvBranch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Chọn chi nhánh"
+                    android:textColor="@color/secondary_900"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/iconBranchRight"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="navigate đến chọn chi nhánh"
+                    android:src="@drawable/arrow_right_thin_icon" />
+
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/chooseAddressLayout"
                 android:layout_width="match_parent"
@@ -87,7 +133,14 @@
                 android:paddingEnd="@dimen/vertical_spacing"
                 app:layout_constraintEnd_toEndOf="@id/bodyLayout"
                 app:layout_constraintStart_toStartOf="@id/bodyLayout"
-                app:layout_constraintTop_toBottomOf="@id/orderProductRecyclerView">
+                app:layout_constraintTop_toBottomOf="@id/chooseBranchLayout">
+
+                <ImageView
+                    android:id="@+id/iconAddressLeft"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/address"
+                    android:src="@drawable/address_icon" />
 
                 <TextView
                     android:id="@+id/tvAddress"

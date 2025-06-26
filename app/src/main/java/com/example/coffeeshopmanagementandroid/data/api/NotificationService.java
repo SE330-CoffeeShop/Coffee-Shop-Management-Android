@@ -14,7 +14,10 @@ import retrofit2.http.Query;
 
 public interface NotificationService {
     @GET("/notification/received/user")
-    Call<BasePagingResponse<List<NotificationResponse>>> getReceivedNotifications();
+    Call<BasePagingResponse<List<NotificationResponse>>> getReceivedNotifications(@Query("page") int page,
+                                                                                  @Query("limit") int limit,
+                                                                                  @Query("sortType") String sortType,
+                                                                                  @Query("sortBy") String sortBy);
 
     @PATCH("/notification/read/{id}")
     Call<BaseResponse<Void>> markNotificationAsRead(@Query("id") String id);

@@ -149,13 +149,13 @@
     <string name="delete_address">Xoá địa chỉ</string>
     <string name="confirm_order">Xác nhận đơn hàng</string>
     <string name="choosed_products">Sản phẩm đã chọn</string>
-    <string name="apply_discount">Áp dụng ưu đãi</string>
-    <string name="choose_address">Chọn địa chỉ</string>
+    <string name="apply_discount">Xem các ưu đãi áp dụng</string>
+    <string name="choose_address">Chọn địa chỉ giao hàng</string>
     <string name="navigate_to_discount">Di chuyển sang màn áp dụng voucher</string>
     <string name="discount_icon">Icon mã giảm giá</string>
-    <string name="default_price">Default price</string>
-    <string name="totalProducts">Thành tiền</string>
-    <string name="fee_shipping">Phí giao hàng</string>
+    <string name="default_price">Tổng tiền</string>
+    <string name="totalProducts">Tạm tính</string>
+    <string name="fee_shipping">Giảm giá</string>
     <string name="payment_method">Phương thức thanh toán</string>
     <string name="payment_icon">Icon phương thức thanh toán</string>
     <string name="discount">Ưu đãi</string>
@@ -171,4 +171,6 @@
     <string name="menu">Menu</string>
     <string name="default_cost_order">Tạm tính</string>
     <string name="best_seller">Best Seller</string>
+    <string name="ch_n_chi_nh_nh_giao_h_ng">Chọn chi nhánh giao hàng</string>
+    <string name="branchList">Chọn chi nhánh đặt hàng</string>
 </resources>

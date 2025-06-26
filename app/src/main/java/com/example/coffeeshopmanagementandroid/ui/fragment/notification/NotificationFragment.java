@@ -18,6 +18,8 @@ import com.example.coffeeshopmanagementandroid.ui.adapter.NotificationAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.NotificationViewModel;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 
 import java.util.ArrayList;
 
@@ -42,7 +44,7 @@ public class NotificationFragment extends BaseOtherFragment {
         setUpRecyclerView(view);
         navController = NavHostFragment.findNavController(this);
         observeNotifications();
-        notificationViewModel.fetchNotifications();
+        notificationViewModel.fetchNotifications(1, 15, SortType.DESC, OrderSortBy.CREATED_AT);
     }
 
     private void setUpRecyclerView(View view) {

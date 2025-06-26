@@ -45,6 +45,7 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -63,6 +64,7 @@ public class DetailProductFragment extends Fragment {
     private ImageButton addToCardButton;
 
     private Button buyButton;
+    private ProductModel currentProduct;
 
     private boolean isExpanded = false;
     private static final String READ_MORE = "Read more";
@@ -107,6 +109,7 @@ public class DetailProductFragment extends Fragment {
         // Observe live data
         detailProductViewModel.getProductLiveData().observe(getViewLifecycleOwner(), product -> {
             if (product != null) {
+                currentProduct = product;
                 productNameTextView.setText(product.getProductName());
                 categoryTextView.setText(product.getProductCategoryId());
                 priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
@@ -191,6 +194,17 @@ public class DetailProductFragment extends Fragment {
 
     private void setupVariants(List<ProductVariantModel> variants) {
         variantProductAdapter = new VariantProductAdapter(variants);
+        variantProductAdapter.setOnVariantSelectedListener(position -> {
+            if (currentProduct == null) return;
+            BigDecimal price = currentProduct.getProductPrice();
+            if (position == 0) {
+                priceTextView.setText(CurrencyFormat.formatVND(price.multiply(BigDecimal.valueOf(0.8))));
+            } else if (position == 1) {
+                priceTextView.setText(CurrencyFormat.formatVND(price));
+            } else {
+                priceTextView.setText(CurrencyFormat.formatVND(price.multiply(BigDecimal.valueOf(1.2))));
+            }
+        });
         RecyclerView variantProductRecyclerView = requireView().findViewById(R.id.variantProductRecyclerView);
         if (variantProductRecyclerView != null) {
             FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(requireContext());

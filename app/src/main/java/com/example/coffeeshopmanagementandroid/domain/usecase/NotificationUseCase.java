@@ -1,6 +1,7 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.notification.request.GetAllReceivedNotificationRequests;
 import com.example.coffeeshopmanagementandroid.data.dto.notification.response.NotificationResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.NotificationRepository;
 
@@ -11,8 +12,8 @@ public class NotificationUseCase {
     public NotificationUseCase(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
     }
-    public BasePagingResponse<List<NotificationResponse>> getReceivedNotifications() throws Exception {
-        return notificationRepository.getReceivedNotifications();
+    public BasePagingResponse<List<NotificationResponse>> getReceivedNotifications(GetAllReceivedNotificationRequests requests) throws Exception {
+        return notificationRepository.getReceivedNotifications(requests);
     }
     public void markNotificationAsRead(String id) throws Exception {
         notificationRepository.markNotificationAsRead(id);

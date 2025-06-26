@@ -23,8 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
 import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
+import com.example.coffeeshopmanagementandroid.domain.model.branch.BranchModel;
 import com.example.coffeeshopmanagementandroid.domain.model.payment.PaymentMethodModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
+import com.example.coffeeshopmanagementandroid.ui.adapter.ChooseBranchAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.OrderProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.PaymentMethodAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.ConfirmOrderViewModel;
@@ -45,6 +47,7 @@ public class ConfirmOrderFragment extends Fragment {
     private RecyclerView orderProductRecyclerView;
     private PaymentMethodAdapter paymentMethodAdapter;
     private RecyclerView paymentMethodRecyclerView;
+    private RecyclerView branchRecyclerView;
     private PaymentMethodModel selectedPaymentMethod;
     private NavController navController;
     private View applyDiscountLayout;
@@ -54,6 +57,8 @@ public class ConfirmOrderFragment extends Fragment {
     private TextView totalPrice;
     private TextView tvAddress;
     private DiscountModel selectedDiscount;
+    private ChooseBranchAdapter chooseBranchAdapter;
+    private BranchModel selectedBranch;
 
     @Nullable
     @Override
@@ -69,6 +74,7 @@ public class ConfirmOrderFragment extends Fragment {
         setupOrderProducts();
         setupPaymentMethods();
         setupAddress();
+        setupBranch();
         getParentFragmentManager().setFragmentResultListener("discountResult", this, (requestKey, result) -> {
             if (result.containsKey("selectedDiscount")) {
                 selectedDiscount = result.getParcelable("selectedDiscount");
@@ -84,6 +90,17 @@ public class ConfirmOrderFragment extends Fragment {
                 startActivity(browserIntent);
             }
         });
+        getParentFragmentManager().setFragmentResultListener("branchResult", this, (requestKey, result) -> {
+            if (result.containsKey("selectedBranch")) {
+                selectedBranch = (BranchModel) result.getSerializable("selectedBranch");
+                confirmOrderViewModel.getSelectedBranch().setValue(selectedBranch);
+                // Gọi xử lý cập nhật tiền giảm giá, cập nhật phiếu giảm giá
+            } else {
+                confirmOrderViewModel.getSelectedBranch().setValue(null);
+                selectedBranch = null;
+                // Xử lý trường hợp không chọn chi nhánh -> bỏ phiếu giảm giá
+            }
+        });
     }
 
     private void initViews(View view) {
@@ -92,6 +109,7 @@ public class ConfirmOrderFragment extends Fragment {
         chooseAddressLayout = view.findViewById(R.id.chooseAddressLayout);
         orderProductRecyclerView = view.findViewById(R.id.orderProductRecyclerView);
         paymentMethodRecyclerView = view.findViewById(R.id.paymentMethodRecyclerView);
+        branchRecyclerView = view.findViewById(R.id.branchRecyclerView);
         backButton = view.findViewById(R.id.backButtonToCart);
         buyButton = view.findViewById(R.id.buyButton);
         totalPrice = view.findViewById(R.id.totalPrice);
@@ -190,6 +208,29 @@ public class ConfirmOrderFragment extends Fragment {
         });
     }
 
+    private void setupBranch() {
+        View chooseBranchLayout = getView().findViewById(R.id.chooseBranchLayout);
+        chooseBranchLayout.setOnClickListener(v -> {
+            NavigationUtils.safeNavigate(
+                    navController,
+                    R.id.confirmOrderFragment,
+                    R.id.action_confirmOrderFragment_to_branchFragment,
+                    "BranchFragment",
+                    "ConfirmOrderFragment",
+                    null
+            );
+        });
+
+        confirmOrderViewModel.getSelectedBranch().observe(getViewLifecycleOwner(), branch -> {
+            TextView tvBranch = getView().findViewById(R.id.tvBranch);
+            if (branch != null) {
+                tvBranch.setText(branch.getBranchName());
+            } else {
+                tvBranch.setText("Chưa chọn chi nhánh");
+            }
+        });
+    }
+
     private void handleBackPressed() {
         if (getView() != null) {
             Navigation.findNavController(getView()).popBackStack();
@@ -197,14 +238,28 @@ public class ConfirmOrderFragment extends Fragment {
     }
 
     private void handleBuyNow() {
+
+        // Check null
+        if (selectedPaymentMethod == null) {
+            Toast.makeText(requireContext(), "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (selectedBranch == null) {
+            Toast.makeText(requireContext(), "Vui lòng chọn chi nhánh", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (confirmOrderViewModel.getSelectedAddress().getValue() == null) {
+            Toast.makeText(requireContext(), "Vui lòng chọn địa chỉ giao hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Lấy thông tin từ các ViewModel và Adapter
         PaymentMethodModel selectedPaymentMethods = paymentMethodAdapter.getSelectedPaymentMethod();
         AddressModel address = confirmOrderViewModel.getSelectedAddress().getValue() != null ? confirmOrderViewModel.getSelectedAddress().getValue() : null;
-        List<DiscountModel> discounts = selectedDiscount != null ? List.of(selectedDiscount) : new ArrayList<>();
 
         // Gọi ViewModel để tạo đơn hàng
         assert address != null;
-        confirmOrderViewModel.createOrder(address.getAddressId() ,selectedPaymentMethods.getPaymentMethodId(), "79b284c7-b6e9-4c16-be41-74e533ef59a2");
+        confirmOrderViewModel.createOrder(address.getAddressId() ,selectedPaymentMethods.getPaymentMethodId(), selectedBranch.getId());
         Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
         navigateToOrderFragment();
     }
