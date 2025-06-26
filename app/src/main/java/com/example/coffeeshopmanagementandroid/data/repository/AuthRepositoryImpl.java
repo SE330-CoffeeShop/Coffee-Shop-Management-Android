@@ -7,6 +7,7 @@ import android.util.Pair;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.auth.request.ChangePasswordRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.request.LoginRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LoginResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LogoutResponse;
@@ -121,4 +122,19 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
+    @Override
+    public Void changePassword(ChangePasswordRequest request) throws Exception {
+        Log.d("AuthRepoImpl", "Change password called");
+        Call<Void> call = authService.changePassword(request);
+        Response<Void> response = call.execute();
+
+        if (response.isSuccessful()) {
+            Log.d("Response", "Password changed successfully");
+            return null;
+        } else {
+            String errorMessage = "Change password failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("CHANGE_PASSWORD", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
 }

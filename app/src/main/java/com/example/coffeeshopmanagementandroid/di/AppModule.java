@@ -27,6 +27,7 @@ import com.example.coffeeshopmanagementandroid.domain.repository.PaymentReposito
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.AuthUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
@@ -82,6 +83,12 @@ public class AppModule {
     public static LogoutUseCase provideLogoutUseCase(AuthRepository authRepository) {
         return new LogoutUseCase(authRepository);
     }
+
+    @Provides
+    public static AuthUseCase provideAuthUseCase(AuthRepository authRepository) {
+        return new AuthUseCase(authRepository);
+    }
+
 
     @Provides
     @Singleton
