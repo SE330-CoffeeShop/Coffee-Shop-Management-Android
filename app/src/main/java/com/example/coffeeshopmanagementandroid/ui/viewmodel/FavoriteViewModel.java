@@ -129,14 +129,22 @@ public class FavoriteViewModel extends ViewModel {
                     setTotal(result.getPaging().getTotal());
                     // Set FavoriteProductId
                     List<ProductModel> newFavoriteProducts = ProductMapper.mapProductResponsesToProductsDomain(result.getData());
-                    appendFavoriteProducts(newFavoriteProducts);
+                    if (page == 1) {
+                        setFavoriteProductsLiveData(newFavoriteProducts);
+                    } else {
+                        appendFavoriteProducts(newFavoriteProducts);
+                    }
                     // Set DetailFavoriteProduct
                     List<ProductModel> newDetailFavoriteProducts = new ArrayList<>();
                     for (ProductModel favoriteProductId : newFavoriteProducts) {
                         ProductModel detailFavoriteProduct = fetchDetailFavoriteProduct(favoriteProductId.getProductId());
                         newDetailFavoriteProducts.add(detailFavoriteProduct);
                     }
-                    appendDetailFavoriteProducts(newDetailFavoriteProducts);
+                    if (page == 1) {
+                        setDetailFavoriteProducts(newDetailFavoriteProducts);
+                    } else {
+                        appendDetailFavoriteProducts(newDetailFavoriteProducts);
+                    }
 
                 }
             } catch (Exception e) {
@@ -149,7 +157,7 @@ public class FavoriteViewModel extends ViewModel {
     }
 
     private void appendFavoriteProducts(List<ProductModel> newProducts) {
-        List<ProductModel> currentProducts = favoriteProductsLiveData.getValue() != null ? new ArrayList<>(favoriteProductsLiveData.getValue()) : new ArrayList<>();
+        List<ProductModel> currentProducts = new ArrayList<>();
         for (ProductModel newProduct : newProducts) {
             if (!currentProducts.contains(newProduct)) {
                 currentProducts.add(newProduct);

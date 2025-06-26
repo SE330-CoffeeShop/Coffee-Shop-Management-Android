@@ -17,8 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,7 @@ public class DetailProductFragment extends Fragment {
     private Button buyButton;
 
     private boolean isExpanded = false;
+    FrameLayout loadingOverlay;
     private static final String READ_MORE = "Read more";
     private static final String COLLAPSE = "Collapse";
     private static final String ELLIPSIS = "... ";
@@ -98,6 +101,7 @@ public class DetailProductFragment extends Fragment {
 
         Log.d("DetailProductFragment", "Received productId: " + productId);
         if (productId != null) {
+            loadingOverlay.setVisibility(View.VISIBLE);
             detailProductViewModel.fetchProductDetailAndVariants(productId);
         } else {
             Toast.makeText(requireContext(), "Missing product ID", Toast.LENGTH_SHORT).show();
@@ -107,6 +111,7 @@ public class DetailProductFragment extends Fragment {
         // Observe live data
         detailProductViewModel.getProductLiveData().observe(getViewLifecycleOwner(), product -> {
             if (product != null) {
+                loadingOverlay.setVisibility(View.GONE);
                 productNameTextView.setText(product.getProductName());
                 categoryTextView.setText(product.getProductCategoryId());
                 priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
@@ -124,6 +129,7 @@ public class DetailProductFragment extends Fragment {
         detailProductViewModel.getVariantListLiveData().observe(getViewLifecycleOwner(), this::setupVariants);
 
         detailProductViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            loadingOverlay.setVisibility(View.GONE);
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
@@ -131,6 +137,7 @@ public class DetailProductFragment extends Fragment {
     }
 
     private void initializeViews() {
+        loadingOverlay = requireView().findViewById(R.id.loadingOverlay);
         descriptionTextView = requireView().findViewById(R.id.descriptionTextView);
         if (descriptionTextView != null) {
             descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());

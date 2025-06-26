@@ -139,6 +139,10 @@ public class DetailOrderFragment extends Fragment {
                 orderProductAdapter.updateList(list);
             }
         });
+
+        orderProductRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        orderProductAdapter = new OrderProductAdapter(new ArrayList<>());
+        orderProductRecyclerView.setAdapter(orderProductAdapter);
     }
 
     private void handleBackPressed() {

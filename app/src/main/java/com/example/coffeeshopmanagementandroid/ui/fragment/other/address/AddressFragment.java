@@ -1,11 +1,16 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.other.address;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.AddressAdapter;
+import com.example.coffeeshopmanagementandroid.ui.adapter.ChooseAddressAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.AddressViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.ConfirmOrderViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.google.android.material.button.MaterialButton;
@@ -22,11 +30,15 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AddressFragment extends BaseOtherFragment {
 
     private RecyclerView addressRecyclerView;
     private MaterialButton btnAddAddress;
     private NavController navController;
+    private AddressViewModel addressViewModel;
 
     @Override
     protected int getLayoutResId() {
@@ -34,54 +46,41 @@ public class AddressFragment extends BaseOtherFragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        addressViewModel = new ViewModelProvider(requireActivity()).get(AddressViewModel.class);
+        setupAddress();
+        initViews(view);;
+    }
+
+    @Override
     protected void initViews(View view) {
-        setupRecentlyAddress(view);
-        setUpRecyclerView(view);
+
         navController = NavHostFragment.findNavController(this);
         NavigationUtils.checkAndFixNavState(navController, R.id.addressFragment, "AddressFragment");
         btnAddAddress = view.findViewById(R.id.btnAddAddress);
         btnAddAddress.setOnClickListener(v -> {
             navigateToAddAddressFragment();
         });
-    }
-
-    private void setUpRecyclerView(View view) {
-        List<AddressModel> addresses = new ArrayList<>();
-        addresses.add(new AddressModel("addr_001", "FEEL Coffee & Tee Express, 82 Đ. Vành Đai", "Đông Hoà, Dĩ An", "Bình Dương", true));
-        addresses.add(new AddressModel("addr_002", "123 Lê Lợi", "Quận 1", "TP. Hồ Chí Minh", false));
-        addresses.add(new AddressModel("addr_003", "456 Nguyễn Trãi", "Thanh Xuân", "Hà Nội", false));
-        addresses.add(new AddressModel("addr_004", "789 Trần Hưng Đạo", "Hải Châu", "Đà Nẵng", false));
-        addresses.add(new AddressModel("addr_005", "101 Phan Đình Phùng", "Ninh Kiều", "Cần Thơ", false));
-
         addressRecyclerView = view.findViewById(R.id.addressRecyclerView);
-        AddressAdapter adapter = new AddressAdapter(addresses, this::navigateToUpdateAddress);
-        addressRecyclerView.setAdapter(adapter);
-        addressRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
-        addressRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
     }
 
-    private void setupRecentlyAddress(View view) {
-        View recentlyAddress = view.findViewById(R.id.iRecentlyAddress);
-        if (recentlyAddress != null) {
-            TextView tvAddress = recentlyAddress.findViewById(R.id.tvRecentlyAddress);
-            ImageView iconEditAddress = recentlyAddress.findViewById(R.id.iconEditRecentlyAddress);
+    private void setupAddress() {
+        addressViewModel.fetchAllAddresses();
 
-            // Dummy data - chỗ này sử dụng API lấy Address của đơn gần nhất
-            List<AddressModel> addresses = new ArrayList<>();
-            addresses.add(new AddressModel("addr_001", "Hehehe & Tee Express, 82 Đ. Vành Đai", "Đông Hoà, Dĩ An", "Bình Dương", true));
-            AddressModel recentAddress;
-            recentAddress = addresses.get(0);
+        addressViewModel.getAddressesLiveData().observe(getViewLifecycleOwner(), addresses -> {
+            if (addresses != null && !addresses.isEmpty()) {
+                addressRecyclerView.setVisibility(View.VISIBLE);
+                AddressAdapter addressAdapter = new AddressAdapter(addresses, this::navigateToUpdateAddress);
+                addressRecyclerView.setAdapter(addressAdapter);
+                addressRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            if (recentAddress != null) {
-                tvAddress.setText(recentAddress.getAddressLine() + "\n" + recentAddress.getAddressDistrict() + ", " + recentAddress.getAddressCity());
-                recentlyAddress.setOnClickListener(v -> navigateToUpdateAddress(recentAddress));
+                int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
+                addressRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
             } else {
-                tvAddress.setText("Không có địa chỉ gần đây");
-                recentlyAddress.setVisibility(View.GONE);
+                addressRecyclerView.setVisibility(View.GONE);
             }
-        }
+        });
     }
 
     private void navigateToUpdateAddress(AddressModel address) {
