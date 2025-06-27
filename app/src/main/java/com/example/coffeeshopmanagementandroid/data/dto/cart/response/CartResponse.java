@@ -1,15 +1,14 @@
-package com.example.coffeeshopmanagementandroid.domain.model.cart;
+package com.example.coffeeshopmanagementandroid.data.dto.cart.response;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class CartModel {
+public class CartResponse {
     private String id;
     private BigDecimal cartTotalCost;
     private BigDecimal cartDiscountCost;
     private BigDecimal cartTotalCostAfterDiscount;
     private List<String> usedDiscounts;
-    public CartModel() {}
 
     public String getId() {
         return id;

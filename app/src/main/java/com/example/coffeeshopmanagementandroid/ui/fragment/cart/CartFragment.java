@@ -136,7 +136,7 @@ public class CartFragment extends Fragment {
     }
 
     private void observeCartItems() {
-        cartViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT);
+        cartViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT, null);
 
         cartViewModel.getCartItemsLiveData().observe(getViewLifecycleOwner(), cartItems -> {
             productCartAdapter.updateList(cartItems);
@@ -154,7 +154,7 @@ public class CartFragment extends Fragment {
 
         cartViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
             if (price != null) {
-                totalPrice.setText(price + " VND");
+                totalPrice.setText(price + " VNĐ");
             }
         });
     }

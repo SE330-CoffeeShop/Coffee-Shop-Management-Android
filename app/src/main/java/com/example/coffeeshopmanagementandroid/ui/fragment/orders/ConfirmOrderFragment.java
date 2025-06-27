@@ -55,6 +55,9 @@ public class ConfirmOrderFragment extends Fragment {
     private ImageButton backButton;
     private MaterialButton buyButton;
     private TextView totalPrice;
+    private TextView totalDiscountCost;
+    private TextView totalCostAfterDiscount;
+    private List<String> appliedDiscountIds;
     private TextView tvAddress;
     private DiscountModel selectedDiscount;
     private ChooseBranchAdapter chooseBranchAdapter;
@@ -94,11 +97,32 @@ public class ConfirmOrderFragment extends Fragment {
             if (result.containsKey("selectedBranch")) {
                 selectedBranch = (BranchModel) result.getSerializable("selectedBranch");
                 confirmOrderViewModel.getSelectedBranch().setValue(selectedBranch);
-                // Gọi xử lý cập nhật tiền giảm giá, cập nhật phiếu giảm giá
+                confirmOrderViewModel.applyDiscountToCart(selectedBranch.getId());
             } else {
                 confirmOrderViewModel.getSelectedBranch().setValue(null);
                 selectedBranch = null;
-                // Xử lý trường hợp không chọn chi nhánh -> bỏ phiếu giảm giá
+            }
+        });
+        confirmOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
+            if (price != null) {
+                totalPrice.setText(price + " VNĐ");
+            }
+        });
+        confirmOrderViewModel.getTotalDiscountCost().observe(getViewLifecycleOwner(), discount -> {
+            if (discount != null) {
+                totalDiscountCost.setText(discount + " VNĐ");
+            }
+        });
+        confirmOrderViewModel.getTotalCostAfterDiscount().observe(getViewLifecycleOwner(), total -> {
+            if (total != null) {
+                totalCostAfterDiscount.setText(total + " VNĐ");
+            }
+        });
+        confirmOrderViewModel.getAppliedDiscountIds().observe(getViewLifecycleOwner(), discountIds -> {
+            if (discountIds != null) {
+                appliedDiscountIds = discountIds;
+            } else {
+                appliedDiscountIds = new ArrayList<>();
             }
         });
     }
@@ -112,8 +136,10 @@ public class ConfirmOrderFragment extends Fragment {
         branchRecyclerView = view.findViewById(R.id.branchRecyclerView);
         backButton = view.findViewById(R.id.backButtonToCart);
         buyButton = view.findViewById(R.id.buyButton);
-        totalPrice = view.findViewById(R.id.totalPrice);
+        totalPrice = view.findViewById(R.id.totalProductsOrder);
         tvAddress = view.findViewById(R.id.tvAddress);
+        totalDiscountCost = view.findViewById(R.id.feeShipping);
+        totalCostAfterDiscount = view.findViewById(R.id.totalPrice);
 
         // Set Listener
         backButton.setOnClickListener(v -> handleBackPressed());

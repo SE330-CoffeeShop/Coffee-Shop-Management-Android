@@ -7,21 +7,23 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.UpdateCartRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
-import com.example.coffeeshopmanagementandroid.data.mapper.CartMapper;
+import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartResponse;
+import com.example.coffeeshopmanagementandroid.data.mapper.CartDetailMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import android.os.Handler;
-import android.os.Looper;
 
 import javax.inject.Inject;
 
@@ -36,7 +38,15 @@ public class CartViewModel extends ViewModel {
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> limit = new MutableLiveData<>(10);
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
-    private final MutableLiveData<Double> totalPrice = new MutableLiveData<>(0.0);
+
+    // total price before discount
+    private final MutableLiveData<BigDecimal> totalPrice = new MutableLiveData<>(BigDecimal.ZERO);
+    // total discount cost
+    private final MutableLiveData<BigDecimal> totalDiscountCost = new MutableLiveData<>(BigDecimal.ZERO);
+    // total price after discount
+    private final MutableLiveData<BigDecimal> totalPriceAfterDiscount = new MutableLiveData<>(BigDecimal.ZERO);
+
+
     private final Handler debounceHandler = new Handler(Looper.getMainLooper());
     private final Map<String, Runnable> debounceMap = new HashMap<>();
 
@@ -70,11 +80,11 @@ public class CartViewModel extends ViewModel {
         return errorLiveData;
     }
 
-    public MutableLiveData<Double> getTotalPrice() {
+    public MutableLiveData<BigDecimal> getTotalPrice() {
         return totalPrice;
     }
 
-    public void fetchAllCartItems(int page, int limit, SortType sortType, CartSortBy sortBy) {
+    public void fetchAllCartItems(int page, int limit, SortType sortType, CartSortBy sortBy, String branchId) {
         setIsLoading(true);
         new Thread(() -> {
             try {
@@ -82,9 +92,30 @@ public class CartViewModel extends ViewModel {
                 BasePagingResponse<List<CartDetailResponse>> result = cartUseCase.getCartItems(request);
                 if (result != null && result.getData() != null) {
                     setTotal(result.getPaging().getTotal());
-                    List<CartItemModel> cartItems = CartMapper.mapToCartItemModels(result.getData());
+                    List<CartItemModel> cartItems = CartDetailMapper.mapToCartItemModels(result.getData());
                     appendCartItems(cartItems);
-                    calculateTotalPrice(cartItems);
+
+                    // Gọi api để lấy thông tin giảm giá
+                    if (branchId != null) {
+                        // Gọi api để lấy thông tin giảm giá và tính toán tổng giá
+                        try {
+                            BaseResponse<CartResponse> cartResponseBaseResponse = cartUseCase.applyDiscountToCart(branchId);
+                            if (cartResponseBaseResponse != null && cartResponseBaseResponse.getData() != null) {
+                                CartResponse cartResponse = cartResponseBaseResponse.getData();
+                                totalPrice.postValue(cartResponse.getCartTotalCost());
+                                totalDiscountCost.postValue(cartResponse.getCartDiscountCost());
+                                totalPriceAfterDiscount.postValue(cartResponse.getCartTotalCostAfterDiscount());
+                            } else {
+                                setErrorLiveData("Không thể lấy thông tin giảm giá");
+                            }
+                        } catch (Exception e) {
+                            setErrorLiveData("Không thể tính toán tổng giá: " + e.getMessage());
+                            Log.e("CartViewModel", "Calculate total price failed: " + e.getMessage(), e);
+                        }
+                    } else {
+                        calculateTotalPrice(cartItems);
+                    }
+
                 }
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());
@@ -95,9 +126,10 @@ public class CartViewModel extends ViewModel {
         }).start();
     }
     private void calculateTotalPrice(List<CartItemModel> cartItems) {
-        double total = 0.0;
+        BigDecimal total = BigDecimal.ZERO;
         for (CartItemModel item : cartItems) {
-            total += item.getCartDetailUnitPrice() * item.getCartDetailQuantity();
+            BigDecimal itemTotal = BigDecimal.valueOf(item.getCartDetailUnitPrice()).multiply(BigDecimal.valueOf(item.getCartDetailQuantity()));
+            total = total.add(itemTotal);
         }
         totalPrice.postValue(total);
     }

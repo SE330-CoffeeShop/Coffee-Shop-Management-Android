@@ -1,15 +1,14 @@
 package com.example.coffeeshopmanagementandroid.domain.usecase;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.AddToCartRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.UpdateCartRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
-import com.example.coffeeshopmanagementandroid.data.mapper.CartMapper;
-import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
+import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CartUseCase {
@@ -65,6 +64,17 @@ public class CartUseCase {
         } catch (Exception e) {
             // Handle exceptions, possibly rethrow or log
             throw new RuntimeException("Failed to delete cart item", e);
+        }
+    }
+
+    public BaseResponse<CartResponse> applyDiscountToCart(String branchId) {
+        if (branchId == null || branchId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid branch ID");
+        }
+        try {
+            return cartRepository.applyDiscountToCart(branchId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to apply discount to cart", e);
         }
     }
 

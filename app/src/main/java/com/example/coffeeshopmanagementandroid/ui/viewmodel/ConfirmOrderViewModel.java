@@ -6,19 +6,18 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.address.response.AddressResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.GetAddressRequest;
-import com.example.coffeeshopmanagementandroid.data.dto.branch.request.GetAllBranchRequest;
-import com.example.coffeeshopmanagementandroid.data.dto.branch.response.BranchResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.OrderResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.request.GetAllPaymentRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.payment.response.PaymentResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.AddressMapper;
-import com.example.coffeeshopmanagementandroid.data.mapper.BranchMapper;
-import com.example.coffeeshopmanagementandroid.data.mapper.CartMapper;
+import com.example.coffeeshopmanagementandroid.data.mapper.CartDetailMapper;
 import com.example.coffeeshopmanagementandroid.data.mapper.PaymentMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 import com.example.coffeeshopmanagementandroid.domain.model.branch.BranchModel;
@@ -34,6 +33,7 @@ import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.AddressSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.PaymentSortBy;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +51,7 @@ public class ConfirmOrderViewModel extends ViewModel {
     private final MutableLiveData<List<CartItemModel>> cartItemsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<PaymentMethodModel>> paymentMethodsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<AddressModel>> addressesLiveDate = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<String>> appliedDiscountIds = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<AddressModel> selectedAddress = new MutableLiveData<>(null);
     private final MutableLiveData<BranchModel> selectedBranch = new MutableLiveData<>(null);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
@@ -58,7 +59,9 @@ public class ConfirmOrderViewModel extends ViewModel {
     private final MutableLiveData<Integer> page = new MutableLiveData<>(1);
     private final MutableLiveData<Integer> limit = new MutableLiveData<>(10);
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
-    private final MutableLiveData<Double> totalPrice = new MutableLiveData<>(0.0);
+    private final MutableLiveData<BigDecimal> totalPrice = new MutableLiveData<>(BigDecimal.ZERO);
+    private final MutableLiveData<BigDecimal> totalDiscountCost = new MutableLiveData<>(BigDecimal.ZERO);
+    private final MutableLiveData<BigDecimal> totalCostAfterDiscount = new MutableLiveData<>(BigDecimal.ZERO);
 
     private final MutableLiveData<String> approvalLinkLiveData = new MutableLiveData<>();
     public MutableLiveData<String> getApprovalLinkLiveData() {
@@ -99,7 +102,7 @@ public class ConfirmOrderViewModel extends ViewModel {
         return errorLiveData;
     }
 
-    public MutableLiveData<Double> getTotalPrice() {
+    public MutableLiveData<BigDecimal> getTotalPrice() {
         return totalPrice;
     }
 
@@ -123,7 +126,7 @@ public class ConfirmOrderViewModel extends ViewModel {
                 BasePagingResponse<List<CartDetailResponse>> result = cartUseCase.getCartItems(request);
                 if (result != null && result.getData() != null) {
                     setTotal(result.getPaging().getTotal());
-                    List<CartItemModel> cartItems = CartMapper.mapToCartItemModels(result.getData());
+                    List<CartItemModel> cartItems = CartDetailMapper.mapToCartItemModels(result.getData());
                     appendCartItems(cartItems);
                     calculateTotalPrice(cartItems);
                 }
@@ -211,7 +214,33 @@ public class ConfirmOrderViewModel extends ViewModel {
         for (CartItemModel item : cartItems) {
             total += item.getCartDetailUnitPrice() * item.getCartDetailQuantity();
         }
-        totalPrice.postValue(total);
+        totalCostAfterDiscount.postValue(BigDecimal.valueOf(total));
+        totalPrice.postValue(BigDecimal.valueOf(total));
+    }
+
+    public void applyDiscountToCart(String branchId) {
+        setIsLoading(true);
+        new Thread(() -> {
+            try {
+                if (branchId == null || branchId.isEmpty()) {
+                    throw new IllegalArgumentException("Branch ID cannot be null or empty");
+                }
+                BaseResponse<CartResponse> response = cartUseCase.applyDiscountToCart(branchId);
+                if (response != null && response.getData() != null) {
+                    CartResponse cartResponse = response.getData();
+                    totalDiscountCost.postValue(cartResponse.getCartDiscountCost().add(BigDecimal.ONE));
+                    totalCostAfterDiscount.postValue(cartResponse.getCartTotalCostAfterDiscount().add(BigDecimal.ONE));
+                    List<String> discountIds = new ArrayList<>();
+                    discountIds.addAll(cartResponse.getUsedDiscounts());
+                    appliedDiscountIds.postValue(discountIds);
+                }
+            } catch (Exception e) {
+                setErrorLiveData(e.getMessage());
+                Log.e("ConfirmOrderViewModel", "Apply discount to cart failed: " + e.getMessage(), e);
+            } finally {
+                setIsLoading(false);
+            }
+        }).start();
     }
 
     public void appendAddresses(List<AddressModel> addresses) {
@@ -247,5 +276,17 @@ public class ConfirmOrderViewModel extends ViewModel {
 
     public MutableLiveData<BranchModel> getSelectedBranch() {
         return selectedBranch;
+    }
+
+    public MutableLiveData<BigDecimal> getTotalDiscountCost() {
+        return totalDiscountCost;
+    }
+
+    public MutableLiveData<BigDecimal> getTotalCostAfterDiscount() {
+        return totalCostAfterDiscount;
+    }
+
+    public MutableLiveData<List<String>> getAppliedDiscountIds() {
+        return appliedDiscountIds;
     }
 }
