@@ -151,12 +151,22 @@ public class ConfirmOrderFragment extends Fragment {
     }
 
     private void navigateToDiscountFragment() {
-        NavigationUtils.safeNavigate(navController,
+
+        if (appliedDiscountIds == null || appliedDiscountIds.isEmpty()) {
+            Toast.makeText(requireContext(), "Chưa có mã giảm giá nào được áp dụng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putStringArrayList("discountIds", new ArrayList<>(appliedDiscountIds));
+        NavigationUtils.safeNavigate(
+                navController,
                 R.id.confirmOrderFragment,
                 R.id.action_confirmOrderFragment_to_discountFragment,
                 "DiscountFragment",
                 "ConfirmOrderFragment",
-                null);
+                args
+        );
     }
 
     private void navigateToChooseAddressFragment() {

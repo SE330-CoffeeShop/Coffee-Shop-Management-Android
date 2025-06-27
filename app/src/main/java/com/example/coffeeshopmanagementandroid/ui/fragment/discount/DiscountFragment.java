@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,19 +21,29 @@ import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.DiscountAdapter;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.CartViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.DiscountViewModel;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.DiscountSortBy;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DiscountFragment extends Fragment {
+    private DiscountViewModel discountViewModel;
     private RecyclerView discountRecyclerView;
     private NavController navController;
     private ImageButton backButton;
-    private Button applyButton;
     private DiscountAdapter discountAdapter;
     private DiscountModel selectedDiscount;
+    private List<String> appliedDiscountIds = new ArrayList<>();
 
     @Nullable
     @Override
@@ -43,6 +54,7 @@ public class DiscountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        discountViewModel = new ViewModelProvider(this).get(DiscountViewModel.class);
         initViews(view);
         setupDiscounts();
     }
@@ -51,67 +63,27 @@ public class DiscountFragment extends Fragment {
         navController = NavHostFragment.findNavController(this);
         discountRecyclerView = view.findViewById(R.id.discountRecyclerView);
         backButton = view.findViewById(R.id.backButtonToConfirmOrder);
-        applyButton = view.findViewById(R.id.applyButton);
 
         backButton.setOnClickListener(v -> handleBackPressed());
-        applyButton.setOnClickListener(v -> applyDiscount());
     }
 
     private void setupDiscounts() {
-        List<DiscountModel> discounts = new ArrayList<>();
+        List<String> discountIds = new ArrayList<>();
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("discountIds")) {
+            discountIds = args.getStringArrayList("discountIds");
+        }
 
-        discounts.add(new DiscountModel(
-                "1",
-                "Giảm 10%",
-                "Đơn tối thiểu 100k",
-                "MIN_ORDER",
-                10.0,
-                "DIS10",
-                new Timestamp(System.currentTimeMillis()),
-                new Timestamp(System.currentTimeMillis() + 86400000L),
-                100,
-                20,
-                1,
-                100000,
-                true,
-                "BR001"
-        ));
+        List<String> finalDiscountIds = discountIds;
+        new Thread(() -> {
+            try {
+                discountViewModel.FetchDiscountsByIdIn(finalDiscountIds, 1, 20, SortType.DESC, DiscountSortBy.CREATED_AT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-        discounts.add(new DiscountModel(
-                "2",
-                "Giảm 20k",
-                "Chọn sản phẩm áp dụng",
-                "PRODUCT",
-                20000.0,
-                "DIS20K",
-                new Timestamp(System.currentTimeMillis() - 86400000L),
-                new Timestamp(System.currentTimeMillis() + 86400000L * 7),
-                50,
-                10,
-                2,
-                0,
-                true,
-                "BR002"
-        ));
-
-        discounts.add(new DiscountModel(
-                "3",
-                "Mua 1 tặng 1",
-                "Áp dụng cho mặt hàng A",
-                "PROMO",
-                0.0,
-                "MUA1TANG1",
-                new Timestamp(System.currentTimeMillis()),
-                new Timestamp(System.currentTimeMillis() + 604800000L),
-                30,
-                5,
-                1,
-                0,
-                true,
-                "BR003"
-        ));
-
-        discountAdapter = new DiscountAdapter(discounts, discount -> {
+        discountAdapter = new DiscountAdapter(new ArrayList<>(), discount -> {
             this.selectedDiscount = discount;
         });
 
@@ -120,17 +92,13 @@ public class DiscountFragment extends Fragment {
 
         int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         discountRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
-    }
 
-    private void applyDiscount() {
-        Bundle result = new Bundle();
-        if (selectedDiscount != null) {
-            result.putParcelable("selectedDiscount", (Parcelable) selectedDiscount);
-        } else {
-            result.putString("noDiscount", "true");
-        }
-        getParentFragmentManager().setFragmentResult("discountResult", result);
-        handleBackPressed();
+        discountViewModel.getDiscountsLiveData().observe(getViewLifecycleOwner(), discounts -> {
+            discountAdapter = new DiscountAdapter(discounts, discount -> {
+                this.selectedDiscount = discount;
+            });
+            discountRecyclerView.setAdapter(discountAdapter);
+        });
     }
 
     private void handleBackPressed() {

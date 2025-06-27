@@ -228,8 +228,8 @@ public class ConfirmOrderViewModel extends ViewModel {
                 BaseResponse<CartResponse> response = cartUseCase.applyDiscountToCart(branchId);
                 if (response != null && response.getData() != null) {
                     CartResponse cartResponse = response.getData();
-                    totalDiscountCost.postValue(cartResponse.getCartDiscountCost().add(BigDecimal.ONE));
-                    totalCostAfterDiscount.postValue(cartResponse.getCartTotalCostAfterDiscount().add(BigDecimal.ONE));
+                    totalDiscountCost.postValue(cartResponse.getCartDiscountCost());
+                    totalCostAfterDiscount.postValue(cartResponse.getCartTotalCostAfterDiscount());
                     List<String> discountIds = new ArrayList<>();
                     discountIds.addAll(cartResponse.getUsedDiscounts());
                     appliedDiscountIds.postValue(discountIds);

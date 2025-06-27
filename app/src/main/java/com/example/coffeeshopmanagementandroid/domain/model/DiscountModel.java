@@ -1,164 +1,156 @@
 package com.example.coffeeshopmanagementandroid.domain.model;
 
-import java.sql.Timestamp;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class DiscountModel {
+import com.example.coffeeshopmanagementandroid.data.dto.discount.response.LiteProductResponse;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DiscountModel implements Parcelable {
     private String discountId;
     private String discountName;
     private String discountDescription;
     private String discountType;
-    private Double discountValue;
+    private BigDecimal discountValue;
     private String discountCode;
     private Timestamp discountStartDate;
     private Timestamp discountEndDate;
     private int discountMaxUses;
     private int discountUserCount;
     private int discountMaxPerUser;
-    private int discountMinOrderValue;
+    private BigDecimal discountMinOrderValue;
     private Boolean discountIsActive;
     private String discountBranchId;
+    private String discountBranchName;
+    private List<LiteProductResponse> products;
 
-    public DiscountModel(
-            String discountId,
-            String discountName,
-            String discountDescription,
-            String discountType,
-            Double discountValue,
-            String discountCode,
-            Timestamp discountStartDate,
-            Timestamp discountEndDate,
-            int discountMaxUses,
-            int discountUserCount,
-            int discountMaxPerUser,
-            int discountMinOrderValue,
-            Boolean discountIsActive,
-            String discountBranchId
-    ) {
-        this.discountId = discountId;
-        this.discountName = discountName;
-        this.discountDescription = discountDescription;
-        this.discountType = discountType;
-        this.discountValue = discountValue;
-        this.discountCode = discountCode;
-        this.discountStartDate = discountStartDate;
-        this.discountEndDate = discountEndDate;
-        this.discountMaxUses = discountMaxUses;
-        this.discountUserCount = discountUserCount;
-        this.discountMaxPerUser = discountMaxPerUser;
-        this.discountMinOrderValue = discountMinOrderValue;
-        this.discountIsActive = discountIsActive;
-        this.discountBranchId = discountBranchId;
+    public DiscountModel() {}
+
+    protected DiscountModel(Parcel in) {
+        discountId = in.readString();
+        discountName = in.readString();
+        discountDescription = in.readString();
+        discountType = in.readString();
+        discountValue = in.readByte() == 0 ? null : new BigDecimal(in.readString());
+        discountCode = in.readString();
+        long tmpDiscountStartDate = in.readLong();
+        discountStartDate = tmpDiscountStartDate == -1 ? null : new Timestamp(tmpDiscountStartDate);
+        long tmpDiscountEndDate = in.readLong();
+        discountEndDate = tmpDiscountEndDate == -1 ? null : new Timestamp(tmpDiscountEndDate);
+        discountMaxUses = in.readInt();
+        discountUserCount = in.readInt();
+        discountMaxPerUser = in.readInt();
+        discountMinOrderValue = in.readByte() == 0 ? null : new BigDecimal(in.readString());
+        byte tmpDiscountIsActive = in.readByte();
+        discountIsActive = tmpDiscountIsActive == 0 ? null : tmpDiscountIsActive == 1;
+        discountBranchId = in.readString();
+        discountBranchName = in.readString();
+        products = new ArrayList<>();
+        in.readTypedList(products, LiteProductResponse.CREATOR);
     }
 
-    public String getDiscountId() {
-        return discountId;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(discountId);
+        dest.writeString(discountName);
+        dest.writeString(discountDescription);
+        dest.writeString(discountType);
+        if (discountValue == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeString(discountValue.toString());
+        }
+        dest.writeString(discountCode);
+        dest.writeLong(discountStartDate != null ? discountStartDate.getTime() : -1);
+        dest.writeLong(discountEndDate != null ? discountEndDate.getTime() : -1);
+        dest.writeInt(discountMaxUses);
+        dest.writeInt(discountUserCount);
+        dest.writeInt(discountMaxPerUser);
+        if (discountMinOrderValue == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeString(discountMinOrderValue.toString());
+        }
+        if (discountIsActive == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) (discountIsActive ? 1 : 2));
+        }
+        dest.writeString(discountBranchId);
+        dest.writeString(discountBranchName);
+        dest.writeTypedList(products);
     }
 
-    public void setDiscountId(String discountId) {
-        this.discountId = discountId;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getDiscountName() {
-        return discountName;
-    }
+    public static final Creator<DiscountModel> CREATOR = new Creator<DiscountModel>() {
+        @Override
+        public DiscountModel createFromParcel(Parcel in) {
+            return new DiscountModel(in);
+        }
 
-    public void setDiscountName(String discountName) {
-        this.discountName = discountName;
-    }
+        @Override
+        public DiscountModel[] newArray(int size) {
+            return new DiscountModel[size];
+        }
+    };
 
-    public String getDiscountDescription() {
-        return discountDescription;
-    }
+    // Getters and setters
 
-    public void setDiscountDescription(String discountDescription) {
-        this.discountDescription = discountDescription;
-    }
+    public String getDiscountId() { return discountId; }
+    public void setDiscountId(String discountId) { this.discountId = discountId; }
 
-    public String getDiscountType() {
-        return discountType;
-    }
+    public String getDiscountName() { return discountName; }
+    public void setDiscountName(String discountName) { this.discountName = discountName; }
 
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
+    public String getDiscountDescription() { return discountDescription; }
+    public void setDiscountDescription(String discountDescription) { this.discountDescription = discountDescription; }
 
-    public Double getDiscountValue() {
-        return discountValue;
-    }
+    public String getDiscountType() { return discountType; }
+    public void setDiscountType(String discountType) { this.discountType = discountType; }
 
-    public void setDiscountValue(Double discountValue) {
-        this.discountValue = discountValue;
-    }
+    public BigDecimal getDiscountValue() { return discountValue; }
+    public void setDiscountValue(BigDecimal discountValue) { this.discountValue = discountValue; }
 
-    public String getDiscountCode() {
-        return discountCode;
-    }
+    public String getDiscountCode() { return discountCode; }
+    public void setDiscountCode(String discountCode) { this.discountCode = discountCode; }
 
-    public void setDiscountCode(String discountCode) {
-        this.discountCode = discountCode;
-    }
+    public Timestamp getDiscountStartDate() { return discountStartDate; }
+    public void setDiscountStartDate(Timestamp discountStartDate) { this.discountStartDate = discountStartDate; }
 
-    public Timestamp getDiscountStartDate() {
-        return discountStartDate;
-    }
+    public Timestamp getDiscountEndDate() { return discountEndDate; }
+    public void setDiscountEndDate(Timestamp discountEndDate) { this.discountEndDate = discountEndDate; }
 
-    public void setDiscountStartDate(Timestamp discountStartDate) {
-        this.discountStartDate = discountStartDate;
-    }
+    public int getDiscountMaxUses() { return discountMaxUses; }
+    public void setDiscountMaxUses(int discountMaxUses) { this.discountMaxUses = discountMaxUses; }
 
-    public Timestamp getDiscountEndDate() {
-        return discountEndDate;
-    }
+    public int getDiscountUserCount() { return discountUserCount; }
+    public void setDiscountUserCount(int discountUserCount) { this.discountUserCount = discountUserCount; }
 
-    public void setDiscountEndDate(Timestamp discountEndDate) {
-        this.discountEndDate = discountEndDate;
-    }
+    public int getDiscountMaxPerUser() { return discountMaxPerUser; }
+    public void setDiscountMaxPerUser(int discountMaxPerUser) { this.discountMaxPerUser = discountMaxPerUser; }
 
-    public int getDiscountMaxUses() {
-        return discountMaxUses;
-    }
+    public BigDecimal getDiscountMinOrderValue() { return discountMinOrderValue; }
+    public void setDiscountMinOrderValue(BigDecimal discountMinOrderValue) { this.discountMinOrderValue = discountMinOrderValue; }
 
-    public void setDiscountMaxUses(int discountMaxUses) {
-        this.discountMaxUses = discountMaxUses;
-    }
+    public Boolean getDiscountIsActive() { return discountIsActive; }
+    public void setDiscountIsActive(Boolean discountIsActive) { this.discountIsActive = discountIsActive; }
 
-    public int getDiscountUserCount() {
-        return discountUserCount;
-    }
+    public String getDiscountBranchId() { return discountBranchId; }
+    public void setDiscountBranchId(String discountBranchId) { this.discountBranchId = discountBranchId; }
 
-    public void setDiscountUserCount(int discountUserCount) {
-        this.discountUserCount = discountUserCount;
-    }
+    public String getDiscountBranchName() { return discountBranchName; }
+    public void setDiscountBranchName(String discountBranchName) { this.discountBranchName = discountBranchName; }
 
-    public int getDiscountMaxPerUser() {
-        return discountMaxPerUser;
-    }
-
-    public void setDiscountMaxPerUser(int discountMaxPerUser) {
-        this.discountMaxPerUser = discountMaxPerUser;
-    }
-
-    public int getDiscountMinOrderValue() {
-        return discountMinOrderValue;
-    }
-
-    public void setDiscountMinOrderValue(int discountMinOrderValue) {
-        this.discountMinOrderValue = discountMinOrderValue;
-    }
-
-    public Boolean getDiscountIsActive() {
-        return discountIsActive;
-    }
-
-    public void setDiscountIsActive(Boolean discountIsActive) {
-        this.discountIsActive = discountIsActive;
-    }
-
-    public String getDiscountBranchId() {
-        return discountBranchId;
-    }
-
-    public void setDiscountBranchId(String discountBranchId) {
-        this.discountBranchId = discountBranchId;
-    }
+    public List<LiteProductResponse> getProducts() { return products; }
+    public void setProducts(List<LiteProductResponse> products) { this.products = products; }
 }

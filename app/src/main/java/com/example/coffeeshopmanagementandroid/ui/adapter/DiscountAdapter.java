@@ -46,19 +46,12 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
         return discounts.size();
     }
 
-    public DiscountModel getSelectedDiscount() {
-        if (selectedPosition != -1) {
-            return discounts.get(selectedPosition);
-        }
-        return null;
-    }
-
     public class DiscountViewHolder extends RecyclerView.ViewHolder {
         private final ImageView ivDiscountImage;
         private final TextView tvDiscountName;
         private final TextView tvDiscountCondition;
         private final TextView tvDiscountExpiry;
-        private final RadioButton rbDiscount;
+
 
         public DiscountViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,16 +59,17 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
             tvDiscountName = itemView.findViewById(R.id.tvDiscountName);
             tvDiscountCondition = itemView.findViewById(R.id.tvDiscountCondition);
             tvDiscountExpiry = itemView.findViewById(R.id.tvDiscountExpiry);
-            rbDiscount = itemView.findViewById(R.id.rbDiscount);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && selectedPosition != position && isDiscountApplicable(discounts.get(position))) {
+                if (position != RecyclerView.NO_POSITION && selectedPosition != position) {
                     selectedPosition = position;
                     notifyDataSetChanged();
                     if (listener != null) {
                         listener.onDiscountSelected(discounts.get(position));
                     }
+
+                    // Xử lý sự kiện -> chuyển qua view discount detail
                 }
             });
         }
@@ -84,31 +78,14 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
             ivDiscountImage.setImageResource(R.drawable.discount_icon); // Thay bằng hình ảnh thực tế nếu cần
             tvDiscountName.setText(discount.getDiscountName());
 
-            String condition;
-            if ("MIN_ORDER".equals(discount.getDiscountType())) {
-                condition = "Đơn tối thiểu: " + discount.getDiscountMinOrderValue() + "K";
-            } else {
-                condition = "Áp dụng cho sản phẩm cụ thể"; // Thay bằng logic thực tế nếu có danh sách sản phẩm
-            }
+            String condition = "Đơn tối thiểu: " + discount.getDiscountMinOrderValue() + "K";
             tvDiscountCondition.setText(condition);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             tvDiscountExpiry.setText("Hết hạn: " + sdf.format(discount.getDiscountEndDate()));
-            rbDiscount.setChecked(position == selectedPosition);
 
-            if (isDiscountApplicable(discount)) {
-                itemView.setAlpha(1.0f);
-                itemView.setEnabled(true);
-            } else {
-                itemView.setAlpha(0.5f);
-                itemView.setEnabled(false);
-            }
-        }
-
-        private boolean isDiscountApplicable(DiscountModel discount) {
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            return discount.getDiscountIsActive() && discount.getDiscountEndDate().after(now);
-            // Thêm logic kiểm tra điều kiện khác nếu cần (ví dụ: đơn hàng tối thiểu)
+            itemView.setAlpha(1.0f);
+            itemView.setEnabled(true);
         }
     }
 

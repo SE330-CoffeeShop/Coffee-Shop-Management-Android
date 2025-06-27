@@ -2,8 +2,11 @@ package com.example.coffeeshopmanagementandroid.data.repository;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
+
+import androidx.annotation.NonNull;
 
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
@@ -16,66 +19,117 @@ import com.example.coffeeshopmanagementandroid.domain.model.auth.UserModel;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Response;
 
 
 public class AuthRepositoryImpl implements AuthRepository {
+    private static final String TAG = "AuthRepoImpl";
+    private static final String PREF_NAME = "fcm_prefs";
+    private static final String KEY_FCM_TOKEN = "fcm_token";
+
     private final AuthService authService;
     private final Context context;
 
     public AuthRepositoryImpl(
             AuthService authService,
-            Context context
+            @ApplicationContext Context context
     ) {
         this.authService = authService;
         this.context = context;
+
+        if (context != null) {
+            initializeFcmToken();
+        } else {
+            Log.e(TAG, "Context is null in constructor!");
+        }
+    }
+
+    private void initializeFcmToken() {
+        if (context == null) {
+            Log.e(TAG, "Context is null in initializeFcmToken!");
+            return;
+        }
+
+        // Lấy token trong background
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        cacheFcmToken(task.getResult());
+                        Log.d(TAG, "FCM token initialized: " + task.getResult());
+                    } else {
+                        Log.e(TAG, "FCM token initialization failed", task.getException());
+                    }
+                });
+    }
+
+    private String getCachedFcmToken() {
+        if (context == null) {
+            Log.e(TAG, "Context is null in getCachedFcmToken!");
+            return null;
+        }
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(KEY_FCM_TOKEN, null);
+    }
+
+    private void cacheFcmToken(String token) {
+        if (context == null) {
+            Log.e(TAG, "Context is null in getCachedFcmToken!");
+            return;
+        }
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putString(KEY_FCM_TOKEN, token).apply();
     }
 
     @Override
     public Pair<AuthModel, UserModel> login(String email, String password) throws Exception {
         Log.d("AuthRepoImpl", "Login called");
 
-        // Get firebase token
-        FirebaseApp.initializeApp(context);
+        // 1. Sử dụng token đã cache nếu có
+        String cachedToken = getCachedFcmToken();
+        Log.d(TAG, "Using cached token: " + (cachedToken != null));
 
+        // 2. Cố gắng lấy token mới nhưng không chờ quá lâu
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<String> tokenRef = new AtomicReference<>();
-        final AtomicReference<Exception> exceptionRef = new AtomicReference<>();
+        final AtomicReference<String> tokenRef = new AtomicReference<>(cachedToken);
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "Firebase token retrieved successfully");
-                        tokenRef.set(task.getResult());
+                        String newToken = task.getResult();
+                        tokenRef.set(newToken);
+                        cacheFcmToken(newToken);
+                        Log.d(TAG, "New FCM token: " + newToken);
                     } else {
-                        Log.w(TAG, "Failed to get FCM token", task.getException());
-                        exceptionRef.set(task.getException());
+                        Log.w(TAG, "FCM token update failed", task.getException());
                     }
-                    latch.countDown(); // Signal completion
+                    latch.countDown();
                 });
 
-        // Wait for the token with a timeout
-        String firebaseToken = null;
+        // Chờ tối đa 3 giây cho token mới
         try {
-            if (latch.await(10, TimeUnit.SECONDS)) {
-                firebaseToken = tokenRef.get();
-                Log.d(TAG, "Firebase token: " + (firebaseToken != null ? "obtained" : "null"));
-            } else {
-                Log.e(TAG, "Timeout waiting for Firebase token");
-            }
+            latch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            Log.e(TAG, "Interrupted while waiting for Firebase token", e);
+            Log.w(TAG, "Token wait interrupted", e);
             Thread.currentThread().interrupt();
         }
 
-        Call<BaseResponse<LoginResponse>> call = authService.login(new LoginRequest(email, password, firebaseToken));
+        String firebaseToken = tokenRef.get();
+        Log.d(TAG, "Final token for login: " + firebaseToken);
+
+        // 3. Gọi API login với token
+        Call<BaseResponse<LoginResponse>> call = authService.login(
+                new LoginRequest(email, password, firebaseToken)
+        );
+
         Response<BaseResponse<LoginResponse>> response = call.execute();
 
         Log.d("LOGIN", "Response received: " + response);
@@ -102,6 +156,10 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public String logout() throws Exception {
         Log.d("AuthRepoImpl", "Logout called");
+
+        // Xóa token cache khi đăng xuất
+        clearFcmTokenCache();
+
         Call<BaseResponse<LogoutResponse>> call = authService.logout();
         Response<BaseResponse<LogoutResponse>> response = call.execute();
 
@@ -119,6 +177,11 @@ public class AuthRepositoryImpl implements AuthRepository {
             Log.e("LOGOUT", errorMessage);
             throw new Exception(errorMessage);
         }
+    }
+
+    private void clearFcmTokenCache() {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().remove(KEY_FCM_TOKEN).apply();
     }
 
 }

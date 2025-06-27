@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.ui.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -119,6 +120,7 @@ public class FavoriteViewModel extends ViewModel {
         isAllDataLoaded.postValue(allDataLoaded);
     }
 
+    @SuppressLint("LongLogTag")
     public void fetchAllFavoriteProducts(String userId, int page, int limit, SortType sortType, FavoriteProductSortBy sortBy) {
         setIsLoading(true);
         new Thread(() -> {

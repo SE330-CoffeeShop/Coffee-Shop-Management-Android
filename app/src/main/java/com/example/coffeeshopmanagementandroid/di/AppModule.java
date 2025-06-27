@@ -7,6 +7,7 @@ import com.example.coffeeshopmanagementandroid.data.api.AuthService;
 import com.example.coffeeshopmanagementandroid.data.api.BranchService;
 import com.example.coffeeshopmanagementandroid.data.api.CartService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
+import com.example.coffeeshopmanagementandroid.data.api.DiscountService;
 import com.example.coffeeshopmanagementandroid.data.api.NotificationService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.PaymentService;
@@ -17,6 +18,7 @@ import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImp
 import com.example.coffeeshopmanagementandroid.data.repository.BranchRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CartRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.DiscountRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.NotificationRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.PaymentRepositoryImpl;
@@ -27,6 +29,7 @@ import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.BranchRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.DiscountRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.NotificationRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.PaymentRepository;
@@ -36,6 +39,7 @@ import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.BranchUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.DiscountUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.NotificationUseCase;
@@ -77,7 +81,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public static AuthRepository provideAuthRepository(AuthService authService) {
+    public static AuthRepository provideAuthRepository(AuthService authService, @ApplicationContext Context context) {
         return new AuthRepositoryImpl(authService, context);
     }
 
@@ -230,5 +234,22 @@ public class AppModule {
     @Provides
     public static BranchUseCase provideBranchUseCase(BranchRepository branchRepository) {
         return new BranchUseCase(branchRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static DiscountService provideDiscountService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(DiscountService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static DiscountRepository provideDiscountRepository(DiscountService discountService) {
+        return new DiscountRepositoryImpl(discountService);
+    }
+
+    @Provides
+    public static DiscountUseCase provideDiscountUseCase(DiscountRepository discountRepository) {
+        return new DiscountUseCase(discountRepository);
     }
 }
