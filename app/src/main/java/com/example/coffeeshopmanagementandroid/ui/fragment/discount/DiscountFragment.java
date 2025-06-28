@@ -23,6 +23,7 @@ import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.DiscountAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.CartViewModel;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.DiscountViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.DiscountSortBy;
@@ -83,22 +84,34 @@ public class DiscountFragment extends Fragment {
             }
         }).start();
 
-        discountAdapter = new DiscountAdapter(new ArrayList<>(), discount -> {
-            this.selectedDiscount = discount;
-        });
-
-        discountRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        discountAdapter = new DiscountAdapter(
+                new ArrayList<>(),
+                discount -> {
+                    this.selectedDiscount = discount;
+                    Bundle navArgs = new Bundle();
+                    navArgs.putString("discountId", discount.getDiscountId());
+                    NavigationUtils.safeNavigate(
+                            navController,
+                            R.id.discountFragment,
+                            R.id.action_discountFragment_to_detail_discount_fragment,
+                            "DiscountDetailFragment",
+                            "DiscountFragment",
+                            navArgs
+                    );
+                }
+        );
         discountRecyclerView.setAdapter(discountAdapter);
-
+        discountRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         discountRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
 
         discountViewModel.getDiscountsLiveData().observe(getViewLifecycleOwner(), discounts -> {
-            discountAdapter = new DiscountAdapter(discounts, discount -> {
-                this.selectedDiscount = discount;
-            });
-            discountRecyclerView.setAdapter(discountAdapter);
+            discountAdapter.setDiscounts(discounts != null ? discounts : new ArrayList<>());
         });
+
+        discountRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        discountRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
+
     }
 
     private void handleBackPressed() {

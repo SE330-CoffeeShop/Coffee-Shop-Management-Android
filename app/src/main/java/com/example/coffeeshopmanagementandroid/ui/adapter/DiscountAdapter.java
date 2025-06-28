@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.ui.adapter;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,12 @@ import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
 public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.DiscountViewHolder> {
-    private final List<DiscountModel> discounts;
+    private List<DiscountModel> discounts;
     private int selectedPosition = -1;
     private final OnDiscountSelectedListener listener;
 
@@ -61,15 +63,17 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
             tvDiscountExpiry = itemView.findViewById(R.id.tvDiscountExpiry);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && selectedPosition != position) {
-                    selectedPosition = position;
-                    notifyDataSetChanged();
-                    if (listener != null) {
-                        listener.onDiscountSelected(discounts.get(position));
+                try {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        selectedPosition = position;
+                        notifyDataSetChanged();
+                        if (listener != null) {
+                            listener.onDiscountSelected(discounts.get(position));
+                        }
                     }
-
-                    // Xử lý sự kiện -> chuyển qua view discount detail
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
         }
@@ -81,12 +85,24 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
             String condition = "Đơn tối thiểu: " + discount.getDiscountMinOrderValue() + "K";
             tvDiscountCondition.setText(condition);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            tvDiscountExpiry.setText("Hết hạn: " + sdf.format(discount.getDiscountEndDate()));
-
+            DateTimeFormatter dtf = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && discount.getDiscountStartDate() != null) {
+                tvDiscountExpiry.setText("Hết hạn: " + discount.getDiscountEndDate().format(dtf));
+            }
             itemView.setAlpha(1.0f);
             itemView.setEnabled(true);
         }
+    }
+
+    public void setDiscounts(List<DiscountModel> discounts) {
+        this.discounts.clear();
+        if (discounts != null) {
+            this.discounts.addAll(discounts);
+        }
+        notifyDataSetChanged();
     }
 
     public interface OnDiscountSelectedListener {
