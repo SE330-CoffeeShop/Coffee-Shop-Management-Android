@@ -181,11 +181,16 @@ public class HomeFragment extends Fragment {
         discountHomeAdapter = new DiscountHomeAdapter(
                 new ArrayList<>(),
                 discount -> {
-                    Toast.makeText(requireContext(), "Selected discount: " + discount.getDiscountName(), Toast.LENGTH_SHORT).show();
-                    // Handle discount click, e.g., navigate to detail
-//                    Bundle args = new Bundle();
-//                    args.putString("discountId", discount.getDiscountId());
-//                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_discountDetailFragment, "DiscountDetailFragment", "HomeFragment", args);
+                    Bundle args = new Bundle();
+                    args.putString("discountId", discount.getDiscountId());
+                    NavigationUtils.safeNavigate(
+                            navController,
+                            R.id.homeFragment,
+                            R.id.action_homeFragment_to_discountDetailFragment,
+                            "DiscountDetailFragment",
+                            "HomeFragment",
+                            args
+                    );
                 }
         );
         discountRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

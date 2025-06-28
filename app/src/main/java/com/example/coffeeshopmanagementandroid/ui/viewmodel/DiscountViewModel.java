@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.discount.request.GetAllDiscountByIdInRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.discount.response.DiscountResponse;
 import com.example.coffeeshopmanagementandroid.data.mapper.DiscountMapper;
@@ -146,6 +147,24 @@ public class DiscountViewModel extends ViewModel {
         if (discountTotal.getValue() != null && current.size() >= discountTotal.getValue()) {
             setIsAllDiscountDataLoaded(true);
         }
+    }
+
+    public void fetchDiscountById(String id) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                BaseResponse<DiscountResponse> response = discountUseCase.findDiscountById(id);
+                if (response != null && response.getData() != null) {
+                    DiscountModel discountModel = DiscountMapper.mapToDiscountModel(response.getData());
+                    List<DiscountModel> current = discountsLiveData.getValue() != null ? new ArrayList<>(discountsLiveData.getValue()) : new ArrayList<>();
+                    current.add(discountModel);
+                    discountsLiveData.postValue(current);
+                } else {
+                    Log.e("DiscountViewModel", "Fetch discount by ID failed: ");
+                }
+            } catch (Exception e) {
+                Log.e("DiscountViewModel", "Error fetching discount by ID", e);
+            }
+        });
     }
 
     public MutableLiveData<List<DiscountModel>> getDiscountsLiveData() {

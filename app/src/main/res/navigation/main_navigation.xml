@@ -21,6 +21,23 @@
             app:destination="@id/detailProductFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_discountDetailFragment"
+            app:destination="@id/detail_discount_fragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detail_discount_fragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.discount.DiscountDetailFragment"
+        android:label="fragment_detail_discount"
+        tools:layout="@layout/fragment_detail_discount">
+        <action
+            android:id="@+id/action_detail_discount_fragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:popUpTo="@id/detail_discount_fragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

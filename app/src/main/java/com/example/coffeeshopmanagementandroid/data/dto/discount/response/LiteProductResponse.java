@@ -7,6 +7,8 @@ public class LiteProductResponse implements Parcelable {
     private String id;
     private String name;
     private String thumb;
+    private String price;
+    private String ratingsAverage;
 
     public LiteProductResponse() {}
 
@@ -14,6 +16,8 @@ public class LiteProductResponse implements Parcelable {
         id = in.readString();
         name = in.readString();
         thumb = in.readString();
+        price = in.readString();
+        ratingsAverage = in.readString();
     }
 
     @Override
@@ -21,6 +25,8 @@ public class LiteProductResponse implements Parcelable {
         dest.writeString(id);
         dest.writeString(name);
         dest.writeString(thumb);
+        dest.writeString(price);
+        dest.writeString(ratingsAverage);
     }
 
     @Override
@@ -48,4 +54,13 @@ public class LiteProductResponse implements Parcelable {
 
     public String getThumb() { return thumb; }
     public void setThumb(String thumb) { this.thumb = thumb; }
+    public String getPrice() { return price; }
+    public void setPrice(String price) { this.price = price;}
+    public String getRatingAverage() {
+        return ratingsAverage;
+    }
+
+    public void setRatingAverage(String ratingsAverage) {
+        this.ratingsAverage = ratingsAverage;
+    }
 }
