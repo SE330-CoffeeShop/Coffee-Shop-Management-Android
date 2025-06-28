@@ -38,4 +38,21 @@ public class DiscountRepositoryImpl implements DiscountRepository {
             throw new Exception(errorMessage);
         }
     }
+
+    @SuppressLint("LongLogTag")
+    @Override
+    public BasePagingResponse<List<DiscountResponse>> findAllDiscounts(int page, int limit, String sortType, String sortBy) throws Exception {
+        Log.d("Discount RepoIml - findAllDiscounts", "Called");
+        Call<BasePagingResponse<List<DiscountResponse>>> call = discountService.findAllDiscounts(page, limit, sortType, sortBy);
+        Response<BasePagingResponse<List<DiscountResponse>>> response = call.execute();
+        Log.d("Discount RepoIml - findAllDiscounts", "Response: " + response.toString());
+        if (response.isSuccessful() && response.body() != null) {
+            Log.d("Response", String.valueOf(response.body().getData()));
+            return response.body();
+        } else {
+            String errorMessage = "Get all discounts failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+            Log.e("GET ALL DISCOUNTS", errorMessage);
+            throw new Exception(errorMessage);
+        }
+    }
 }

@@ -22,4 +22,10 @@ public class DiscountUseCase {
         Log.d("Discount Use Case - findDiscountsByIdIn", "Called with request: " + request);
         return discountRepository.findDiscountsByIdIn(request);
     }
+
+    @SuppressLint("LongLogTag")
+    public BasePagingResponse<List<DiscountResponse>> findAllDiscounts(int page, int limit, String sortType, String sortBy) throws Exception {
+        Log.d("Discount Use Case - findAllDiscounts", "Called with page: " + page + ", limit: " + limit + ", sortType: " + sortType + ", sortBy: " + sortBy);
+        return discountRepository.findAllDiscounts(page, limit, sortType, sortBy);
+    }
 }

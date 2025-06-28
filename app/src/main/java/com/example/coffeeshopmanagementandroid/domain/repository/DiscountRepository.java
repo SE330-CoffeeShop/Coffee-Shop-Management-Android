@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface DiscountRepository {
     BasePagingResponse<List<DiscountResponse>> findDiscountsByIdIn(GetAllDiscountByIdInRequest request) throws Exception;
+    BasePagingResponse<List<DiscountResponse>> findAllDiscounts(int page, int limit, String sortType, String sortBy) throws Exception;
 }

@@ -12,10 +12,10 @@ import com.example.coffeeshopmanagementandroid.data.mapper.DiscountMapper;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
 import com.example.coffeeshopmanagementandroid.domain.usecase.DiscountUseCase;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
-import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.DiscountSortBy;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -41,21 +41,25 @@ public class DiscountViewModel extends ViewModel {
             discountsLiveData.postValue(discountModels);
         } else {
             Log.e("DiscountViewModel", "Fetch discounts failed: ");
-            return;
         }
     }
 
-//    public void FetchAllDiscounts(int page, int limit, SortType sortType, DiscountSortBy sortBy) throws Exception {
-//        BasePagingResponse<List<DiscountResponse>> response = discountUseCase.findAllDiscount(page, limit, sortType, sortBy);
-//        if (response != null && response.getData() != null) {
-//            List<DiscountResponse> discountResponses = response.getData();
-//            List<DiscountModel> discountModels = DiscountMapper.mapToDiscountModels(discountResponses);
-//            discountsLiveData.postValue(discountModels);
-//        } else {
-//            Log.e("DiscountViewModel", "Fetch all discounts failed: ");
-//            return;
-//        }
-//    }
+    public void FetchAllDiscounts(int page, int limit, SortType sortType, DiscountSortBy sortBy) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                BasePagingResponse<List<DiscountResponse>> response = discountUseCase.findAllDiscounts(page, limit, sortType.toString(), sortBy.toString());
+                if (response != null && response.getData() != null) {
+                    List<DiscountResponse> discountResponses = response.getData();
+                    List<DiscountModel> discountModels = DiscountMapper.mapToDiscountModels(discountResponses);
+                    discountsLiveData.postValue(discountModels);
+                } else {
+                    Log.e("DiscountViewModel", "Fetch all discounts failed: ");
+                }
+            } catch (Exception e) {
+                Log.e("DiscountViewModel", "Error fetching discounts", e);
+            }
+        });
+    }
 
     public MutableLiveData<List<DiscountModel>> getDiscountsLiveData() {
         return discountsLiveData;

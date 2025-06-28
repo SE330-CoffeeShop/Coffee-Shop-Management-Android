@@ -7,6 +7,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -14,6 +15,14 @@ public interface DiscountService {
     @POST("/discount/filter-by-ids")
     Call<BasePagingResponse<List<DiscountResponse>>> findDiscountsByIds(
             @Body List<String> discountIds,
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("sortType") String sortType,
+            @Query("sortBy") String sortBy
+    );
+
+    @GET("/discount/all")
+    Call<BasePagingResponse<List<DiscountResponse>>> findAllDiscounts(
             @Query("page") int page,
             @Query("limit") int limit,
             @Query("sortType") String sortType,
