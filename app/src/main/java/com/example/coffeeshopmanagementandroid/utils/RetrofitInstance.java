@@ -7,6 +7,8 @@ import com.example.coffeeshopmanagementandroid.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -35,6 +37,9 @@ public class RetrofitInstance {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(context))
                     .authenticator(new TokenAuthenticator(context))
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
 
             // Sử dụng định dạng ngày tương thích với server (ISO 8601 không timezone)
