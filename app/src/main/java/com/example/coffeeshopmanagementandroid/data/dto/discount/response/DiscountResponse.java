@@ -1,6 +1,7 @@
 package com.example.coffeeshopmanagementandroid.data.dto.discount.response;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DiscountResponse {
@@ -12,8 +13,8 @@ public class DiscountResponse {
     private String discountType;
     private BigDecimal discountValue;
     private String discountCode;
-    private String discountStartDate;
-    private String discountEndDate;
+    private LocalDateTime discountStartDate;
+    private LocalDateTime discountEndDate;
     private int discountMaxUsers;
     private int discountUserCount;
     private int discountMaxPerUser;
@@ -47,11 +48,11 @@ public class DiscountResponse {
     public String getDiscountCode() { return discountCode; }
     public void setDiscountCode(String discountCode) { this.discountCode = discountCode; }
 
-    public String getDiscountStartDate() { return discountStartDate; }
-    public void setDiscountStartDate(String discountStartDate) { this.discountStartDate = discountStartDate; }
+    public LocalDateTime getDiscountStartDate() { return discountStartDate; }
+    public void setDiscountStartDate(LocalDateTime discountStartDate) { this.discountStartDate = discountStartDate; }
 
-    public String getDiscountEndDate() { return discountEndDate; }
-    public void setDiscountEndDate(String discountEndDate) { this.discountEndDate = discountEndDate; }
+    public LocalDateTime getDiscountEndDate() { return discountEndDate; }
+    public void setDiscountEndDate(LocalDateTime discountEndDate) { this.discountEndDate = discountEndDate; }
 
     public int getDiscountMaxUsers() { return discountMaxUsers; }
     public void setDiscountMaxUsers(int discountMaxUsers) { this.discountMaxUsers = discountMaxUsers; }

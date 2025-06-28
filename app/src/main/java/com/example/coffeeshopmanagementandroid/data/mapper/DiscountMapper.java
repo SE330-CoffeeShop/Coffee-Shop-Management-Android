@@ -21,8 +21,8 @@ public class DiscountMapper {
         model.setDiscountType(response.getDiscountType());
         model.setDiscountValue(response.getDiscountValue());
         model.setDiscountCode(response.getDiscountCode());
-        model.setDiscountStartDate(parseTimestamp(response.getDiscountStartDate()));
-        model.setDiscountEndDate(parseTimestamp(response.getDiscountEndDate()));
+        model.setDiscountStartDate(response.getDiscountStartDate());
+        model.setDiscountEndDate(response.getDiscountEndDate());
         model.setDiscountMaxUses(response.getDiscountMaxUsers());
         model.setDiscountUserCount(response.getDiscountUserCount());
         model.setDiscountMaxPerUser(response.getDiscountMaxPerUser());

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.example.coffeeshopmanagementandroid.data.dto.discount.response.LiteProductResponse;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +17,8 @@ public class DiscountModel implements Parcelable {
     private String discountType;
     private BigDecimal discountValue;
     private String discountCode;
-    private Timestamp discountStartDate;
-    private Timestamp discountEndDate;
+    private LocalDateTime discountStartDate;
+    private LocalDateTime discountEndDate;
     private int discountMaxUses;
     private int discountUserCount;
     private int discountMaxPerUser;
@@ -37,10 +37,10 @@ public class DiscountModel implements Parcelable {
         discountType = in.readString();
         discountValue = in.readByte() == 0 ? null : new BigDecimal(in.readString());
         discountCode = in.readString();
-        long tmpDiscountStartDate = in.readLong();
-        discountStartDate = tmpDiscountStartDate == -1 ? null : new Timestamp(tmpDiscountStartDate);
-        long tmpDiscountEndDate = in.readLong();
-        discountEndDate = tmpDiscountEndDate == -1 ? null : new Timestamp(tmpDiscountEndDate);
+        String startDateStr = in.readString();
+        discountStartDate = startDateStr == null ? null : LocalDateTime.parse(startDateStr);
+        String endDateStr = in.readString();
+        discountEndDate = endDateStr == null ? null : LocalDateTime.parse(endDateStr);
         discountMaxUses = in.readInt();
         discountUserCount = in.readInt();
         discountMaxPerUser = in.readInt();
@@ -66,8 +66,8 @@ public class DiscountModel implements Parcelable {
             dest.writeString(discountValue.toString());
         }
         dest.writeString(discountCode);
-        dest.writeLong(discountStartDate != null ? discountStartDate.getTime() : -1);
-        dest.writeLong(discountEndDate != null ? discountEndDate.getTime() : -1);
+        dest.writeString(discountStartDate != null ? discountStartDate.toString() : null);
+        dest.writeString(discountEndDate != null ? discountEndDate.toString() : null);
         dest.writeInt(discountMaxUses);
         dest.writeInt(discountUserCount);
         dest.writeInt(discountMaxPerUser);
@@ -124,11 +124,11 @@ public class DiscountModel implements Parcelable {
     public String getDiscountCode() { return discountCode; }
     public void setDiscountCode(String discountCode) { this.discountCode = discountCode; }
 
-    public Timestamp getDiscountStartDate() { return discountStartDate; }
-    public void setDiscountStartDate(Timestamp discountStartDate) { this.discountStartDate = discountStartDate; }
+    public LocalDateTime getDiscountStartDate() { return discountStartDate; }
+    public void setDiscountStartDate(LocalDateTime discountStartDate) { this.discountStartDate = discountStartDate; }
 
-    public Timestamp getDiscountEndDate() { return discountEndDate; }
-    public void setDiscountEndDate(Timestamp discountEndDate) { this.discountEndDate = discountEndDate; }
+    public LocalDateTime getDiscountEndDate() { return discountEndDate; }
+    public void setDiscountEndDate(LocalDateTime discountEndDate) { this.discountEndDate = discountEndDate; }
 
     public int getDiscountMaxUses() { return discountMaxUses; }
     public void setDiscountMaxUses(int discountMaxUses) { this.discountMaxUses = discountMaxUses; }

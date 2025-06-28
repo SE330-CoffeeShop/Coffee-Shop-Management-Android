@@ -21,7 +21,7 @@ public interface DiscountService {
             @Query("sortBy") String sortBy
     );
 
-    @GET("/discount/all")
+    @GET("/discount/active-not-expired")
     Call<BasePagingResponse<List<DiscountResponse>>> findAllDiscounts(
             @Query("page") int page,
             @Query("limit") int limit,

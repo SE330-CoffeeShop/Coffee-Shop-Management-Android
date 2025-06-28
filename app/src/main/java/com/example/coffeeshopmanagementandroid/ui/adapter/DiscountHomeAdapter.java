@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.ui.adapter;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,11 +71,20 @@ public class DiscountHomeAdapter extends RecyclerView.Adapter<DiscountHomeAdapte
             ivDiscountImage.setImageResource(R.drawable.discount_icon);
             tvDiscountName.setText(discount.getDiscountName());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM", Locale.getDefault());
-            String start = sdf.format(discount.getDiscountStartDate());
-            String end = sdf.format(discount.getDiscountEndDate());
-            tvDiscountStartDate.setText(start);
-            tvDiscountEndDate.setText(" - " + end);
+            DateTimeFormatter formatter = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            }
+            String start = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                start = discount.getDiscountStartDate() != null ? discount.getDiscountStartDate().format(formatter) : "";
+            }
+            String end = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                end = discount.getDiscountEndDate() != null ? discount.getDiscountEndDate().format(formatter) : "";
+            }
+            tvDiscountStartDate.setText(start + " - " + end);
+            tvDiscountEndDate.setText("");
         }
     }
 

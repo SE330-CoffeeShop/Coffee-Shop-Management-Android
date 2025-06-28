@@ -90,9 +90,7 @@ public class ChooseAddressAdapter extends RecyclerView.Adapter<ChooseAddressAdap
         }
 
         private boolean isDiscountApplicable(DiscountModel discount) {
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            return discount.getDiscountIsActive() && discount.getDiscountEndDate().after(now);
-            // Thêm logic kiểm tra điều kiện khác nếu cần (ví dụ: đơn hàng tối thiểu)
+            return true;
         }
     }
 

@@ -188,6 +188,24 @@ public class HomeFragment extends Fragment {
 //                    NavigationUtils.safeNavigate(navController, R.id.homeFragment, R.id.action_homeFragment_to_discountDetailFragment, "DiscountDetailFragment", "HomeFragment", args);
                 }
         );
+        discountRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Boolean.FALSE.equals(discountViewModel.getIsDiscountLoading().getValue())
+                        && dx > 0
+                        && Boolean.FALSE.equals(discountViewModel.getIsAllDiscountDataLoaded().getValue())) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (lm != null) {
+                        int totalItemCount = lm.getItemCount();
+                        int lastVisibleItem = lm.findLastVisibleItemPosition();
+                        if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                            discountViewModel.fetchMoreDiscounts(SortType.DESC, DiscountSortBy.CREATED_AT);
+                        }
+                    }
+                }
+            }
+        });
         discountRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         discountRecyclerView.setAdapter(discountHomeAdapter);
 
