@@ -62,13 +62,14 @@ public class DetailProductFragment extends Fragment {
     private NavController navController;
     private TextView priceTextView;
     private ImageButton addToCardButton;
+    private TextView tvRating;
 
     private Button buyButton;
     private ProductModel currentProduct;
 
     private boolean isExpanded = false;
-    private static final String READ_MORE = "Read more";
-    private static final String COLLAPSE = "Collapse";
+    private static final String READ_MORE = "Đọc thêm";
+    private static final String COLLAPSE = "Ẩn hiện";
     private static final String ELLIPSIS = "... ";
     private static final int MAX_LINES = 3;
     private final int expandCollapseColor = Color.parseColor("#4CAF50");
@@ -115,6 +116,14 @@ public class DetailProductFragment extends Fragment {
                 priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
                 loadProductImage(product.getProductThumb());
                 setupExpandableText(product.getProductDescription());
+
+                // Set rating from API
+                TextView ratingTextView = requireView().findViewById(R.id.ratingTextView);
+                if (product.getProductRatingsAverage() != null) {
+                    ratingTextView.setText(product.getProductRatingsAverage().toString());
+                } else {
+                    ratingTextView.setText("0.0");
+                }
 
                 if (product.isFavorite()) {
                     favoriteButton.setImageResource(R.drawable.favorites_icon);

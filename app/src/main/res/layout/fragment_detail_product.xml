@@ -35,7 +35,7 @@
             style="@style/text_lg_2_semibold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/detail"
+            android:text="Chi tiết sản phẩm"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
@@ -111,19 +111,12 @@
                     android:src="@drawable/star_icon" />
 
                 <TextView
+                    android:id="@+id/ratingTextView"
                     style="@style/text_lg_2_semibold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="4.8" />
-
-                <TextView
-                    style="@style/text_lg_regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:text="(230)"
-                    android:textColor="#808080" />
 
                 <View
                     android:layout_width="0dp"
