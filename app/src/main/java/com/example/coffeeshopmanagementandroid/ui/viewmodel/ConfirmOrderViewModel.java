@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.address.response.AddressResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.CreateAddressRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.address.resquest.GetAddressRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartItemRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
@@ -184,6 +185,30 @@ public class ConfirmOrderViewModel extends ViewModel {
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());
                 Log.e("ConfirmViewModel", "Fetch all products failed: " + e.getMessage(), e);
+            } finally {
+                setIsLoading(false);
+            }
+        }).start();
+    }
+
+    public void createAddress(String addressLine, String addressDistrict, String addressCity, boolean isDefault) {
+        setIsLoading(true);
+        new Thread(() -> {
+            try {
+                CreateAddressRequest addressModel = new CreateAddressRequest(addressLine, addressDistrict, addressCity, isDefault);
+                BaseResponse<AddressResponse> response = addressUseCase.createAddress(addressModel);
+                if (response != null && response.getData() != null) {
+                    AddressModel createdAddress = AddressMapper.mapToAddressModel(response.getData());
+                    List<AddressModel> currentAddresses = addressesLiveDate.getValue();
+                    if (currentAddresses != null) {
+                        currentAddresses.add(createdAddress);
+                        addressesLiveDate.postValue(currentAddresses);
+                    }
+                    selectedAddress.postValue(createdAddress);
+                }
+            } catch (Exception e) {
+                setErrorLiveData(e.getMessage());
+                Log.e("ConfirmOrderViewModel", "Create address failed: " + e.getMessage(), e);
             } finally {
                 setIsLoading(false);
             }
