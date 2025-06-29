@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.address.AddressModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.AddressAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.ConfirmOrderViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.google.android.material.button.MaterialButton;
@@ -27,6 +29,8 @@ public class AddressFragment extends BaseOtherFragment {
     private RecyclerView addressRecyclerView;
     private MaterialButton btnAddAddress;
     private NavController navController;
+    private ConfirmOrderViewModel confirmOrderViewModel;
+
 
     @Override
     protected int getLayoutResId() {
@@ -35,8 +39,11 @@ public class AddressFragment extends BaseOtherFragment {
 
     @Override
     protected void initViews(View view) {
-        setupRecentlyAddress(view);
+        confirmOrderViewModel = new ViewModelProvider(this).get(ConfirmOrderViewModel.class);
+        confirmOrderViewModel.fetchAllAddresses();
         setUpRecyclerView(view);
+        observeAddresses();
+        setupRecentlyAddress(view);
         navController = NavHostFragment.findNavController(this);
         NavigationUtils.checkAndFixNavState(navController, R.id.addressFragment, "AddressFragment");
         btnAddAddress = view.findViewById(R.id.btnAddAddress);
@@ -45,19 +52,19 @@ public class AddressFragment extends BaseOtherFragment {
         });
     }
 
-    private void setUpRecyclerView(View view) {
-        List<AddressModel> addresses = new ArrayList<>();
-        addresses.add(new AddressModel("addr_001", "FEEL Coffee & Tee Express, 82 Đ. Vành Đai", "Đông Hoà, Dĩ An", "Bình Dương", true));
-        addresses.add(new AddressModel("addr_002", "123 Lê Lợi", "Quận 1", "TP. Hồ Chí Minh", false));
-        addresses.add(new AddressModel("addr_003", "456 Nguyễn Trãi", "Thanh Xuân", "Hà Nội", false));
-        addresses.add(new AddressModel("addr_004", "789 Trần Hưng Đạo", "Hải Châu", "Đà Nẵng", false));
-        addresses.add(new AddressModel("addr_005", "101 Phan Đình Phùng", "Ninh Kiều", "Cần Thơ", false));
+    private void observeAddresses() {
+        confirmOrderViewModel.getAddressesLiveData().observe(getViewLifecycleOwner(), addresses -> {
+            if (addresses != null && addressRecyclerView.getAdapter() != null) {
+                ((AddressAdapter) addressRecyclerView.getAdapter()).updateList(addresses);
+            }
+        });
+    }
 
+    private void setUpRecyclerView(View view) {
         addressRecyclerView = view.findViewById(R.id.addressRecyclerView);
-        AddressAdapter adapter = new AddressAdapter(addresses, this::navigateToUpdateAddress);
+        AddressAdapter adapter = new AddressAdapter(new ArrayList<>(), this::navigateToUpdateAddress);
         addressRecyclerView.setAdapter(adapter);
         addressRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         addressRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
     }

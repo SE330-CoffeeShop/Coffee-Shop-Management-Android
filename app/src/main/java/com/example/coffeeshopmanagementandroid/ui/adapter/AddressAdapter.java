@@ -70,12 +70,20 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
 //            });
         }
 
+
         public void bind(AddressModel address) {
             if (address == null) return;
             String twoLineAddress = address.getAddressLine() + "\n" + address.getAddressDistrict() + ", " + address.getAddressCity();
             tvAddress.setText(twoLineAddress);
         }
     }
+
+    public void updateList(List<AddressModel> newList) {
+        this.addresses.clear();
+        this.addresses.addAll(newList);
+        notifyDataSetChanged();
+    }
+
 
 
     public interface OnItemClickListener {
