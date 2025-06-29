@@ -86,7 +86,6 @@ public class BranchFragment  extends Fragment {
         branchRecyclerView = view.findViewById(R.id.branchRecyclerView);
         branchAdapter = new ChooseBranchAdapter(new ArrayList<>(), branch -> {
             // Handle branch selection here (e.g., navigate back with result)
-            Toast.makeText(requireContext(), "Selected: " + branch.getBranchName(), Toast.LENGTH_SHORT).show();
         });
         branchRecyclerView.setAdapter(branchAdapter);
         branchRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

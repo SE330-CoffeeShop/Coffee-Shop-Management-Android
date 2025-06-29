@@ -120,7 +120,7 @@ public class DetailOrderFragment extends Fragment {
         });
 
         detailOrderViewModel.getOrderDiscountCost().observe(getViewLifecycleOwner(), discount -> {
-            tvDiscount.setText("-" + CurrencyFormat.formatVND(discount));
+            tvDiscount.setText(CurrencyFormat.formatVND(discount));
         });
 
         detailOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), totalPrice -> {

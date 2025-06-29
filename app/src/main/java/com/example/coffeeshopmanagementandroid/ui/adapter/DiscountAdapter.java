@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.DiscountModel;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -82,7 +83,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
             ivDiscountImage.setImageResource(R.drawable.discount_icon); // Thay bằng hình ảnh thực tế nếu cần
             tvDiscountName.setText(discount.getDiscountName());
 
-            String condition = "Đơn tối thiểu: " + discount.getDiscountMinOrderValue() + "K";
+            String condition = "Đơn tối thiểu: " + CurrencyFormat.formatVND(discount.getDiscountMinOrderValue());
             tvDiscountCondition.setText(condition);
 
             DateTimeFormatter dtf = null;

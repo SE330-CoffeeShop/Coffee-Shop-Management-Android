@@ -22,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class NotificationViewModel extends ViewModel {
     private final NotificationUseCase notificationUseCase;
     private final MutableLiveData<List<NotificationModel>> notificationModelsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<NotificationModel> notificationModelMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     @Inject
     public NotificationViewModel(NotificationUseCase notificationUseCase) {
@@ -53,7 +54,32 @@ public class NotificationViewModel extends ViewModel {
         new Thread(() -> {
             try {
                 notificationUseCase.markNotificationAsRead(notificationId);
-                // Optionally, refresh notifications or update the read status in LiveData
+                List<NotificationModel> currentList = notificationModelsLiveData.getValue();
+                if (currentList != null) {
+                    for (NotificationModel model : currentList) {
+                        if (model.getId().equals(notificationId)) {
+                            model.setRead(true);
+                            break;
+                        }
+                    }
+                    notificationModelsLiveData.postValue(currentList);
+                }
+            } catch (Exception e) {
+                errorLiveData.postValue(e.getMessage());
+            }
+        }).start();
+    }
+
+    public MutableLiveData<NotificationModel> getNotificationModelMutableLiveData() {
+        return notificationModelMutableLiveData;
+    }
+
+    public void fetchNotificationById(String id) {
+        new Thread(() -> {
+            try {
+                NotificationResponse response = notificationUseCase.getNotificationById(id).getData();
+                NotificationModel model = NotificationMapper.mapToNotificationModel(response);
+                notificationModelMutableLiveData.postValue(model);
             } catch (Exception e) {
                 errorLiveData.postValue(e.getMessage());
             }

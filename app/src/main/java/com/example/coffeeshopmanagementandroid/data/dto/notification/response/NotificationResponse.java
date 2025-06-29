@@ -24,7 +24,7 @@ public class NotificationResponse {
     @SerializedName("receiverName")
     private String receiverName;
 
-    @SerializedName("isRead")
+    @SerializedName("read")
     private boolean isRead;
 
     @SerializedName("createdAt")

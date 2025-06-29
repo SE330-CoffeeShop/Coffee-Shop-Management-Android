@@ -33,6 +33,7 @@ import com.example.coffeeshopmanagementandroid.ui.viewmodel.ConfirmOrderViewMode
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -105,17 +106,17 @@ public class ConfirmOrderFragment extends Fragment {
         });
         confirmOrderViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
             if (price != null) {
-                totalPrice.setText(price + " VNĐ");
+                totalPrice.setText(CurrencyFormat.formatVND(price));
             }
         });
         confirmOrderViewModel.getTotalDiscountCost().observe(getViewLifecycleOwner(), discount -> {
             if (discount != null) {
-                totalDiscountCost.setText(discount + " VNĐ");
+                totalDiscountCost.setText(CurrencyFormat.formatVND(discount));
             }
         });
         confirmOrderViewModel.getTotalCostAfterDiscount().observe(getViewLifecycleOwner(), total -> {
             if (total != null) {
-                totalCostAfterDiscount.setText(total + " VNĐ");
+                totalCostAfterDiscount.setText(CurrencyFormat.formatVND(total));
             }
         });
         confirmOrderViewModel.getAppliedDiscountIds().observe(getViewLifecycleOwner(), discountIds -> {

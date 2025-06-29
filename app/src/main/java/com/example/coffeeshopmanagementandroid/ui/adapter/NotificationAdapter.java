@@ -75,7 +75,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 ivReadStatus.setVisibility(View.GONE);
                 itemView.setBackgroundResource(R.drawable.bg_notification_read);
             } else {
+                ivReadStatus.setVisibility(View.VISIBLE);
                 ivReadStatus.setImageResource(R.drawable.unread_icon);
+                itemView.setBackgroundResource(R.drawable.bg_stroke);
             }
         }
     }

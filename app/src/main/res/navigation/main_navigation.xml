@@ -29,6 +29,17 @@
     </fragment>
 
     <fragment
+        android:id="@+id/detailNotificationFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.notification.DetailNotificationFragment"
+        android:label="fragment_detail_notification"
+        tools:layout="@layout/fragment_detail_notification">
+        <argument
+            android:name="notificationId"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
         android:id="@+id/detail_discount_fragment"
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.discount.DiscountDetailFragment"
         android:label="fragment_detail_discount"
@@ -196,8 +207,12 @@
         android:id="@+id/notificationFragment"
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.notification.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification"
-        />
+        tools:layout="@layout/fragment_notification">
+        <action
+            android:id="@+id/action_notificationFragment_to_detailNotificationFragment"
+            app:destination="@id/detailNotificationFragment"
+            app:launchSingleTop="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/changePasswordFragment"

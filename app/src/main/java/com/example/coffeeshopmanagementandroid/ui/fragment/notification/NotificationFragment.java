@@ -17,6 +17,7 @@ import com.example.coffeeshopmanagementandroid.domain.model.notification.Notific
 import com.example.coffeeshopmanagementandroid.ui.adapter.NotificationAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.NotificationViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
@@ -51,6 +52,16 @@ public class NotificationFragment extends BaseOtherFragment {
         notificationRecyclerView = view.findViewById(R.id.notificationRecyclerView);
         notificationAdapter = new NotificationAdapter(new ArrayList<>(), notification -> {
             notificationViewModel.markNotificationAsRead(notification.getId());
+            Bundle args = new Bundle();
+            args.putString("notificationId", notification.getId());
+            NavigationUtils.safeNavigate(
+                    navController,
+                    R.id.notificationFragment,
+                    R.id.action_notificationFragment_to_detailNotificationFragment,
+                    "DetailNotificationFragment",
+                    "NotificationFragment",
+                    args
+            );
         });
         notificationRecyclerView.setAdapter(notificationAdapter);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

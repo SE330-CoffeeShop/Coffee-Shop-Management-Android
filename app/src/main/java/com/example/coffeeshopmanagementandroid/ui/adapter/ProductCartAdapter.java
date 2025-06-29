@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,7 +138,7 @@ public class ProductCartAdapter extends RecyclerView.Adapter<ProductCartAdapter.
         public void bind(CartItemModel product){
             productNameTextView.setText(product.getProductName());
             variantProductTextView.setText(product.getVariantTierIdx());
-            priceTextView.setText(product.getCartDetailUnitPriceAfterDiscount() + " VND");
+            priceTextView.setText(CurrencyFormat.formatVND(BigDecimal.valueOf(product.getCartDetailUnitPriceAfterDiscount())));
             quantityTextView.setText(String.valueOf(product.getCartDetailQuantity()));
 
             if (product.getProductThumb() != null && !product.getProductThumb().isEmpty()) {

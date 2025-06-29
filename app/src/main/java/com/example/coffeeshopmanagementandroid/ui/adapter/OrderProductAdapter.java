@@ -13,7 +13,9 @@ import com.bumptech.glide.Glide;
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.OrderItemModel;
 import com.example.coffeeshopmanagementandroid.domain.model.cart.CartItemModel;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,7 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
             }
             productNameTextView.setText(product.getProductName());
             variantProductTextView.setText(product.getVariantTierIdx());
-            priceTextView.setText(product.getCartDetailUnitPrice() + "đ");
+            priceTextView.setText(CurrencyFormat.formatVND(BigDecimal.valueOf(product.getCartDetailUnitPrice())));
             quantityTextView.setText(String.valueOf(product.getCartDetailQuantity()));
         }
     }
