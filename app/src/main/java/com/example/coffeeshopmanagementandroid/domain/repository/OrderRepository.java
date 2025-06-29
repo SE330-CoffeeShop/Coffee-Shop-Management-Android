@@ -14,4 +14,6 @@ public interface OrderRepository {
     OrderResponse createOrder(CreateOrderRequest request) throws Exception;
 
     GetDetailOrderResponse getDetailOrder(String orderId) throws Exception;
+
+    BaseResponse<Void> updateOrderStatus(String orderId, String status) throws Exception;
 }

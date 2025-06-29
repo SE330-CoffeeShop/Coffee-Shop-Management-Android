@@ -114,4 +114,16 @@ public class DetailOrderViewModel extends ViewModel {
             }
         }).start();
     }
+
+    public void cancelOrder(String orderId) {
+        new Thread(() -> {
+            try {
+                orderUseCase.updateOrderStatus(orderId, "CANCELLED");
+                Log.d("OrderViewModel", "Order cancelled successfully: " + orderId);
+            } catch (Exception e) {
+                setErrorLiveData("Failed to cancel order: " + e.getMessage());
+                Log.e("OrderViewModel", "Cancel order failed: " + e.getMessage(), e);
+            }
+        }).start();
+    }
 }

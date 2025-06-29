@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class DetailOrderFragment extends Fragment {
     private TextView tvTotalOrder;
     private TextView tvOriginalTotal;
     private TextView tvDiscount;
+    private Button cancelOrderButton;
 
 
     @Override
@@ -62,6 +64,11 @@ public class DetailOrderFragment extends Fragment {
         ImageButton backButton = view.findViewById(R.id.backButtonOrder);
         backButton.setOnClickListener(v -> {
             handleBackPressed();
+        });
+
+        cancelOrderButton = view.findViewById(R.id.btnCancelOrder);
+        cancelOrderButton.setOnClickListener(v -> {
+            handleCancelOrder();
         });
 
         setupRecyclerView(view);
@@ -144,6 +151,16 @@ public class DetailOrderFragment extends Fragment {
     private void handleBackPressed() {
         if (getView() != null) {
             Navigation.findNavController(getView()).popBackStack();
+        }
+    }
+
+    private void handleCancelOrder() {
+        String orderId = requireArguments().getString("orderId");
+        if (orderId != null) {
+            detailOrderViewModel.cancelOrder(orderId);
+            handleBackPressed();
+        } else {
+            Toast.makeText(requireContext(), "Cannot cancel order", Toast.LENGTH_SHORT).show();
         }
     }
 
