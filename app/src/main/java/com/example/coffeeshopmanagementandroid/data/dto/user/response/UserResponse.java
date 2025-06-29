@@ -1,6 +1,5 @@
 package com.example.coffeeshopmanagementandroid.data.dto.user.response;
 
-import java.util.Date;
 
 public class UserResponse {
     private String id;
@@ -9,12 +8,9 @@ public class UserResponse {
     private String lastName;
     private String gender;
     private String phoneNumber;
-    private Date birthday;
+    private String birthday;
     private String role;
-    private Date emailVerifiedAt;
-    private Date createAt;
     private String avatar;
-    private Date updateAt;
 
     public String getId() {
         return id;
@@ -56,30 +52,6 @@ public class UserResponse {
         this.role = role;
     }
 
-    public Date getEmailVerifiedAt() {
-        return emailVerifiedAt;
-    }
-
-    public void setEmailVerifiedAt(Date emailVerifiedAt) {
-        this.emailVerifiedAt = emailVerifiedAt;
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -96,11 +68,11 @@ public class UserResponse {
         this.avatar = avatar;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 

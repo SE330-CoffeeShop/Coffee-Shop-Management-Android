@@ -17,12 +17,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.ui.activity.AuthActivity;
 import com.example.coffeeshopmanagementandroid.ui.component.OtherButton;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.LogoutViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.UserViewModel;
 import com.example.coffeeshopmanagementandroid.utils.LoadingManager;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 
@@ -37,6 +39,8 @@ public class OtherFragment extends Fragment {
     private OtherButton btnNotification;
     private Button btnLogout;
     private NavController navController;
+    private UserViewModel userViewModel;
+
     private LogoutViewModel logoutViewModel;
 
     public OtherFragment() {
@@ -53,7 +57,9 @@ public class OtherFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         logoutViewModel = new ViewModelProvider(this).get(LogoutViewModel.class);
-
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.fetchInformationCustomer();
+        observeUserViewModel(view);
         navController = NavHostFragment.findNavController(this);
 
         NavigationUtils.checkAndFixNavState(navController, R.id.otherFragment, "OtherFragment");
@@ -110,6 +116,7 @@ public class OtherFragment extends Fragment {
             }
         });
 
+
         // Observe logout result
         logoutViewModel.getLogoutResult().observe(getViewLifecycleOwner(), result -> {
             if (result != null) {
@@ -128,6 +135,25 @@ public class OtherFragment extends Fragment {
         logoutViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), "Logout failed: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void observeUserViewModel(View view) {
+        TextView tvUsername = view.findViewById(R.id.tvUsername);
+        TextView tvRank = view.findViewById(R.id.tvRank);
+
+        userViewModel.getUserLiveData().observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                String fullName = user.getFullName();
+                tvUsername.setText(fullName);
+                tvRank.setText("Khách hàng");
+            }
+        });
+
+        userViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Failed to load user info: " + error, Toast.LENGTH_SHORT).show();
             }
         });
     }
