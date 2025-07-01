@@ -17,8 +17,21 @@ public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAd
     private final List<ProductVariantModel> variantsList;
     private int selectedPosition = -1;
 
+    private OnVariantSelectedListener onVariantSelectedListener;
+
+    public interface OnVariantSelectedListener {
+        void onVariantSelected(int position);
+    }
+
     public VariantProductAdapter(List<ProductVariantModel> variantsList) {
         this.variantsList = variantsList;
+        if (variantsList != null) {
+            if (variantsList.size() > 2) {
+                selectedPosition = 1;
+            } else if (variantsList.size() > 0) {
+                selectedPosition = 0;
+            }
+        }
     }
 
     @NonNull
@@ -35,19 +48,17 @@ public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAd
         holder.variantProductChipButton.setSeletected(position == selectedPosition);
         holder.variantProductChipButton.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
-            if (pos == selectedPosition) {
-                // Bỏ chọn nếu đang được chọn
-                selectedPosition = -1;
-                notifyItemChanged(pos);
-            } else {
-                // Chọn chip mới và bỏ chọn chip cũ (nếu có)
+            if (pos != selectedPosition) {
                 int previous = selectedPosition;
                 selectedPosition = pos;
                 if (previous != -1) {
                     notifyItemChanged(previous);
                 }
+                notifyItemChanged(pos);
+                if (onVariantSelectedListener != null) {
+                    onVariantSelectedListener.onVariantSelected(selectedPosition);
+                }
             }
-            notifyItemChanged(pos);
         });
     }
 
@@ -70,5 +81,9 @@ public class VariantProductAdapter extends RecyclerView.Adapter<VariantProductAd
             super(itemView);
             variantProductChipButton = (VariantProductChipButton) itemView;
         }
+    }
+
+    public void setOnVariantSelectedListener(OnVariantSelectedListener listener) {
+        this.onVariantSelectedListener = listener;
     }
 }

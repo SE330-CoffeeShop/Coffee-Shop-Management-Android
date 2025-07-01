@@ -22,12 +22,15 @@ import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
 import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
+import com.example.coffeeshopmanagementandroid.ui.adapter.DiscountHomeAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.CategoryViewModel;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.DiscountViewModel;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.ProductViewModel;
 import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CategorySortBy;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.DiscountSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.ProductSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 
@@ -40,15 +43,18 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class HomeFragment extends Fragment {
     private ProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
+    private DiscountHomeAdapter discountHomeAdapter;
     private ProductAdapter recentlyProductAdapter;
     private RecyclerView productRecyclerView;
     private RecyclerView categoryRecyclerView;
+    private RecyclerView discountRecyclerView;
     private RecyclerView recentlyProductRecyclerView;
     private NavController navController;
     private ImageButton notificationButton;
     private ImageButton cartButton;
     private ProductViewModel productViewModel;
     private CategoryViewModel categoryViewModel;
+    private DiscountViewModel discountViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,10 +66,12 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        discountViewModel = new ViewModelProvider(this).get(DiscountViewModel.class);
 
         productRecyclerView = view.findViewById(R.id.productRecyclerView);
         categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView);
         recentlyProductRecyclerView = view.findViewById(R.id.recentlyProductRecyclerView);
+        discountRecyclerView = view.findViewById(R.id.superSaleRecyclerView);
 
         navController = NavHostFragment.findNavController(this);
         NavigationUtils.checkAndFixNavState(navController, R.id.homeFragment, "HomeFragment");
@@ -76,6 +84,11 @@ public class HomeFragment extends Fragment {
         fetchAndObserveProducts();
         fetchAndObserveCategories();
         fetchAndObserveRecentlyProducts();
+        try {
+            fetchAndObserveDiscounts();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         categoryAdapter.setOnCategorySelectedListener(categoryId -> filterProductsByCategory(categoryId));
     }
@@ -165,9 +178,46 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        discountHomeAdapter = new DiscountHomeAdapter(
+                new ArrayList<>(),
+                discount -> {
+                    Bundle args = new Bundle();
+                    args.putString("discountId", discount.getDiscountId());
+                    NavigationUtils.safeNavigate(
+                            navController,
+                            R.id.homeFragment,
+                            R.id.action_homeFragment_to_discountDetailFragment,
+                            "DiscountDetailFragment",
+                            "HomeFragment",
+                            args
+                    );
+                }
+        );
+        discountRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (Boolean.FALSE.equals(discountViewModel.getIsDiscountLoading().getValue())
+                        && dx > 0
+                        && Boolean.FALSE.equals(discountViewModel.getIsAllDiscountDataLoaded().getValue())) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (lm != null) {
+                        int totalItemCount = lm.getItemCount();
+                        int lastVisibleItem = lm.findLastVisibleItemPosition();
+                        if (totalItemCount > 0 && lastVisibleItem >= totalItemCount - 5) {
+                            discountViewModel.fetchMoreDiscounts(SortType.DESC, DiscountSortBy.CREATED_AT);
+                        }
+                    }
+                }
+            }
+        });
+        discountRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        discountRecyclerView.setAdapter(discountHomeAdapter);
+
         int marginHorizontal = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         productRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
         recentlyProductRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
+        discountRecyclerView.addItemDecoration(new SpaceItemDecoration().horizontal(marginHorizontal));
     }
 
     private void setUpListener() {
@@ -257,6 +307,22 @@ public class HomeFragment extends Fragment {
         categoryViewModel.getIsAllDataLoaded().observe(getViewLifecycleOwner(), isAllLoaded -> {
             if (isAllLoaded) {
                 Log.d("HomeFragment", "All data loaded, no more fetching");
+            }
+        });
+    }
+
+    private void fetchAndObserveDiscounts() {
+        try {
+            discountViewModel.FetchAllDiscounts(1, 10, SortType.DESC, DiscountSortBy.CREATED_AT);
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error fetching discounts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        discountViewModel.getDiscountsLiveData().observe(getViewLifecycleOwner(), discounts -> {
+            if (discounts != null) {
+                discountHomeAdapter.setDiscounts(discounts);
+            } else {
+                discountHomeAdapter.setDiscounts(new ArrayList<>());
             }
         });
     }

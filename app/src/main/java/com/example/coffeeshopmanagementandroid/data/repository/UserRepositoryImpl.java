@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.UserService;
@@ -17,6 +18,7 @@ public class UserRepositoryImpl implements UserRepository {
     public UserRepositoryImpl(UserService userServices) {
         this.userServices = userServices;
     }
+    @SuppressLint("LongLogTag")
     @Override
     public UserModel getInformationCustomer() throws Exception {
         Call<BaseResponse<UserResponse>> call = userServices.getInformationCustomer();

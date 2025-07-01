@@ -29,6 +29,7 @@ import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.CartSortBy;
 import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.ProductSortBy;
+import com.example.coffeeshopmanagementandroid.utils.helper.CurrencyFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +137,7 @@ public class CartFragment extends Fragment {
     }
 
     private void observeCartItems() {
-        cartViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT);
+        cartViewModel.fetchAllCartItems(1, 10, SortType.DESC, CartSortBy.CREATED_AT, null);
 
         cartViewModel.getCartItemsLiveData().observe(getViewLifecycleOwner(), cartItems -> {
             productCartAdapter.updateList(cartItems);
@@ -154,7 +155,7 @@ public class CartFragment extends Fragment {
 
         cartViewModel.getTotalPrice().observe(getViewLifecycleOwner(), price -> {
             if (price != null) {
-                totalPrice.setText(price + " VND");
+                totalPrice.setText(CurrencyFormat.formatVND(price));
             }
         });
     }

@@ -13,6 +13,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -31,4 +32,9 @@ public interface OrderService {
     @GET("/orders/me/{orderId}")
     Call<BaseResponse<GetDetailOrderResponse>> getDetailOrder(@Path("orderId") String orderId);
 
+    @PUT("/orders/{id}/status")
+    Call<BaseResponse<Void>> updateOrderStatus(
+            @Path("id") String orderId,
+            @Query("status") String status
+    );
 }

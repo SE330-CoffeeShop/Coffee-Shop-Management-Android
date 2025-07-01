@@ -31,7 +31,7 @@ public class OrderViewModel extends ViewModel {
     private final MutableLiveData<Integer> total = new MutableLiveData<>(null);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> isAllDataLoaded = new MutableLiveData<>(false); // Thêm cờ này
+    private final MutableLiveData<Boolean> isAllDataLoaded = new MutableLiveData<>(false);
 
     @Inject
     public OrderViewModel(OrderUseCase orderUseCase) {

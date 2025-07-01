@@ -88,4 +88,8 @@ public class UserModel {
     public void setUserBirthday(Date userBirthday) {
         this.userBirthday = userBirthday;
     }
+
+    public String getFullName() {
+        return userName + " " + userLastName;
+    }
 }

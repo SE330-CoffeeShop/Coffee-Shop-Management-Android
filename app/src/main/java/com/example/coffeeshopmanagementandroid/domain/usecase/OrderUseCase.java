@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.dto.BasePagingResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.CreateOrderRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.request.GetAllOrdersCustomerRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.order.response.GetDetailOrderResponse;
@@ -45,6 +46,17 @@ public class OrderUseCase {
         } catch (Exception e) {
             Log.e("Order Use Case - getDetailOrder", "Error fetching order details: " + e.getMessage());
             throw new Exception("Failed to fetch order details", e);
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    public BaseResponse<Void> updateOrderStatus(String orderId, String status) throws Exception {
+        Log.d("Order Use Case - updateOrderStatus", "Called");
+        try {
+            return orderRepository.updateOrderStatus(orderId, status);
+        } catch (Exception e) {
+            Log.e("Order Use Case - updateOrderStatus", "Error updating order status: " + e.getMessage());
+            throw new Exception("Failed to update order status", e);
         }
     }
 }

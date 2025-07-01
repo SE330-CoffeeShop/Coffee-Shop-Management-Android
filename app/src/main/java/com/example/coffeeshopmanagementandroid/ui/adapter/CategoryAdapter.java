@@ -12,14 +12,13 @@ import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<CategoryModel> categories;
-    private int selectedPosition = -1;
+    private int selectedPosition = 0;
     private OnCategorySelectedListener onCategorySelectedListener;
 
     public CategoryAdapter(List<CategoryModel> categoryList) {
         this.categories = categoryList;
     }
 
-    // Interface để thông báo khi category được chọn
     public interface OnCategorySelectedListener {
         void onCategorySelected(String categoryId);
     }
@@ -42,15 +41,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         holder.categoryChipButton.setSelected(position == selectedPosition);
         holder.categoryChipButton.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
-            if (pos == selectedPosition) {
-                // Bỏ chọn nếu đang được chọn
-                selectedPosition = -1;
-                notifyItemChanged(pos);
-                if (onCategorySelectedListener != null) {
-                    onCategorySelectedListener.onCategorySelected(null);
-                }
-            } else {
-                // Chọn category mới
+            if (pos != selectedPosition) {
                 int previous = selectedPosition;
                 selectedPosition = pos;
                 if (previous != -1) {
@@ -58,7 +49,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 }
                 notifyItemChanged(pos);
                 if (onCategorySelectedListener != null) {
-                    onCategorySelectedListener.onCategorySelected(category.getCategoryId()); // Gửi categoryId
+                    if ("all".equals(category.getCategoryId())) {
+                        onCategorySelectedListener.onCategorySelected(null);
+                    } else {
+                        onCategorySelectedListener.onCategorySelected(category.getCategoryId());
+                    }
                 }
             }
         });
@@ -71,7 +66,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     public void setCategories(List<CategoryModel> categories) {
         this.categories = categories;
+        for (int i = 0; i < categories.size(); i++) {
+            if ("all".equals(categories.get(i).getCategoryId())) {
+                selectedPosition = i;
+                break;
+            }
+        }
         notifyDataSetChanged();
+        if (onCategorySelectedListener != null && !categories.isEmpty()) {
+            onCategorySelectedListener.onCategorySelected(null);
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

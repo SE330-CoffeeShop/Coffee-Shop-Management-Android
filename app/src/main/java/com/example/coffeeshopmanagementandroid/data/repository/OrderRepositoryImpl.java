@@ -1,7 +1,5 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
@@ -77,5 +75,25 @@ public class OrderRepositoryImpl implements OrderRepository {
             Log.e("GET ORDER DETAILS", "Exception: " + e.getMessage());
             throw new Exception("Failed to get order details", e);
         }
+    }
+
+    @Override
+    public BaseResponse<Void> updateOrderStatus(String orderId, String status) throws Exception {
+        try {
+            Call<BaseResponse<Void>> call = orderService.updateOrderStatus(orderId, status);
+            Response<BaseResponse<Void>> response = call.execute();
+            if (response.isSuccessful() && response.body() != null) {
+                Log.d("UpdateOrderStatus", "Order status updated successfully");
+            } else {
+                String errorMessage = "Update order status failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+                Log.e("UPDATE ORDER STATUS", errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            Log.e("UPDATE ORDER STATUS", "Exception: " + e.getMessage());
+            throw new Exception("Failed to update order status", e);
+        }
+
+        return null;
     }
 }

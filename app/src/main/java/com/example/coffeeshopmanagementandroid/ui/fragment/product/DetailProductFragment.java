@@ -17,10 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +45,7 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -63,13 +62,14 @@ public class DetailProductFragment extends Fragment {
     private NavController navController;
     private TextView priceTextView;
     private ImageButton addToCardButton;
+    private TextView tvRating;
 
     private Button buyButton;
+    private ProductModel currentProduct;
 
     private boolean isExpanded = false;
-    FrameLayout loadingOverlay;
-    private static final String READ_MORE = "Read more";
-    private static final String COLLAPSE = "Collapse";
+    private static final String READ_MORE = "Đọc thêm";
+    private static final String COLLAPSE = "Ẩn hiện";
     private static final String ELLIPSIS = "... ";
     private static final int MAX_LINES = 3;
     private final int expandCollapseColor = Color.parseColor("#4CAF50");
@@ -101,7 +101,6 @@ public class DetailProductFragment extends Fragment {
 
         Log.d("DetailProductFragment", "Received productId: " + productId);
         if (productId != null) {
-            loadingOverlay.setVisibility(View.VISIBLE);
             detailProductViewModel.fetchProductDetailAndVariants(productId);
         } else {
             Toast.makeText(requireContext(), "Missing product ID", Toast.LENGTH_SHORT).show();
@@ -111,12 +110,20 @@ public class DetailProductFragment extends Fragment {
         // Observe live data
         detailProductViewModel.getProductLiveData().observe(getViewLifecycleOwner(), product -> {
             if (product != null) {
-                loadingOverlay.setVisibility(View.GONE);
+                currentProduct = product;
                 productNameTextView.setText(product.getProductName());
                 categoryTextView.setText(product.getProductCategoryId());
                 priceTextView.setText(CurrencyFormat.formatVND(product.getProductPrice()));
                 loadProductImage(product.getProductThumb());
                 setupExpandableText(product.getProductDescription());
+
+                // Set rating from API
+                TextView ratingTextView = requireView().findViewById(R.id.ratingTextView);
+                if (product.getProductRatingsAverage() != null) {
+                    ratingTextView.setText(product.getProductRatingsAverage().toString());
+                } else {
+                    ratingTextView.setText("0.0");
+                }
 
                 if (product.isFavorite()) {
                     favoriteButton.setImageResource(R.drawable.favorites_icon);
@@ -129,7 +136,6 @@ public class DetailProductFragment extends Fragment {
         detailProductViewModel.getVariantListLiveData().observe(getViewLifecycleOwner(), this::setupVariants);
 
         detailProductViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
-            loadingOverlay.setVisibility(View.GONE);
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
@@ -137,7 +143,6 @@ public class DetailProductFragment extends Fragment {
     }
 
     private void initializeViews() {
-        loadingOverlay = requireView().findViewById(R.id.loadingOverlay);
         descriptionTextView = requireView().findViewById(R.id.descriptionTextView);
         if (descriptionTextView != null) {
             descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -198,6 +203,17 @@ public class DetailProductFragment extends Fragment {
 
     private void setupVariants(List<ProductVariantModel> variants) {
         variantProductAdapter = new VariantProductAdapter(variants);
+        variantProductAdapter.setOnVariantSelectedListener(position -> {
+            if (currentProduct == null) return;
+            BigDecimal price = currentProduct.getProductPrice();
+            if (position == 0) {
+                priceTextView.setText(CurrencyFormat.formatVND(price.multiply(BigDecimal.valueOf(0.8))));
+            } else if (position == 1) {
+                priceTextView.setText(CurrencyFormat.formatVND(price));
+            } else {
+                priceTextView.setText(CurrencyFormat.formatVND(price.multiply(BigDecimal.valueOf(1.2))));
+            }
+        });
         RecyclerView variantProductRecyclerView = requireView().findViewById(R.id.variantProductRecyclerView);
         if (variantProductRecyclerView != null) {
             FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(requireContext());

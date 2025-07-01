@@ -6,6 +6,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.cart.request.AddToCartRe
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.UpdateCartRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.AddToCartResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartResponse;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface CartService {
     @DELETE("cart/detail/{variantId}")
     Call<Void> deleteCartItem(@Path("variantId") String variantId);
 
+    @GET("discount/apply-to-cart")
+    Call<BaseResponse<CartResponse>> applyDiscountToCart(@Query("branchId") String branchId);
 }

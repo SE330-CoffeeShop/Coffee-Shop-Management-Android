@@ -47,41 +47,8 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:paddingHorizontal="@dimen/vertical_spacing"
-        app:layout_constraintBottom_toTopOf="@id/applyButtonLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerLayout" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/applyButtonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_top"
-        android:paddingStart="@dimen/double_vertical_spacing"
-        android:paddingTop="@dimen/vertical_spacing"
-        android:paddingEnd="@dimen/double_vertical_spacing"
-        android:paddingBottom="@dimen/vertical_spacing"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/applyButton"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minWidth="120dp"
-            android:paddingStart="@dimen/vertical_spacing"
-            android:paddingTop="@dimen/vertical_spacing"
-            android:paddingEnd="@dimen/vertical_spacing"
-            android:paddingBottom="@dimen/vertical_spacing"
-            android:text="@string/apply"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:backgroundTint="@color/primary_500"
-            app:cornerRadius="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

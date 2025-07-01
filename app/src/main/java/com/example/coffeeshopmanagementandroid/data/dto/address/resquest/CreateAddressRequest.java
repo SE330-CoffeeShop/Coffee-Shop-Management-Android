@@ -4,9 +4,11 @@ public class CreateAddressRequest {
     private String addressLine;
     private String addressCity;
     private String addressDistrict;
-    private Boolean addressIsDefault;
+    private boolean addressIsDefault;
 
-    public CreateAddressRequest(String addressLine, String addressCity, String addressDistrict, Boolean addressIsDefault) {
+    public CreateAddressRequest() {}
+
+    public CreateAddressRequest(String addressLine, String addressCity, String addressDistrict, boolean addressIsDefault) {
         this.addressLine = addressLine;
         this.addressCity = addressCity;
         this.addressDistrict = addressDistrict;
@@ -37,11 +39,11 @@ public class CreateAddressRequest {
         this.addressDistrict = addressDistrict;
     }
 
-    public Boolean getAddressIsDefault() {
+    public boolean isAddressIsDefault() {
         return addressIsDefault;
     }
 
-    public void setAddressIsDefault(Boolean addressIsDefault) {
+    public void setAddressIsDefault(boolean addressIsDefault) {
         this.addressIsDefault = addressIsDefault;
     }
 }

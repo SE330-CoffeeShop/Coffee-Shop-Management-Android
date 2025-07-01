@@ -194,9 +194,13 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void filterProductsByCategory(String categoryId) {
-        if (categoryId == null) {
+        if (categoryId == null || "all".equals(categoryId)) {
             // Reset về danh sách đầy đủ
-            favoriteProductAdapter.setProducts(favoriteViewModel.getDetailFavoriteProductsLiveData().getValue());
+            if (favoriteViewModel.getDetailFavoriteProductsLiveData().getValue() != null) {
+                favoriteProductAdapter.setProducts(favoriteViewModel.getDetailFavoriteProductsLiveData().getValue());
+            } else {
+                favoriteProductAdapter.setProducts(new ArrayList<>());
+            }
         } else {
             // Lọc danh sách sản phẩm theo categoryId
             favoriteViewModel.getDetailFavoriteProductsLiveData().observe(getViewLifecycleOwner(), products -> {

@@ -1,11 +1,15 @@
 package com.example.coffeeshopmanagementandroid.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -35,12 +39,18 @@ public class RetrofitInstance {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(context))
                     .authenticator(new TokenAuthenticator(context))
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
 
             // Sử dụng định dạng ngày tương thích với server (ISO 8601 không timezone)
-            Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-                    .create();
+            Gson gson = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                gson = new GsonBuilder()
+                        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                        .create();
+            }
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)

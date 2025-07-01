@@ -21,6 +21,34 @@
             app:destination="@id/detailProductFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_discountDetailFragment"
+            app:destination="@id/detail_discount_fragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailNotificationFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.notification.DetailNotificationFragment"
+        android:label="fragment_detail_notification"
+        tools:layout="@layout/fragment_detail_notification">
+        <argument
+            android:name="notificationId"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detail_discount_fragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.discount.DiscountDetailFragment"
+        android:label="fragment_detail_discount"
+        tools:layout="@layout/fragment_detail_discount">
+        <action
+            android:id="@+id/action_detail_discount_fragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:popUpTo="@id/detail_discount_fragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -179,8 +207,12 @@
         android:id="@+id/notificationFragment"
         android:name="com.example.coffeeshopmanagementandroid.ui.fragment.notification.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification"
-        />
+        tools:layout="@layout/fragment_notification">
+        <action
+            android:id="@+id/action_notificationFragment_to_detailNotificationFragment"
+            app:destination="@id/detailNotificationFragment"
+            app:launchSingleTop="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/changePasswordFragment"
@@ -223,7 +255,19 @@
             app:popUpTo="@id/confirmOrderFragment"
             app:popUpToInclusive="false"
             app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/action_confirmOrderFragment_to_branchFragment"
+            app:destination="@id/branchFragment"
+            app:popUpTo="@id/confirmOrderFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/branchFragment"
+        android:name="com.example.coffeeshopmanagementandroid.ui.fragment.branch.BranchFragment"
+        android:label="fragment_branch"
+        tools:layout="@layout/fragment_choose_branch"/>
 
     <fragment
         android:id="@+id/discountFragment"
@@ -233,6 +277,12 @@
         <action
             android:id="@+id/action_discountFragment_to_confirmOrderFragment"
             app:destination="@id/confirmOrderFragment"
+            app:popUpTo="@id/discountFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/action_discountFragment_to_detail_discount_fragment"
+            app:destination="@id/detail_discount_fragment"
             app:popUpTo="@id/discountFragment"
             app:popUpToInclusive="false"
             app:launchSingleTop="true"/>

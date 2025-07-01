@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.ui.viewmodel;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -77,7 +78,13 @@ public class DetailProductViewModel extends ViewModel {
                 }
                 GetAllProductVariantsRequest request = new GetAllProductVariantsRequest(productId, 1, 100, SortType.DESC, ProductVariantSortBy.CREATED_AT);
                 List<ProductVariantModel> variants = productUseCase.getAllProductVariants(request);
-                variantListLiveData.postValue(variants);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    variantListLiveData.postValue(variants.reversed());
+                }
+                else {
+                    variantListLiveData.postValue(variants);
+                }
 
             } catch (Exception e) {
                 setErrorLiveData(e.getMessage());

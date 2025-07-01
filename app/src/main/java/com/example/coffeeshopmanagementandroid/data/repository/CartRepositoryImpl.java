@@ -10,6 +10,7 @@ import com.example.coffeeshopmanagementandroid.data.dto.cart.request.GetAllCartI
 import com.example.coffeeshopmanagementandroid.data.dto.cart.request.UpdateCartRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.AddToCartResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartDetailResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.cart.response.CartResponse;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 
 import java.util.List;
@@ -92,6 +93,25 @@ public class CartRepositoryImpl implements CartRepository {
             }
         } catch (Exception e) {
             Log.e("DELETE CART ITEM", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public BaseResponse<CartResponse> applyDiscountToCart(String branchId) throws Exception {
+        try {
+            Call<BaseResponse<CartResponse>> call = cartService.applyDiscountToCart(branchId);
+            Response<BaseResponse<CartResponse>> response = call.execute();
+            if (response.isSuccessful() && response.body() != null) {
+                Log.d("ApplyDiscount", "Response: " + response.body());
+                return response.body();
+            } else {
+                String errorMessage = "Apply discount failed: " + (response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+                Log.e("APPLY DISCOUNT", errorMessage);
+                throw new Exception(errorMessage);
+            }
+        } catch (Exception e) {
+            Log.e("APPLY DISCOUNT", "Exception: " + e.getMessage());
             return null;
         }
     }

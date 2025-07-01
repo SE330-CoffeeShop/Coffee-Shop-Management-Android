@@ -1,28 +1,38 @@
 package com.example.coffeeshopmanagementandroid.ui.fragment.notification;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopmanagementandroid.R;
-import com.example.coffeeshopmanagementandroid.domain.model.NotificationModel;
+import com.example.coffeeshopmanagementandroid.domain.model.notification.NotificationModel;
 import com.example.coffeeshopmanagementandroid.ui.adapter.NotificationAdapter;
 import com.example.coffeeshopmanagementandroid.ui.fragment.other.BaseOtherFragment;
+import com.example.coffeeshopmanagementandroid.ui.viewmodel.NotificationViewModel;
+import com.example.coffeeshopmanagementandroid.utils.NavigationUtils;
 import com.example.coffeeshopmanagementandroid.utils.SpaceItemDecoration;
+import com.example.coffeeshopmanagementandroid.utils.enums.SortType;
+import com.example.coffeeshopmanagementandroid.utils.enums.sortBy.OrderSortBy;
 
-import java.sql.Timestamp;
-import java.util.List;
+import java.util.ArrayList;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class NotificationFragment extends BaseOtherFragment {
 
     private RecyclerView notificationRecyclerView;
     private NotificationAdapter notificationAdapter;
     private NavController navController;
-
+    private NotificationViewModel notificationViewModel;
 
     @Override
     protected int getLayoutResId() {
@@ -31,37 +41,46 @@ public class NotificationFragment extends BaseOtherFragment {
 
     @Override
     protected void initViews(View view) {
-        // Initialize any additional views specific to NotificationFragment
+        notificationViewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
         setUpRecyclerView(view);
         navController = NavHostFragment.findNavController(this);
+        observeNotifications();
+        notificationViewModel.fetchNotifications(1, 15, SortType.DESC, OrderSortBy.CREATED_AT);
     }
 
     private void setUpRecyclerView(View view) {
-        List<NotificationModel> notifications = List.of(
-                new NotificationModel("N001", "User123", "User456", "ORDER_STATUS", new Timestamp(System.currentTimeMillis() - 3600_000), "Đơn hàng #12345 của bạn đã được giao thành công.", false),
-                new NotificationModel("N002", "Admin", "User456", "PROMOTION", new Timestamp(System.currentTimeMillis() - 86_400_000), "Ưu đãi giảm giá 20% cho đơn hàng đầu tiên của bạn!", true),
-                new NotificationModel("N003", "System", "User456", "SECURITY", new Timestamp(System.currentTimeMillis() - 300_000), "Có đăng nhập mới từ thiết bị lạ vào tài khoản của bạn.", false),
-                new NotificationModel("N001", "User123", "User456", "ORDER_STATUS", new Timestamp(System.currentTimeMillis() - 3600_000), "Đơn hàng #12345 của bạn đã được giao thành công.", false),
-                new NotificationModel("N002", "Admin", "User456", "PROMOTION", new Timestamp(System.currentTimeMillis() - 86_400_000), "Ưu đãi giảm giá 20% cho đơn hàng đầu tiên của bạn!", true),
-                new NotificationModel("N003", "System", "User456", "SECURITY", new Timestamp(System.currentTimeMillis() - 300_000), "Có đăng nhập mới từ thiết bị lạ vào tài khoản của bạn.", false),
-                new NotificationModel("N001", "User123", "User456", "ORDER_STATUS", new Timestamp(System.currentTimeMillis() - 3600_000), "Đơn hàng #12345 của bạn đã được giao thành công.", false),
-                new NotificationModel("N002", "Admin", "User456", "PROMOTION", new Timestamp(System.currentTimeMillis() - 86_400_000), "Ưu đãi giảm giá 20% cho đơn hàng đầu tiên của bạn!", true),
-                new NotificationModel("N003", "System", "User456", "SECURITY", new Timestamp(System.currentTimeMillis() - 300_000), "Có đăng nhập mới từ thiết bị lạ vào tài khoản của bạn.", false),
-                new NotificationModel("N001", "User123", "User456", "ORDER_STATUS", new Timestamp(System.currentTimeMillis() - 3600_000), "Đơn hàng #12345 của bạn đã được giao thành công.", false),
-                new NotificationModel("N002", "Admin", "User456", "PROMOTION", new Timestamp(System.currentTimeMillis() - 86_400_000), "Ưu đãi giảm giá 20% cho đơn hàng đầu tiên của bạn!", true),
-                new NotificationModel("N003", "System", "User456", "SECURITY", new Timestamp(System.currentTimeMillis() - 300_000), "Có đăng nhập mới từ thiết bị lạ vào tài khoản của bạn.", false)
-        );
-
-
         notificationRecyclerView = view.findViewById(R.id.notificationRecyclerView);
-        notificationAdapter = new NotificationAdapter(notifications, notification -> {
-            Toast.makeText(getContext(), "Clicked notification: " + notification.getNotificationContent(), Toast.LENGTH_SHORT).show();
+        notificationAdapter = new NotificationAdapter(new ArrayList<>(), notification -> {
+            notificationViewModel.markNotificationAsRead(notification.getId());
+            Bundle args = new Bundle();
+            args.putString("notificationId", notification.getId());
+            NavigationUtils.safeNavigate(
+                    navController,
+                    R.id.notificationFragment,
+                    R.id.action_notificationFragment_to_detailNotificationFragment,
+                    "DetailNotificationFragment",
+                    "NotificationFragment",
+                    args
+            );
         });
-
         notificationRecyclerView.setAdapter(notificationAdapter);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
         notificationRecyclerView.addItemDecoration(new SpaceItemDecoration().setTop(marginTop));
+    }
+
+    private void observeNotifications() {
+        notificationViewModel.getNotificationModelsLiveData().observe(getViewLifecycleOwner(), notificationModels -> {
+            if (notificationModels != null) {
+                notificationAdapter.updateNotifications(notificationModels);
+            } else {
+                notificationAdapter.updateNotifications(new ArrayList<>());
+            }
+        });
+        notificationViewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

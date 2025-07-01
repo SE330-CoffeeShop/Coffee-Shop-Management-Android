@@ -4,34 +4,45 @@ import android.content.Context;
 
 import com.example.coffeeshopmanagementandroid.data.api.AddressService;
 import com.example.coffeeshopmanagementandroid.data.api.AuthService;
+import com.example.coffeeshopmanagementandroid.data.api.BranchService;
 import com.example.coffeeshopmanagementandroid.data.api.CartService;
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
+import com.example.coffeeshopmanagementandroid.data.api.DiscountService;
+import com.example.coffeeshopmanagementandroid.data.api.NotificationService;
 import com.example.coffeeshopmanagementandroid.data.api.OrderService;
 import com.example.coffeeshopmanagementandroid.data.api.PaymentService;
 import com.example.coffeeshopmanagementandroid.data.api.ProductService;
 import com.example.coffeeshopmanagementandroid.data.api.UserService;
 import com.example.coffeeshopmanagementandroid.data.repository.AddressRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.AuthRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.BranchRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CartRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.CategoryRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.DiscountRepositoryImpl;
+import com.example.coffeeshopmanagementandroid.data.repository.NotificationRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.OrderRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.PaymentRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.ProductRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.data.repository.UserRepositoryImpl;
 import com.example.coffeeshopmanagementandroid.domain.repository.AddressRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.AuthRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.BranchRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CartRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.CategoryRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.DiscountRepository;
+import com.example.coffeeshopmanagementandroid.domain.repository.NotificationRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.OrderRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.PaymentRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.ProductRepository;
 import com.example.coffeeshopmanagementandroid.domain.repository.UserRepository;
 import com.example.coffeeshopmanagementandroid.domain.usecase.AddressUseCase;
-import com.example.coffeeshopmanagementandroid.domain.usecase.AuthUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.BranchUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CartUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.CategoryUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.DiscountUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LoginUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.LogoutUseCase;
+import com.example.coffeeshopmanagementandroid.domain.usecase.NotificationUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.OrderUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.PaymentUseCase;
 import com.example.coffeeshopmanagementandroid.domain.usecase.ProductUseCase;
@@ -70,7 +81,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public static AuthRepository provideAuthRepository(AuthService authService) {
+    public static AuthRepository provideAuthRepository(AuthService authService, @ApplicationContext Context context) {
         return new AuthRepositoryImpl(authService, context);
     }
 
@@ -83,12 +94,6 @@ public class AppModule {
     public static LogoutUseCase provideLogoutUseCase(AuthRepository authRepository) {
         return new LogoutUseCase(authRepository);
     }
-
-    @Provides
-    public static AuthUseCase provideAuthUseCase(AuthRepository authRepository) {
-        return new AuthUseCase(authRepository);
-    }
-
 
     @Provides
     @Singleton
@@ -195,5 +200,56 @@ public class AppModule {
     @Provides
     public static UserUseCase provideUserUseCase(UserRepository userRepository) {
         return new UserUseCase(userRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static NotificationService provideNotificationService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(NotificationService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static NotificationRepository provideNotificationRepository(NotificationService notificationService) {
+        return new NotificationRepositoryImpl(notificationService);
+    }
+
+    @Provides
+    public static NotificationUseCase provideNotificationUseCase(NotificationRepository notificationRepository) {
+        return new NotificationUseCase(notificationRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static BranchService provideBranchService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(BranchService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static BranchRepository provideBranchRepository(BranchService branchService) {
+        return new BranchRepositoryImpl(branchService);
+    }
+
+    @Provides
+    public static BranchUseCase provideBranchUseCase(BranchRepository branchRepository) {
+        return new BranchUseCase(branchRepository);
+    }
+
+    @Provides
+    @Singleton
+    public static DiscountService provideDiscountService(RetrofitInstance retrofitInstance) {
+        return retrofitInstance.createService(DiscountService.class);
+    }
+
+    @Provides
+    @Singleton
+    public static DiscountRepository provideDiscountRepository(DiscountService discountService) {
+        return new DiscountRepositoryImpl(discountService);
+    }
+
+    @Provides
+    public static DiscountUseCase provideDiscountUseCase(DiscountRepository discountRepository) {
+        return new DiscountUseCase(discountRepository);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.coffeeshopmanagementandroid.data.repository;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.coffeeshopmanagementandroid.data.api.CategoryService;
@@ -18,6 +19,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public CategoryRepositoryImpl(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
+    @SuppressLint("LongLogTag")
     @Override
     public BasePagingResponse<List<CategoryResponse>> getAllCategories(GetAllCategoriesRequest request) throws Exception {
         Log.d("Category RepoIml - getAllCategories", "Called");

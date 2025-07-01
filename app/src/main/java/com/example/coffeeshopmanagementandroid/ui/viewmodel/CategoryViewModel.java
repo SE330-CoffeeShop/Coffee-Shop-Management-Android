@@ -139,6 +139,17 @@ public class CategoryViewModel extends ViewModel {
                 currentCategories.add(newCategory);
             }
         }
+
+        // Thêm tất cả
+        CategoryModel allCategory = new CategoryModel();
+        allCategory.setCategoryId("all");
+        allCategory.setCategoryName("Tất cả");
+        allCategory.setCategoryDescription("Tất cả các loại sản phẩm");
+
+        if (!currentCategories.contains(allCategory)) {
+            currentCategories.add(0, allCategory); // Thêm vào đầu danh sách
+        }
+
         categoriesLiveData.postValue(currentCategories);
     }
 }
