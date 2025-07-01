@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.coffeeshopmanagementandroid.R;
 import com.example.coffeeshopmanagementandroid.domain.model.product.ProductModel;
+import com.example.coffeeshopmanagementandroid.ui.MainActivity;
 import com.example.coffeeshopmanagementandroid.ui.adapter.CategoryAdapter;
 import com.example.coffeeshopmanagementandroid.ui.adapter.ProductAdapter;
 import com.example.coffeeshopmanagementandroid.ui.viewmodel.FavoriteViewModel;
@@ -213,6 +214,15 @@ public class FavoritesFragment extends Fragment {
                     favoriteProductAdapter.setProducts(filteredProducts);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchAndObserveProducts();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showBottomNavigation();
         }
     }
 }

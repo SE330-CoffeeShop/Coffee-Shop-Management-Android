@@ -2,6 +2,7 @@ package com.example.coffeeshopmanagementandroid.data.api;
 
 
 import com.example.coffeeshopmanagementandroid.data.dto.BaseResponse;
+import com.example.coffeeshopmanagementandroid.data.dto.auth.request.ChangePasswordRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.request.LoginRequest;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LoginResponse;
 import com.example.coffeeshopmanagementandroid.data.dto.auth.response.LogoutResponse;
@@ -17,4 +18,7 @@ public interface AuthService {
 
     @GET("auth/logout")
     Call<BaseResponse<LogoutResponse>> logout();
+
+    @POST("account/password")
+    Call<Void> changePassword(@Body ChangePasswordRequest request);
 }

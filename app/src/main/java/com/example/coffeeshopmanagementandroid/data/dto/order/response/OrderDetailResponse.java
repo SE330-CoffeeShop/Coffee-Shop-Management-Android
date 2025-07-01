@@ -16,7 +16,6 @@ public class OrderDetailResponse {
     private String productName;
     private String productThumb;
     private String variantTierId;
-    public OrderDetailResponse() {}
 
     public String getId() {
         return id;
@@ -24,22 +23,6 @@ public class OrderDetailResponse {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public int getOrderDetailQuantity() {
-        return orderDetailQuantity;
-    }
-
-    public void setOrderDetailQuantity(int orderDetailQuantity) {
-        this.orderDetailQuantity = orderDetailQuantity;
-    }
-
-    public BigDecimal getOrderDetailUnitPrice() {
-        return orderDetailUnitPrice;
-    }
-
-    public void setOrderDetailUnitPrice(BigDecimal orderDetailUnitPrice) {
-        this.orderDetailUnitPrice = orderDetailUnitPrice;
     }
 
     public String getCreatedAt() {
@@ -58,6 +41,21 @@ public class OrderDetailResponse {
         this.updatedAt = updatedAt;
     }
 
+    public int getOrderDetailQuantity() {
+        return orderDetailQuantity;
+    }
+
+    public void setOrderDetailQuantity(int orderDetailQuantity) {
+        this.orderDetailQuantity = orderDetailQuantity;
+    }
+
+    public BigDecimal getOrderDetailUnitPrice() {
+        return orderDetailUnitPrice;
+    }
+
+    public void setOrderDetailUnitPrice(BigDecimal orderDetailUnitPrice) {
+        this.orderDetailUnitPrice = orderDetailUnitPrice;
+    }
 
     public String getProductVariantId() {
         return productVariantId;
