@@ -100,6 +100,7 @@ public class DiscountFragment extends Fragment {
                     );
                 }
         );
+
         discountRecyclerView.setAdapter(discountAdapter);
         discountRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         int marginTop = getResources().getDimensionPixelOffset(R.dimen.vertical_spacing);
